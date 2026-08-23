@@ -1,0 +1,12 @@
+// .opencode/tsconfig.json
+{
+  "compilerOptions": {
+    "types": ["bun-types"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "strict": true,
+    "allowJs": true,
+    "noEmit": true
+  }
+}
