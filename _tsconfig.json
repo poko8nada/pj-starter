@@ -8,12 +8,8 @@
     "allowJs": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "erasableSyntaxOnly": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
     "allowImportingTsExtensions": true,
     "types": ["node"]
   },
