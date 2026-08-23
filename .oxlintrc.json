@@ -10,7 +10,7 @@
     "typeAware": true
   },
   "rules": {
-    "curly": "error",
+    "curly": ["error", "multi"],
     "eqeqeq": "error",
     "max-lines-per-function": [
       "error",

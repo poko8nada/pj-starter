@@ -10,8 +10,9 @@
     "lint:fix": "oxlint --fix && oxfmt",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "typecheck": "pnpm typecheck:product",
+    "typecheck": "pnpm typecheck:product && pnpm typecheck:opencode",
     "typecheck:product": "tsc --noEmit",
+    "typecheck:opencode": "tsc -p .opencode/tsconfig.json --noEmit",
     "typecheck:staged": "node scripts/typecheck-staged.mjs",
     "prepare": "lefthook install"
   },

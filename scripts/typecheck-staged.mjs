@@ -23,9 +23,7 @@ const files = process.argv.slice(2).filter((f) => {
   return fs.existsSync(abs) && checkableExt.has(path.extname(abs));
 });
 
-if (files.length === 0) {
-  process.exit(0);
-}
+if (files.length === 0) process.exit(0);
 
 // tsconfig ごとにファイルをグループ化する
 const groups = new Map();
@@ -37,9 +35,8 @@ for (const f of files) {
   const tsconfig = harnessDir
     ? path.join(root, harnessDir, 'tsconfig.json')
     : path.join(root, 'tsconfig.json');
-  if (!fs.existsSync(tsconfig)) {
-    continue;
-  }
+  if (!fs.existsSync(tsconfig)) continue;
+
   groups.set(tsconfig, [...(groups.get(tsconfig) ?? []), abs]);
 }
 
@@ -76,10 +73,7 @@ const runTypecheckGroup = (tsconfig, groupFiles) => {
 };
 
 let failed = false;
-for (const [tsconfig, groupFiles] of groups) {
-  if (runTypecheckGroup(tsconfig, groupFiles)) {
-    failed = true;
-  }
-}
+for (const [tsconfig, groupFiles] of groups)
+  if (runTypecheckGroup(tsconfig, groupFiles)) failed = true;
 
 process.exit(failed ? 1 : 0);

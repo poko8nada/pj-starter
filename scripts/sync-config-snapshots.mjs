@@ -1,8 +1,3 @@
-/*
- * FEATURES: M-sync
- * PURPOSE: package.json / tsconfig.json を _ 付きスナップショットへ上書きコピーしてステージする (isDone: true)
- * STATUS: sizeDrift=false, driftSuspected=false
- */
 // 設定ファイルのスナップショット (_package.json / _tsconfig.json) を本体と同期するスクリプト
 // 使い方: node scripts/sync-config-snapshots.mjs
 // 仕組み: 本体 (package.json / tsconfig.json) を _ 付きファイルへ上書きコピーし、git add でステージする。
@@ -30,6 +25,4 @@ for (const [sourceName, snapshotName] of SNAPSHOT_PAIRS) {
 
 // スナップショットをステージする（pre-commit で実行される前提）
 const result = spawnSync('git', ['add', ...snapshots], { stdio: 'inherit', cwd: root });
-if (result.status !== 0) {
-  process.exit(result.status ?? 1);
-}
+if (result.status !== 0) process.exit(result.status ?? 1);

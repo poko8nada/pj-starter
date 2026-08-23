@@ -1,12 +1,14 @@
-// .opencode/tsconfig.json
+// .opencode 配下（プラグイン等）専用の tsconfig。ルートの tsconfig とは責務が別
 {
   "compilerOptions": {
-    "types": ["bun-types"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext"],
     "strict": true,
-    "allowJs": true,
-    "noEmit": true
-  }
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": ["plugin/**/*.ts"]
 }
