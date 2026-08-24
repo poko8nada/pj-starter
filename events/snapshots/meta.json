@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-24T15:37:40.165+09:00",
-  "asOf": "2026-08-24T15:37:40.138+09:00",
+  "generatedAt": "2026-08-24T16:05:51.652+09:00",
+  "asOf": "2026-08-24T16:05:51.627+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -40,6 +40,10 @@
       "feature": {
         "path": ".opencode/skills/feature/SKILL.md",
         "purpose": "featureとコンポーネントの登録・分割・定義改訂",
+        "status": "commit"
+      },
+      "commit": {
+        "purpose": "コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める",
         "status": "commit"
       }
     },

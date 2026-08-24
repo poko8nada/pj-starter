@@ -29,3 +29,6 @@
 {"ts":"2026-08-24T15:37:40.138+09:00","type":"del","key":"meta.docs.product-spec.isDone"}
 {"ts":"2026-08-24T15:37:40.138+09:00","type":"del","key":"meta.scripts.typecheck-staged.isDone"}
 {"ts":"2026-08-24T15:37:40.138+09:00","type":"del","key":"meta.scripts.sync-config-snapshots.isDone"}
+{"ts":"2026-08-24T15:58:07.698+09:00","type":"set","key":"meta.skills.commit","value":{"purpose":"コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める"}}
+{"ts":"2026-08-24T15:59:31.059+09:00","type":"set","key":"meta.skills.commit.status","value":"ready"}
+{"ts":"2026-08-24T16:05:51.627+09:00","type":"set","key":"meta.skills.commit.status","value":"commit"}

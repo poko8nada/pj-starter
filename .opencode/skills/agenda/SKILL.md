@@ -7,9 +7,8 @@ description: Select and fix the unit of work before implementation. Use when the
 
 Turn an implementation decision into an agreed plan, then record it. Never implement inside agenda.
 
-## Trigger & scope
+## Scope
 
-- Trigger: the decision to implement something.
 - Idea capture ("ログインを作りたい") is not agenda — it is plain discussion: once the content is agreed, append it directly (new features enter as `planned`; stack / roadmap changes surfaced by the same discussion go together).
 - Pure JSON value changes (copy tweaks, status flips) skip agenda entirely — append directly.
 - When unsure whether something counts as implementation, run agenda.
