@@ -12,7 +12,7 @@ export const LOG_PATH = path.join(EVENTS_DIR, 'log.jsonl');
 export const SNAPSHOTS_DIR = path.join(EVENTS_DIR, 'snapshots');
 export const CHECKPOINT_PATH = path.join(EVENTS_DIR, 'checkpoint.json');
 
-// 名前空間と検証規則。product の第2セグメントは固定区画のみ許容する
+// 名前空間と検証規則。product / meta の第2セグメントは固定区画のみ許容する
 export const NAMESPACES = new Set(['product', 'meta', 'agenda']);
 export const PRODUCT_SECTIONS = new Set([
   'name',
@@ -23,6 +23,7 @@ export const PRODUCT_SECTIONS = new Set([
   'roadmap',
   'deploy',
 ]);
+export const META_SECTIONS = new Set(['harness', 'skills', 'docs', 'scripts']);
 export const EVENT_TYPES = new Set(['set', 'del']);
 
 // JST(+09:00) 固定の ISO 8601 タイムスタンプを生成する
@@ -61,6 +62,8 @@ export const validateKey = (key) => {
   if (!NAMESPACES.has(ns)) fail(`unknown namespace: ${ns}`);
   if (ns === 'product' && !PRODUCT_SECTIONS.has(section))
     fail(`product section must be one of ${[...PRODUCT_SECTIONS].join('/')}: ${key}`);
+  if (ns === 'meta' && !META_SECTIONS.has(section))
+    fail(`meta section must be one of ${[...META_SECTIONS].join('/')}: ${key}`);
 };
 
 // アクティブなログを読み込み、イベントの配列を返す
@@ -129,6 +132,17 @@ export const normalizeFeatures = (features) => {
       node.status ??= 'planned';
       node.isDone ??= false;
     }
+};
+
+// meta の葉に初期値を補完する。purpose を持つノードをコンポーネントとみなす。
+// meta は「区画→コンポーネント」の2段構造のため、2レベル走査する
+export const normalizeMeta = (meta) => {
+  for (const section of Object.values(meta ?? {}))
+    for (const node of Object.values(section ?? {}))
+      if (node && typeof node === 'object' && 'purpose' in node) {
+        node.status ??= 'planned';
+        node.isDone ??= false;
+      }
 };
 
 // チェックポイント起点 + アクティブログ全体を畳み込む。

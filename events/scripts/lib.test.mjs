@@ -1,6 +1,6 @@
 // events/scripts/lib.mjs の畳み込み意味論に関するテスト
 import { describe, expect, it } from 'vitest';
-import { deletePath, normalizeFeatures, setPath, stableStringify } from './lib.mjs';
+import { deletePath, normalizeFeatures, normalizeMeta, setPath, stableStringify } from './lib.mjs';
 
 describe('setPath', () => {
   it('creates nested objects along the path', () => {
@@ -54,6 +54,27 @@ describe('normalizeFeatures', () => {
     normalizeFeatures(features);
     expect(features.auth.status).toBe('commit');
     expect(features.auth.isDone).toBe(true);
+  });
+});
+
+describe('normalizeMeta', () => {
+  it('injects defaults into component leaves only', () => {
+    const meta = {
+      skills: { agenda: { purpose: 'p' } },
+      docs: { plain: { note: 'not a component' } },
+    };
+    normalizeMeta(meta);
+    expect(meta.skills.agenda).toEqual({ purpose: 'p', status: 'planned', isDone: false });
+    expect(meta.docs.plain).toEqual({ note: 'not a component' });
+  });
+
+  it('keeps explicitly set values', () => {
+    const meta = {
+      harness: { gate: { path: 'lefthook.yaml', purpose: 'gate', status: 'commit', isDone: true } },
+    };
+    normalizeMeta(meta);
+    expect(meta.harness.gate.status).toBe('commit');
+    expect(meta.harness.gate.isDone).toBe(true);
   });
 });
 

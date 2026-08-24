@@ -9,6 +9,7 @@ events/
   README.md            # This document (driving system spec)
   spec/
     product.md         # Product snapshot specification (sections, features guide)
+    meta.md            # Meta snapshot specification (harness/skills/docs/scripts)
   scripts/
     lib.mjs            # Shared fold/validation logic
     append.mjs         # Append one event — the only script skills/agents call
@@ -57,7 +58,7 @@ Lifecycle facts (implemented / audited / committed) are not special types — th
 The first segment must be one of `product` / `meta` / `agenda`. Unknown namespaces are rejected on append.
 
 - `product.*` — second segment is fixed: `name` / `what` / `stack` / `look` / `features` / `roadmap` / `deploy`
-- `meta.*` — schema not yet finalized; second segment is free for now
+- `meta.*` — second segment is fixed: `harness` / `skills` / `docs` / `scripts` (see [spec/meta.md](./spec/meta.md))
 - `agenda.*` — units of work; projection is optional
 
 ## Compaction
@@ -86,7 +87,7 @@ Generated only by `build.mjs`. Hand-authoring or hand-editing snapshot files vio
 - `asOf` — the timestamp of the newest event reflected in this snapshot. Compare against the log's latest event to detect staleness
 - Consumers read `content` only
 
-Product structure is specified in [spec/product.md](./spec/product.md). `meta.json` is TBD and is produced only when `meta.*` events exist.
+Product structure is specified in [spec/product.md](./spec/product.md). Meta machinery is specified in [spec/meta.md](./spec/meta.md); `meta.json` is produced only when `meta.*` events exist.
 
 ## Rebuild rules
 

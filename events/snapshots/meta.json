@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-08-24T11:50:00.937+09:00",
+  "asOf": "2026-08-24T11:49:34.465+09:00",
+  "content": {
+    "harness": {
+      "quality-gate": {
+        "path": "lefthook.yaml",
+        "purpose": "コミット時のformat/lint/typecheck強制",
+        "status": "commit",
+        "isDone": true
+      },
+      "tool-execute-after": {
+        "path": ".opencode/plugin/tool-execute-after.ts",
+        "purpose": "編集直後のreport-only lint",
+        "status": "commit",
+        "isDone": true
+      },
+      "session-idle": {
+        "path": ".opencode/plugin/session-idle.ts",
+        "purpose": "品質レビューとevents同期の順次実行",
+        "status": "commit",
+        "isDone": true
+      }
+    },
+    "skills": {
+      "agenda": {
+        "purpose": "作業単位をfeatureスライス単位で確定する",
+        "status": "planned",
+        "isDone": false
+      },
+      "recon": {
+        "purpose": "実装前の調査と記録",
+        "status": "planned",
+        "isDone": false
+      },
+      "audit": {
+        "purpose": "生成物をログで絞り込みレビューする",
+        "status": "planned",
+        "isDone": false
+      },
+      "mockup": {
+        "purpose": "静的HTMLモックアップの作成",
+        "status": "planned",
+        "isDone": false
+      }
+    },
+    "docs": {
+      "agents-md": {
+        "path": "AGENTS.md",
+        "purpose": "行動原則と駆動方式への導線",
+        "status": "commit",
+        "isDone": true
+      },
+      "events-readme": {
+        "path": "events/README.md",
+        "purpose": "駆動方式の仕様",
+        "status": "commit",
+        "isDone": true
+      },
+      "product-spec": {
+        "path": "events/spec/product.md",
+        "purpose": "productスナップショットの仕様",
+        "status": "commit",
+        "isDone": true
+      }
+    },
+    "scripts": {
+      "event-scripts": {
+        "path": "events/scripts/",
+        "purpose": "イベント追記・生成・圧縮",
+        "status": "commit",
+        "isDone": true
+      },
+      "typecheck-staged": {
+        "path": "scripts/typecheck-staged.mjs",
+        "purpose": "ステージされたファイルだけを型検査",
+        "status": "commit",
+        "isDone": true
+      },
+      "sync-config-snapshots": {
+        "path": "scripts/sync-config-snapshots.mjs",
+        "purpose": "設定スナップショットの同期",
+        "status": "commit",
+        "isDone": true
+      }
+    }
+  }
+}

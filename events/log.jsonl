@@ -1,0 +1,13 @@
+{"ts":"2026-08-24T11:49:34.195+09:00","type":"set","key":"meta.harness.quality-gate","value":{"path":"lefthook.yaml","purpose":"コミット時のformat/lint/typecheck強制","status":"commit","isDone":true}}
+{"ts":"2026-08-24T11:49:34.219+09:00","type":"set","key":"meta.harness.tool-execute-after","value":{"path":".opencode/plugin/tool-execute-after.ts","purpose":"編集直後のreport-only lint","status":"commit","isDone":true}}
+{"ts":"2026-08-24T11:49:34.242+09:00","type":"set","key":"meta.harness.session-idle","value":{"path":".opencode/plugin/session-idle.ts","purpose":"品質レビューとevents同期の順次実行","status":"commit","isDone":true}}
+{"ts":"2026-08-24T11:49:34.264+09:00","type":"set","key":"meta.skills.agenda","value":{"purpose":"作業単位をfeatureスライス単位で確定する"}}
+{"ts":"2026-08-24T11:49:34.286+09:00","type":"set","key":"meta.skills.recon","value":{"purpose":"実装前の調査と記録"}}
+{"ts":"2026-08-24T11:49:34.308+09:00","type":"set","key":"meta.skills.audit","value":{"purpose":"生成物をログで絞り込みレビューする"}}
+{"ts":"2026-08-24T11:49:34.330+09:00","type":"set","key":"meta.skills.mockup","value":{"purpose":"静的HTMLモックアップの作成"}}
+{"ts":"2026-08-24T11:49:34.352+09:00","type":"set","key":"meta.docs.agents-md","value":{"path":"AGENTS.md","purpose":"行動原則と駆動方式への導線","status":"commit","isDone":true}}
+{"ts":"2026-08-24T11:49:34.376+09:00","type":"set","key":"meta.docs.events-readme","value":{"path":"events/README.md","purpose":"駆動方式の仕様","status":"commit","isDone":true}}
+{"ts":"2026-08-24T11:49:34.398+09:00","type":"set","key":"meta.docs.product-spec","value":{"path":"events/spec/product.md","purpose":"productスナップショットの仕様","status":"commit","isDone":true}}
+{"ts":"2026-08-24T11:49:34.420+09:00","type":"set","key":"meta.scripts.event-scripts","value":{"path":"events/scripts/","purpose":"イベント追記・生成・圧縮","status":"commit","isDone":true}}
+{"ts":"2026-08-24T11:49:34.442+09:00","type":"set","key":"meta.scripts.typecheck-staged","value":{"path":"scripts/typecheck-staged.mjs","purpose":"ステージされたファイルだけを型検査","status":"commit","isDone":true}}
+{"ts":"2026-08-24T11:49:34.465+09:00","type":"set","key":"meta.scripts.sync-config-snapshots","value":{"path":"scripts/sync-config-snapshots.mjs","purpose":"設定スナップショットの同期","status":"commit","isDone":true}}
