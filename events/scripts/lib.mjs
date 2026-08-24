@@ -151,7 +151,8 @@ export const normalizeFeatures = (features) => {
 };
 
 // meta の葉に初期値を補完する。purpose を持つノードをコンポーネントとみなす。
-// meta は「区画→コンポーネント」の2段構造のため、2レベル走査する
+// meta は「区画→コンポーネント」の2段構造のため、2レベル走査する。
+// events 側は受動的に畳み込むだけで、整合性監査は opencode/lib 側の責務
 export const normalizeMeta = (meta) => {
   for (const section of Object.values(meta ?? {}))
     for (const node of Object.values(section ?? {}))

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-24T16:05:51.652+09:00",
-  "asOf": "2026-08-24T16:05:51.627+09:00",
+  "generatedAt": "2026-08-24T17:36:55.532+09:00",
+  "asOf": "2026-08-24T17:36:55.506+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -44,7 +44,8 @@
       },
       "commit": {
         "purpose": "コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める",
-        "status": "commit"
+        "status": "commit",
+        "path": ".opencode/skills/commit/SKILL.md"
       }
     },
     "docs": {
@@ -88,6 +89,11 @@
       "event-compact": {
         "path": "events/scripts/compact.mjs",
         "purpose": "チェックポイント退避",
+        "status": "commit"
+      },
+      "event-read": {
+        "purpose": "スナップショットcontentの読み出し",
+        "path": "events/scripts/read.mjs",
         "status": "commit"
       }
     }

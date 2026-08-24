@@ -109,6 +109,22 @@ describe('normalizeMeta', () => {
     normalizeMeta(meta);
     expect(meta.harness.gate.status).toBe('commit');
   });
+
+  it('rejects empty meta namespace', () => {
+    const meta = {};
+    normalizeMeta(meta);
+    expect(meta).toEqual({});
+  });
+
+  it('stays passive: does not require a path at any status', () => {
+    for (const status of ['planned', 'ready', 'commit']) {
+      const meta = { skills: { x: { purpose: 'p', status } } };
+      expect(() => {
+        normalizeMeta(meta);
+      }).not.toThrow();
+      expect(meta.skills.x.status).toBe(status);
+    }
+  });
 });
 
 describe('stableStringify', () => {
