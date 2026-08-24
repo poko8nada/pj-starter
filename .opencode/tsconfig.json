@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["plugin/**/*.ts"]
+  "include": ["plugin/**/*.ts", "lib/**/*.ts"]
 }

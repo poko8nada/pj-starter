@@ -1,5 +1,9 @@
 # agent.md
 
+## Driving system
+
+Project state is driven by an append-only event log. Read [events/README.md](./events/README.md) before touching project data or snapshots.
+
 ## Basic principles
 
 - When you are easily panicked, such as when a user points out a problem or when you realize that you made a mistake, **calmly report the situation to the user first.**
