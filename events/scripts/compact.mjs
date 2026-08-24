@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 // 現在状態をチェックポイントへ退避し、アクティブなログを空にする。
 // 圧縮前の履歴は git が保持するためアーカイブ機構は持たない。
-// 状態そのものは不変なので、既存スナップショットは圧縮後も正しいまま
+// 状態そのものは不変なので、既存スナップショットは圧縮後も正しいまま。
+// updatedAt も導出値として checkpoint に含める（コンパクション後に消えないように）
 import fs from 'node:fs';
-import { CHECKPOINT_PATH, foldAll, jstNow, LOG_PATH } from './lib.mjs';
+import { CHECKPOINT_PATH, foldAll, injectUpdatedAt, jstNow, LOG_PATH } from './lib.mjs';
 
-const { trees, asOf } = foldAll();
+const { trees, asOf, events } = foldAll();
+injectUpdatedAt(trees, events);
 fs.writeFileSync(
   CHECKPOINT_PATH,
   `${JSON.stringify({ compactedAt: jstNow(), asOf, trees }, null, 2)}\n`,

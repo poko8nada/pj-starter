@@ -158,19 +158,29 @@ export const normalizeMeta = (meta) => {
       if (node && typeof node === 'object' && 'purpose' in node) node.stage ??= 'planned';
 };
 
-// 各名前空間の直近 status（進捗文）を latestStatus として注入する。
-// コンポーネントの status フィールドを走査し、最後に書かれたものを namespace 直下に置く
-export const injectLatestStatus = (trees) => {
-  for (const tree of Object.values(trees)) {
-    if (!tree || typeof tree !== 'object') continue;
-    const statuses = [];
-    const walk = (node) => {
-      if (!node || typeof node !== 'object') return;
-      if (typeof node.status === 'string') statuses.push(node.status);
-      for (const value of Object.values(node)) walk(value);
-    };
-    walk(tree);
-    if (statuses.length > 0) tree.latestStatus = statuses.at(-1);
+// 各コンポーネントの最終更新日（YYYYMMDD）を updatedAt として注入する。
+// 対象はログのエントリが指すコンポーネント（meta は meta.<区画>.<id>、product の葉は product.<区画>）。
+// 区画や深い葉には付けない
+export const injectUpdatedAt = (trees, events) => {
+  const lastTs = new Map();
+  for (const event of events) {
+    if (event.type !== 'set') continue;
+    const parts = event.key.split('.');
+    if (parts.length < 2) continue;
+    // コンポーネントの key: meta は 3 つ目まで、product は 2 つ目まで
+    const componentKey =
+      parts[0] === 'meta' ? parts.slice(0, 3).join('.') : parts.slice(0, 2).join('.');
+    lastTs.set(componentKey, event.ts);
+  }
+  for (const [componentKey, ts] of lastTs) {
+    const parts = componentKey.split('.');
+    let node = trees[parts[0]];
+    for (const part of parts.slice(1)) {
+      if (!node || typeof node !== 'object') break;
+      node = node[part];
+    }
+    if (node && typeof node === 'object' && !Array.isArray(node))
+      node.updatedAt = ts.slice(0, 10).replaceAll('-', '');
   }
 };
 
@@ -189,7 +199,7 @@ export const foldAll = () => {
     base.compactedAt !== null && base.compactedAt >= lastEventTs
       ? base.compactedAt
       : lastEventTs || null;
-  return { trees: base.trees, asOf };
+  return { trees: base.trees, asOf, events };
 };
 
 // キー順を正規化した文字列化。生成物の同一性判定に使う

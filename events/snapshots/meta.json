@@ -1,25 +1,28 @@
 {
-  "generatedAt": "2026-08-24T20:37:04.666+09:00",
-  "asOf": "2026-08-24T20:37:04.638+09:00",
+  "generatedAt": "2026-08-24T21:32:01.692+09:00",
+  "asOf": "2026-08-24T21:32:01.663+09:00",
   "content": {
     "harness": {
       "quality-gate": {
         "path": "lefthook.yaml",
         "purpose": "コミット時のformat/lint/typecheck強制",
         "stage": "commit",
-        "status": "lefthook で pre-commit フックを運用中"
+        "status": "lefthook で pre-commit フックを運用中",
+        "updatedAt": "20260824"
       },
       "tool-execute-after": {
         "path": ".opencode/plugin/tool-execute-after.ts",
         "purpose": "編集直後のreport-only lint",
         "stage": "commit",
-        "status": "edit 直後に oxlint を report-only で実行中"
+        "status": "edit 直後に oxlint を report-only で実行中",
+        "updatedAt": "20260824"
       },
       "session-idle": {
         "path": ".opencode/plugin/session-idle.ts",
         "purpose": "品質レビューとevents同期の順次実行",
         "stage": "commit",
-        "status": "idle 時にレビューと同期を Report 合成で実行中"
+        "status": "idle 時にレビューと同期を Report 合成で実行中",
+        "updatedAt": "20260824"
       }
     },
     "skills": {
@@ -27,34 +30,40 @@
         "path": ".opencode/skills/agenda/SKILL.md",
         "purpose": "作業単位をfeatureスライス単位で確定する",
         "stage": "commit",
-        "status": "stage遷移時のstatus同時更新を明文化済み"
+        "status": "stage遷移時のstatus同時更新を明文化済み",
+        "updatedAt": "20260824"
       },
       "recon": {
         "purpose": "実装前の調査と記録",
         "stage": "planned",
-        "status": "未着手"
+        "status": "未着手",
+        "updatedAt": "20260824"
       },
       "audit": {
         "purpose": "生成物をログで絞り込みレビューする",
         "stage": "planned",
-        "status": "未着手"
+        "status": "未着手",
+        "updatedAt": "20260824"
       },
       "mockup": {
         "purpose": "静的HTMLモックアップの作成",
         "stage": "planned",
-        "status": "未着手"
+        "status": "未着手",
+        "updatedAt": "20260824"
       },
       "feature": {
         "path": ".opencode/skills/feature/SKILL.md",
         "purpose": "featureとコンポーネントの登録・分割・定義改訂",
         "stage": "commit",
-        "status": "登録・改訂時のstatus同時更新を明文化済み"
+        "status": "登録・改訂時のstatus同時更新を明文化済み",
+        "updatedAt": "20260824"
       },
       "commit": {
         "path": ".opencode/skills/commit/SKILL.md",
         "purpose": "コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める",
         "stage": "commit",
-        "status": "append→commit順序とstatus同時更新を明文化済み"
+        "status": "append→commit順序とstatus同時更新を明文化済み",
+        "updatedAt": "20260824"
       }
     },
     "docs": {
@@ -62,19 +71,22 @@
         "path": "AGENTS.md",
         "purpose": "行動原則と駆動方式への導線",
         "stage": "commit",
-        "status": "駆動システムの導線として運用中"
+        "status": "駆動システムの導線として運用中",
+        "updatedAt": "20260824"
       },
       "events-readme": {
         "path": "events/README.md",
         "purpose": "駆動方式の仕様",
         "stage": "commit",
-        "status": "駆動方式の仕様として運用中"
+        "status": "駆動方式の仕様として運用中",
+        "updatedAt": "20260824"
       },
       "product-spec": {
         "path": "events/spec/product.md",
         "purpose": "productスナップショットの仕様",
         "stage": "commit",
-        "status": "product スナップショットの仕様として運用中"
+        "status": "updatedAt 対応の型定義に整合済み",
+        "updatedAt": "20260824"
       }
     },
     "scripts": {
@@ -82,39 +94,44 @@
         "path": "scripts/typecheck-staged.mjs",
         "purpose": "ステージされたファイルだけを型検査",
         "stage": "commit",
-        "status": "pre-commit でステージ済みのみ型検査中"
+        "status": "pre-commit でステージ済みのみ型検査中",
+        "updatedAt": "20260824"
       },
       "sync-config-snapshots": {
         "path": "scripts/sync-config-snapshots.mjs",
         "purpose": "設定スナップショットの同期",
         "stage": "commit",
-        "status": "pre-commit で設定スナップショットを同期中"
+        "status": "pre-commit で設定スナップショットを同期中",
+        "updatedAt": "20260824"
       },
       "event-append": {
         "path": "events/scripts/append.mjs",
         "purpose": "イベントの追記（単発・バッチ）",
         "stage": "commit",
-        "status": "単発・バッチ両対応でイベントを追記中"
+        "status": "単発・バッチ両対応でイベントを追記中",
+        "updatedAt": "20260824"
       },
       "event-build": {
         "path": "events/scripts/build.mjs",
         "purpose": "スナップショット生成",
-        "stage": "commit",
-        "status": "ログからスナップショットを生成中"
+        "stage": "ready",
+        "status": "updatedAt 注入をシンプルに再実装中",
+        "updatedAt": "20260824"
       },
       "event-compact": {
         "path": "events/scripts/compact.mjs",
         "purpose": "チェックポイント退避",
         "stage": "commit",
-        "status": "しきい値超過時にチェックポイントへ退避中"
+        "status": "コンパクション後も updatedAt を保持する修正を実装済み",
+        "updatedAt": "20260824"
       },
       "event-read": {
         "path": "events/scripts/read.mjs",
         "purpose": "スナップショットcontentの読み出し",
         "stage": "commit",
-        "status": "スナップショットの content を読み出し中"
+        "status": "スナップショットの content を読み出し中",
+        "updatedAt": "20260824"
       }
-    },
-    "latestStatus": "スナップショットの content を読み出し中"
+    }
   }
 }

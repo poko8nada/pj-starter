@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   foldAll,
-  injectLatestStatus,
+  injectUpdatedAt,
   jstNow,
   normalizeFeatures,
   normalizeMeta,
@@ -13,10 +13,10 @@ import {
   stableStringify,
 } from './lib.mjs';
 
-const { trees, asOf } = foldAll();
+const { trees, asOf, events } = foldAll();
 normalizeFeatures(trees.product.features);
 normalizeMeta(trees.meta);
-injectLatestStatus(trees);
+injectUpdatedAt(trees, events);
 fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
 
 // 生成物を書き出す。既存内容と同一なら何もしない

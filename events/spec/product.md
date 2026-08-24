@@ -22,13 +22,15 @@ The second segment of a `product.*` key is fixed to these seven:
 
 | Section    | Type   | Definition                                    |
 | ---------- | ------ | --------------------------------------------- |
-| `name`     | string | Product name                                  |
-| `what`     | string | One-sentence description                      |
+| `name`     | object | `{ "value": "…", "updatedAt": "…" }`          |
+| `what`     | object | `{ "value": "…", "updatedAt": "…" }`          |
 | `stack`    | object | Technology stack (fixed groups below)         |
 | `look`     | object | Design direction                              |
 | `features` | object | Map of slices (see **Features** below)        |
 | `roadmap`  | object | `{ "mvp": [featureId…], "v1": [featureId…] }` |
 | `deploy`   | object | Delivery process                              |
+
+Every node receives `updatedAt` (YYYYMMDD) from the rebuild — the date its value was last written, derived from the event's `ts`. Scalar and array leaves are wrapped as `{ "value": …, "updatedAt": … }` so the date can attach to them.
 
 ## stack
 
@@ -90,6 +92,7 @@ A feature is a **vertical slice**: the smallest unit that independently complete
 One optional lifecycle field exists on every slice — **omit it at creation**; `rebuild` injects the default (`"stage": "planned"`) so snapshots always carry it:
 
 - `stage` — pipeline stage: `planned` → `ready` → `implement` → `commit`. A committed feature re-enters at `ready` whenever new work on it is agreed — keep the stage truthful at all times
+- `updatedAt` — injected by rebuild (YYYYMMDD) from the `ts` of the latest event touching the slice
 
 Lifecycle transitions are ordinary `set`s on deep keys — one line, one concern:
 

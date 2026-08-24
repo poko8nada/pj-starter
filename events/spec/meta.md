@@ -38,12 +38,13 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 }
 ```
 
-| Field     | Rule                                                                                                                   |
-| --------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `path`    | Where the component lives. Omit while only planned; set once implemented                                               |
-| `purpose` | One-sentence intent. Required — its presence defines a component leaf                                                  |
-| `stage`   | Mechanical pipeline stage: `planned` → `ready` → `commit`. Injected by rebuild (`"planned"` default); omit at creation |
-| `status`  | Free-text progress note (what has been done so far). Required — always write the current progress in one sentence      |
+| Field       | Rule                                                                                                                   |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `path`      | Where the component lives. Omit while only planned; set once implemented                                               |
+| `purpose`   | One-sentence intent. Required — its presence defines a component leaf                                                  |
+| `stage`     | Mechanical pipeline stage: `planned` → `ready` → `commit`. Injected by rebuild (`"planned"` default); omit at creation |
+| `status`    | Free-text progress note (what has been done so far). Required — always write the current progress in one sentence      |
+| `updatedAt` | Last update date (YYYYMMDD), injected by rebuild from the `ts` of the latest event touching the component              |
 
 A committed component re-enters at `ready` whenever new work on it is agreed — components never close; change cycles do. Keep the stage truthful at all times.
 
@@ -55,7 +56,7 @@ Lifecycle transitions are ordinary `set`s on deep keys, identical to product sli
 {"ts":"…","type":"set","key":"meta.skills.mockup.status","value":"要件を整理し、実装に着手する"}
 ```
 
-The rebuild also injects `latestStatus` on each namespace root — the most recent `status` text written in that namespace, for a quick glance at where things stand.
+The rebuild also injects `updatedAt` (YYYYMMDD) on each component — the date its value was last written, derived from the event's `ts`.
 
 ## Granularity policy
 
@@ -175,5 +176,5 @@ The rebuild also injects `latestStatus` on each namespace root — the most rece
 
 1. Fold `meta.*` events like any namespace
 2. Normalize: every leaf carrying `purpose` receives `"stage": "planned"` unless already set
-3. Inject `latestStatus` on each namespace root from the most recent `status` text
+3. Inject `updatedAt` (YYYYMMDD) on each component from the `ts` of its latest event
 4. `meta.json` is written only when at least one `meta.*` event exists
