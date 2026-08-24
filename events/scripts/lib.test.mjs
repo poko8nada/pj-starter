@@ -42,18 +42,16 @@ describe('normalizeFeatures', () => {
       result: 'r',
       route: ['a'],
       status: 'planned',
-      isDone: false,
     });
     expect(features.nested).toEqual({ notASlice: true });
   });
 
   it('keeps explicitly set values', () => {
     const features = {
-      auth: { trigger: 't', result: 'r', route: [], status: 'commit', isDone: true },
+      auth: { trigger: 't', result: 'r', route: [], status: 'commit' },
     };
     normalizeFeatures(features);
     expect(features.auth.status).toBe('commit');
-    expect(features.auth.isDone).toBe(true);
   });
 });
 
@@ -64,17 +62,16 @@ describe('normalizeMeta', () => {
       docs: { plain: { note: 'not a component' } },
     };
     normalizeMeta(meta);
-    expect(meta.skills.agenda).toEqual({ purpose: 'p', status: 'planned', isDone: false });
+    expect(meta.skills.agenda).toEqual({ purpose: 'p', status: 'planned' });
     expect(meta.docs.plain).toEqual({ note: 'not a component' });
   });
 
   it('keeps explicitly set values', () => {
     const meta = {
-      harness: { gate: { path: 'lefthook.yaml', purpose: 'gate', status: 'commit', isDone: true } },
+      harness: { gate: { path: 'lefthook.yaml', purpose: 'gate', status: 'commit' } },
     };
     normalizeMeta(meta);
     expect(meta.harness.gate.status).toBe('commit');
-    expect(meta.harness.gate.isDone).toBe(true);
   });
 });
 

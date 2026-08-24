@@ -128,10 +128,7 @@ export function deletePath(tree, key) {
 // features の葉に初期値を補完する。書き手は trigger/result/route に集中できる
 export const normalizeFeatures = (features) => {
   for (const node of Object.values(features ?? {}))
-    if (node && typeof node === 'object' && 'trigger' in node) {
-      node.status ??= 'planned';
-      node.isDone ??= false;
-    }
+    if (node && typeof node === 'object' && 'trigger' in node) node.status ??= 'planned';
 };
 
 // meta の葉に初期値を補完する。purpose を持つノードをコンポーネントとみなす。
@@ -139,10 +136,7 @@ export const normalizeFeatures = (features) => {
 export const normalizeMeta = (meta) => {
   for (const section of Object.values(meta ?? {}))
     for (const node of Object.values(section ?? {}))
-      if (node && typeof node === 'object' && 'purpose' in node) {
-        node.status ??= 'planned';
-        node.isDone ??= false;
-      }
+      if (node && typeof node === 'object' && 'purpose' in node) node.status ??= 'planned';
 };
 
 // チェックポイント起点 + アクティブログ全体を畳み込む。

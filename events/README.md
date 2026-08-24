@@ -110,21 +110,13 @@ For testing, point `EVENTS_DIR` at a scratch copy of this directory.
 
 ## Operation flow
 
-**Capture** (no skill):
+Recording follows one of three paths, depending on what was agreed:
 
-```
-discussion ──▶ content agreement ──▶ append
-```
+1. **Plain value changes** — `product.what`, stack entries, status updates outside agenda. Append directly; no skill needed.
+2. **Structural registrations** — new features, new meta components, splits, definition revisions. The `feature` skill records them with complete definitions; new entries enter as `planned`.
+3. **Implementation decisions** — the `agenda` skill selects targets from existing state. On consensus, selected targets become `"ready"` and implementation begins.
 
-New features enter as `planned`. Stack / roadmap changes surfaced by the same discussion are appended together.
-
-**Implementation** (triggered by the decision to build something):
-
-```
-agenda skill ──▶ targets selected & agreed ──▶ targets become "ready" ──▶ implement
-```
-
-The idle hook keeps quality checks and snapshots fresh automatically.
+In every path, stack / roadmap changes surfaced by the discussion are appended together with their related events. After the turn ends, the idle hook keeps quality checks and snapshots fresh automatically.
 
 ## Harness independence
 

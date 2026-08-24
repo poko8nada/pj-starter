@@ -32,8 +32,7 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 {
   "agenda": {
     "purpose": "Fix the unit of work per feature slice",
-    "status": "planned",
-    "isDone": false
+    "status": "planned"
   }
 }
 ```
@@ -43,7 +42,8 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 | `path`    | Where the component lives. Omit while only planned; set once implemented                                                            |
 | `purpose` | One-sentence intent. Required — its presence defines a component leaf                                                               |
 | `status`  | Pipeline stage: `planned` → `ready` → `implement` → `audit` → `commit`. Injected by rebuild (`"planned"` default); omit at creation |
-| `isDone`  | Boolean completion. Injected by rebuild (`false` default); independent of `status`                                                  |
+
+A committed component re-enters at `ready` whenever new work on it is agreed — components never close; change cycles do. Keep the status truthful at all times.
 
 Lifecycle transitions are ordinary `set`s on deep keys, identical to product slices:
 
@@ -54,7 +54,9 @@ Lifecycle transitions are ordinary `set`s on deep keys, identical to product sli
 
 ## Granularity policy
 
-- One entry per **entry point or mechanism** (a hook runtime, a skill, a script family, a gate). Never per configuration file
+- **One component = one purpose**, verifiable by **one surface**. An entry whose purpose needs "and" / "etc." is a bundle and must be split into sibling entries at the same depth (the oversized key is removed with `del`)
+- Size each change cycle to complete within one working session (`ready → commit`)
+- One entry per **entry point or mechanism** (a hook runtime, a skill, a script, a gate). Never per configuration file
 - Tool configs (oxlint, oxfmt, tsconfig…) are summarized by their gate entry only — e.g. the pre-commit quality gate is one entry pointing at `lefthook.yaml`
 - Library internals are reachable through the entry's `path`; do not enumerate them
 
@@ -66,74 +68,76 @@ Lifecycle transitions are ordinary `set`s on deep keys, identical to product sli
     "quality-gate": {
       "path": "lefthook.yaml",
       "purpose": "コミット時のformat/lint/typecheck強制",
-      "status": "commit",
-      "isDone": true
+      "status": "commit"
     },
     "tool-execute-after": {
       "path": ".opencode/plugin/tool-execute-after.ts",
       "purpose": "編集直後のreport-only lint",
-      "status": "commit",
-      "isDone": true
+      "status": "commit"
     },
     "session-idle": {
       "path": ".opencode/plugin/session-idle.ts",
       "purpose": "品質レビューとevents同期の順次実行",
-      "status": "commit",
-      "isDone": true
+      "status": "commit"
     }
   },
   "skills": {
     "agenda": {
+      "path": ".opencode/skills/agenda/SKILL.md",
       "purpose": "作業単位をfeatureスライス単位で確定する",
-      "status": "planned",
-      "isDone": false
+      "status": "commit"
     },
-    "recon": { "purpose": "実装前の調査と記録", "status": "planned", "isDone": false },
-    "audit": {
-      "purpose": "生成物をログで絞り込みレビューする",
-      "status": "planned",
-      "isDone": false
+    "feature": {
+      "path": ".opencode/skills/feature/SKILL.md",
+      "purpose": "featureとコンポーネントの登録・分割・定義改訂",
+      "status": "commit"
     },
-    "mockup": { "purpose": "静的HTMLモックアップの作成", "status": "planned", "isDone": false }
+    "recon": { "purpose": "実装前の調査と記録", "status": "planned" },
+    "audit": { "purpose": "生成物をログで絞り込みレビューする", "status": "planned" },
+    "mockup": { "purpose": "静的HTMLモックアップの作成", "status": "planned" }
   },
   "docs": {
     "agents-md": {
       "path": "AGENTS.md",
       "purpose": "行動原則と駆動方式への導線",
-      "status": "commit",
-      "isDone": true
+      "status": "commit"
     },
     "events-readme": {
       "path": "events/README.md",
       "purpose": "駆動方式の仕様",
-      "status": "commit",
-      "isDone": true
+      "status": "commit"
     },
     "product-spec": {
       "path": "events/spec/product.md",
       "purpose": "productスナップショットの仕様",
-      "status": "commit",
-      "isDone": true
+      "status": "commit"
     }
   },
   "scripts": {
-    "event-scripts": {
-      "path": "events/scripts/",
-      "purpose": "イベント追記・生成・圧縮",
-      "status": "commit",
-      "isDone": true
+    "event-append": {
+      "path": "events/scripts/append.mjs",
+      "purpose": "イベントの追記",
+      "status": "commit"
+    },
+    "event-build": {
+      "path": "events/scripts/build.mjs",
+      "purpose": "スナップショット生成",
+      "status": "commit"
+    },
+    "event-compact": {
+      "path": "events/scripts/compact.mjs",
+      "purpose": "チェックポイント退避",
+      "status": "commit"
     },
     "typecheck-staged": {
       "path": "scripts/typecheck-staged.mjs",
       "purpose": "ステージされたファイルだけを型検査",
-      "status": "commit",
-      "isDone": true
+      "status": "commit"
     },
     "sync-config-snapshots": {
       "path": "scripts/sync-config-snapshots.mjs",
       "purpose": "設定スナップショットの同期",
-      "status": "commit",
-      "isDone": true
+      "status": "commit"
     }
   }
 }
@@ -142,5 +146,5 @@ Lifecycle transitions are ordinary `set`s on deep keys, identical to product sli
 ## Rebuild behavior
 
 1. Fold `meta.*` events like any namespace
-2. Normalize: every leaf carrying `purpose` receives `"status": "planned"` / `"isDone": false` unless already set
+2. Normalize: every leaf carrying `purpose` receives `"status": "planned"` unless already set
 3. `meta.json` is written only when at least one `meta.*` event exists

@@ -14,3 +14,9 @@
 {"ts":"2026-08-24T14:33:00.008+09:00","type":"set","key":"meta.skills.agenda.path","value":".opencode/skills/agenda/SKILL.md"}
 {"ts":"2026-08-24T14:33:00.034+09:00","type":"set","key":"meta.skills.agenda.status","value":"commit"}
 {"ts":"2026-08-24T14:33:00.058+09:00","type":"set","key":"meta.skills.agenda.isDone","value":true}
+{"ts":"2026-08-24T15:22:45.427+09:00","type":"del","key":"meta.skills.agenda.isDone"}
+{"ts":"2026-08-24T15:22:45.453+09:00","type":"del","key":"meta.scripts.event-scripts"}
+{"ts":"2026-08-24T15:22:45.476+09:00","type":"set","key":"meta.scripts.event-append","value":{"path":"events/scripts/append.mjs","purpose":"イベントの追記","status":"commit"}}
+{"ts":"2026-08-24T15:22:45.499+09:00","type":"set","key":"meta.scripts.event-build","value":{"path":"events/scripts/build.mjs","purpose":"スナップショット生成","status":"commit"}}
+{"ts":"2026-08-24T15:22:45.521+09:00","type":"set","key":"meta.scripts.event-compact","value":{"path":"events/scripts/compact.mjs","purpose":"チェックポイント退避","status":"commit"}}
+{"ts":"2026-08-24T15:22:45.544+09:00","type":"set","key":"meta.skills.feature","value":{"path":".opencode/skills/feature/SKILL.md","purpose":"featureとコンポーネントの登録・分割・定義改訂","status":"commit"}}

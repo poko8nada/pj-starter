@@ -87,10 +87,9 @@ A feature is a **vertical slice**: the smallest unit that independently complete
 }
 ```
 
-Two optional lifecycle fields exist on every slice — **omit them at creation**; `rebuild` injects the defaults (`"status": "planned"`, `"isDone": false`) so snapshots always carry them:
+One optional lifecycle field exists on every slice — **omit it at creation**; `rebuild` injects the default (`"status": "planned"`) so snapshots always carry it:
 
-- `status` — pipeline stage: `planned` → `ready` → `implement` → `audit` → `commit`
-- `isDone` — boolean; whether the slice is genuinely complete. Independent of `status`: a committed slice can still be `false`
+- `status` — pipeline stage: `planned` → `ready` → `implement` → `audit` → `commit`. A committed feature re-enters at `ready` whenever new work on it is agreed — keep the status truthful at all times
 
 Lifecycle transitions are ordinary `set`s on deep keys — one line, one concern:
 
@@ -98,8 +97,13 @@ Lifecycle transitions are ordinary `set`s on deep keys — one line, one concern
 {"ts":"…","type":"set","key":"product.features.contact_form.status","value":"implement","note":"uw-001"}
 {"ts":"…","type":"set","key":"product.features.contact_form.status","value":"audit"}
 {"ts":"…","type":"set","key":"product.features.contact_form.status","value":"commit"}
-{"ts":"…","type":"set","key":"product.features.contact_form.isDone","value":true}
 ```
+
+### Sizing & splitting
+
+- Draft routes with **at most 3 steps**. A request needing more is split at capture time into sibling features — same depth, kebab-composed ids (`auth-session`, `auth-endpoint`) — each with its own trigger / result / sub-route; the oversized key is removed with `del`
+- Each feature is sized so one working session carries it through `ready → commit`
+- Committed features re-enter at `ready` when new work is agreed; remaining route steps mark what is left
 
 ### The completeness test
 

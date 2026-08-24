@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-24T14:33:00.082+09:00",
-  "asOf": "2026-08-24T14:33:00.058+09:00",
+  "generatedAt": "2026-08-24T15:22:45.570+09:00",
+  "asOf": "2026-08-24T15:22:45.544+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -26,23 +26,24 @@
       "agenda": {
         "purpose": "作業単位をfeatureスライス単位で確定する",
         "path": ".opencode/skills/agenda/SKILL.md",
-        "status": "commit",
-        "isDone": true
+        "status": "commit"
       },
       "recon": {
         "purpose": "実装前の調査と記録",
-        "status": "planned",
-        "isDone": false
+        "status": "planned"
       },
       "audit": {
         "purpose": "生成物をログで絞り込みレビューする",
-        "status": "planned",
-        "isDone": false
+        "status": "planned"
       },
       "mockup": {
         "purpose": "静的HTMLモックアップの作成",
-        "status": "planned",
-        "isDone": false
+        "status": "planned"
+      },
+      "feature": {
+        "path": ".opencode/skills/feature/SKILL.md",
+        "purpose": "featureとコンポーネントの登録・分割・定義改訂",
+        "status": "commit"
       }
     },
     "docs": {
@@ -66,12 +67,6 @@
       }
     },
     "scripts": {
-      "event-scripts": {
-        "path": "events/scripts/",
-        "purpose": "イベント追記・生成・圧縮",
-        "status": "commit",
-        "isDone": true
-      },
       "typecheck-staged": {
         "path": "scripts/typecheck-staged.mjs",
         "purpose": "ステージされたファイルだけを型検査",
@@ -83,6 +78,21 @@
         "purpose": "設定スナップショットの同期",
         "status": "commit",
         "isDone": true
+      },
+      "event-append": {
+        "path": "events/scripts/append.mjs",
+        "purpose": "イベントの追記",
+        "status": "commit"
+      },
+      "event-build": {
+        "path": "events/scripts/build.mjs",
+        "purpose": "スナップショット生成",
+        "status": "commit"
+      },
+      "event-compact": {
+        "path": "events/scripts/compact.mjs",
+        "purpose": "チェックポイント退避",
+        "status": "commit"
       }
     }
   }
