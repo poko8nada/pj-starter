@@ -12,7 +12,7 @@
 
 ### Context
 
-- **Think in English. Output in Japanese.**
+- **Think in English. Output in Japanese.** Avoid using non-existent terms or awkward "translation-ese" (Japanese phrases translated into English in ways not used in Japan).
 - Docs for users will be written in Japanese, and docs for agents will be written in English. Use concise and consistent language.
 - Code should be written in English, and comments should be written actively in Japanese. Maintain a self-explanatory code structure.
 
