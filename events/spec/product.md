@@ -89,7 +89,7 @@ A feature is a **vertical slice**: the smallest unit that independently complete
 
 Two optional lifecycle fields exist on every slice — **omit them at creation**; `rebuild` injects the defaults (`"status": "planned"`, `"isDone": false`) so snapshots always carry them:
 
-- `status` — pipeline stage: `planned` → `implement` → `audit` → `commit`
+- `status` — pipeline stage: `planned` → `ready` → `implement` → `audit` → `commit`
 - `isDone` — boolean; whether the slice is genuinely complete. Independent of `status`: a committed slice can still be `false`
 
 Lifecycle transitions are ordinary `set`s on deep keys — one line, one concern:

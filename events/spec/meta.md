@@ -38,12 +38,12 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 }
 ```
 
-| Field     | Rule                                                                                                                      |
-| --------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `path`    | Where the component lives. Omit while only planned; set once implemented                                                  |
-| `purpose` | One-sentence intent. Required — its presence defines a component leaf                                                     |
-| `status`  | Pipeline stage: `planned` → `implement` → `audit` → `commit`. Injected by rebuild (`"planned"` default); omit at creation |
-| `isDone`  | Boolean completion. Injected by rebuild (`false` default); independent of `status`                                        |
+| Field     | Rule                                                                                                                                |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `path`    | Where the component lives. Omit while only planned; set once implemented                                                            |
+| `purpose` | One-sentence intent. Required — its presence defines a component leaf                                                               |
+| `status`  | Pipeline stage: `planned` → `ready` → `implement` → `audit` → `commit`. Injected by rebuild (`"planned"` default); omit at creation |
+| `isDone`  | Boolean completion. Injected by rebuild (`false` default); independent of `status`                                                  |
 
 Lifecycle transitions are ordinary `set`s on deep keys, identical to product slices:
 

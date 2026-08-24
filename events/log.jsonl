@@ -11,3 +11,6 @@
 {"ts":"2026-08-24T11:49:34.420+09:00","type":"set","key":"meta.scripts.event-scripts","value":{"path":"events/scripts/","purpose":"イベント追記・生成・圧縮","status":"commit","isDone":true}}
 {"ts":"2026-08-24T11:49:34.442+09:00","type":"set","key":"meta.scripts.typecheck-staged","value":{"path":"scripts/typecheck-staged.mjs","purpose":"ステージされたファイルだけを型検査","status":"commit","isDone":true}}
 {"ts":"2026-08-24T11:49:34.465+09:00","type":"set","key":"meta.scripts.sync-config-snapshots","value":{"path":"scripts/sync-config-snapshots.mjs","purpose":"設定スナップショットの同期","status":"commit","isDone":true}}
+{"ts":"2026-08-24T14:33:00.008+09:00","type":"set","key":"meta.skills.agenda.path","value":".opencode/skills/agenda/SKILL.md"}
+{"ts":"2026-08-24T14:33:00.034+09:00","type":"set","key":"meta.skills.agenda.status","value":"commit"}
+{"ts":"2026-08-24T14:33:00.058+09:00","type":"set","key":"meta.skills.agenda.isDone","value":true}
