@@ -16,3 +16,7 @@
 {"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.event-build","value":{"path":"events/scripts/build.mjs","purpose":"スナップショット生成","stage":"commit","status":"ログからスナップショットを生成中"}}
 {"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.event-compact","value":{"path":"events/scripts/compact.mjs","purpose":"チェックポイント退避","stage":"commit","status":"しきい値超過時にチェックポイントへ退避中"}}
 {"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.event-read","value":{"path":"events/scripts/read.mjs","purpose":"スナップショットcontentの読み出し","stage":"commit","status":"スナップショットの content を読み出し中"}}
+{"ts":"2026-08-24T20:27:59.436+09:00","type":"set","key":"meta.harness.session-idle.stage","value":"ready"}
+{"ts":"2026-08-24T20:27:59.436+09:00","type":"set","key":"meta.harness.tool-execute-after.stage","value":"ready"}
+{"ts":"2026-08-24T20:29:10.731+09:00","type":"set","key":"meta.harness.session-idle.stage","value":"commit"}
+{"ts":"2026-08-24T20:29:10.731+09:00","type":"set","key":"meta.harness.tool-execute-after.stage","value":"commit"}

@@ -1,6 +1,10 @@
 // 自動修正ラウンド管理のテスト
-import { describe, expect, it } from 'vitest';
-import { createRounds, MAX_AUTO_FIX_ROUNDS } from './rounds';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createRounds, MAX_AUTO_FIX_ROUNDS, ROUND_RESET_MS } from './rounds';
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('createRounds', () => {
   it('starts at zero for unknown sessions', () => {
@@ -30,5 +34,25 @@ describe('createRounds', () => {
     rounds.reset('s1');
     expect(rounds.next('s1')).toBe(0);
     expect(rounds.exhausted('s1')).toBe(false);
+  });
+
+  it('resets the count after the reset window elapses', () => {
+    vi.useFakeTimers();
+    const rounds = createRounds();
+    rounds.advance('s1');
+    rounds.advance('s1');
+    expect(rounds.next('s1')).toBe(2);
+
+    vi.advanceTimersByTime(ROUND_RESET_MS + 1);
+    expect(rounds.next('s1')).toBe(0);
+    expect(rounds.exhausted('s1')).toBe(false);
+  });
+
+  it('keeps the count within the reset window', () => {
+    vi.useFakeTimers();
+    const rounds = createRounds();
+    rounds.advance('s1');
+    vi.advanceTimersByTime(ROUND_RESET_MS - 1);
+    expect(rounds.next('s1')).toBe(1);
   });
 });

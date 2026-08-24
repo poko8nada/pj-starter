@@ -15,16 +15,20 @@ export interface EditLintCtx {
 const MAX_REPORT_LINES = 20;
 const EDIT_TOOLS = new Set(['edit', 'write']);
 
-let dirty = false;
+// dirty の有効期限。これを過ぎた dirty は無視する（強制停止後のループ防止）
+const DIRTY_TTL_MS = 5 * 60 * 1000;
+
+let dirtyAt: number | null = null;
 
 export const markDirty = (): void => {
-  dirty = true;
+  dirtyAt = Date.now();
 };
 
 export const consumeDirty = (): boolean => {
-  const value = dirty;
-  dirty = false;
-  return value;
+  if (dirtyAt === null) return false;
+  const fresh = Date.now() - dirtyAt <= DIRTY_TTL_MS;
+  dirtyAt = null;
+  return fresh;
 };
 
 export const runEditLint = async (
