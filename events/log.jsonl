@@ -20,3 +20,6 @@
 {"ts":"2026-08-24T20:27:59.436+09:00","type":"set","key":"meta.harness.tool-execute-after.stage","value":"ready"}
 {"ts":"2026-08-24T20:29:10.731+09:00","type":"set","key":"meta.harness.session-idle.stage","value":"commit"}
 {"ts":"2026-08-24T20:29:10.731+09:00","type":"set","key":"meta.harness.tool-execute-after.stage","value":"commit"}
+{"ts":"2026-08-24T20:37:04.637+09:00","type":"set","key":"meta.skills.agenda.status","value":"stage遷移時のstatus同時更新を明文化済み"}
+{"ts":"2026-08-24T20:37:04.638+09:00","type":"set","key":"meta.skills.feature.status","value":"登録・改訂時のstatus同時更新を明文化済み"}
+{"ts":"2026-08-24T20:37:04.638+09:00","type":"set","key":"meta.skills.commit.status","value":"append→commit順序とstatus同時更新を明文化済み"}

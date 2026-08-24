@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-24T20:29:10.756+09:00",
-  "asOf": "2026-08-24T20:29:10.731+09:00",
+  "generatedAt": "2026-08-24T20:37:04.666+09:00",
+  "asOf": "2026-08-24T20:37:04.638+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -27,7 +27,7 @@
         "path": ".opencode/skills/agenda/SKILL.md",
         "purpose": "作業単位をfeatureスライス単位で確定する",
         "stage": "commit",
-        "status": "実装決定を既存スナップショットから選択して合意する"
+        "status": "stage遷移時のstatus同時更新を明文化済み"
       },
       "recon": {
         "purpose": "実装前の調査と記録",
@@ -48,13 +48,13 @@
         "path": ".opencode/skills/feature/SKILL.md",
         "purpose": "featureとコンポーネントの登録・分割・定義改訂",
         "stage": "commit",
-        "status": "登録・分割・定義改訂を feature スキルで運用中"
+        "status": "登録・改訂時のstatus同時更新を明文化済み"
       },
       "commit": {
         "path": ".opencode/skills/commit/SKILL.md",
         "purpose": "コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める",
         "stage": "commit",
-        "status": "作業単位のコミット手順を commit スキルで運用中"
+        "status": "append→commit順序とstatus同時更新を明文化済み"
       }
     },
     "docs": {

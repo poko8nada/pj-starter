@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Perform a git commit for a work unit, then record lifecycle transitions. Use when the user asks to commit (コミットして / 確定して) or when a work unit is complete and ready to be committed. Follows the repo's commit conventions and the driving-system integration (append → commit). Never commit without the user explicitly asking.
+description: Perform a git commit for a work unit, appending lifecycle transitions first. Use when the user asks to commit (コミットして / 確定して) or when a work unit is complete and ready to be committed. Follows the repo's commit conventions and the driving-system integration (append → commit). Never commit without the user explicitly asking.
 ---
 
 # Commit
@@ -21,7 +21,7 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 
 1. **Verify work is done** — tests pass (`pnpm test:run`), format/typecheck clean.
 2. **Identify the work unit's agreed events** — collected during implementation; nothing new.
-3. **Append** via batch mode `node events/scripts/append.mjs --file <draft.jsonl>` — then `node events/scripts/build.mjs` to refresh snapshots.
+3. **Append lifecycle transitions first** — set `<key>.stage = "commit"` **and** `<key>.status` (progress text) together via batch mode `node events/scripts/append.mjs --file <draft.jsonl>`, then `node events/scripts/build.mjs` to refresh snapshots. The log and snapshots are committed alongside the code.
 4. **Pre-commit inspection**:
    - `git status` — intended files only
    - `git diff` — no secrets, no unintended changes
@@ -36,9 +36,10 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 
 ## Lifecycle integration
 
-After a successful commit, assert lifecycle transitions for the work unit's targets:
+Lifecycle transitions are appended **before** the commit, so the log and snapshots ship in the same commit as the code:
 
-- Set `<key>.stage = "commit"` for targets that reached it (deep-key append, batch mode).
+- Set `<key>.stage = "commit"` for targets that reached it.
+- Set `<key>.status` (progress text) **in the same append** — e.g. "〇〇まで実装済み". Stage transitions and status updates always go together.
 - Plain value changes and doc updates commit alongside.
 
 If a commit succeeds but lifecycle transitions weren't recorded, append them as part of the NEXT work unit (no amending).

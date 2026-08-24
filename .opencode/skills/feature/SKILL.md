@@ -22,7 +22,7 @@ When a discussion settles on something new:
    - Product: `{trigger, result, route}` with **at most 3 route steps**
    - Meta: `{purpose}` (+ `path` once it exists)
 3. **Size check** — one working session must carry it `ready → commit`. If obviously larger, propose a split instead (see Splitting).
-4. **Append** — `set <key> '<full definition>'`; rebuild injects `"stage": "planned"`.
+4. **Append** — `set <key> '<full definition>'`; rebuild injects `"stage": "planned"`. Include an initial `status` (progress text, e.g. "未着手") in the same definition.
 
 ## Splitting
 
@@ -34,7 +34,7 @@ If an existing component turns out oversized (route > 3 steps, mixed purposes, a
 
 ## Definition revisions
 
-Route or definition changes on existing components are deep-key sets with full-value assertions. Keep stages truthful: when new work on a committed component is agreed, assert `<key>.stage = "ready"` immediately.
+Route or definition changes on existing components are deep-key sets with full-value assertions. Keep stages truthful: when new work on a committed component is agreed, assert `<key>.stage = "ready"` immediately, **together with a `status` update** (progress text) in the same append.
 
 ## Rules
 
