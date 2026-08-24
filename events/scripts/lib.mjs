@@ -81,7 +81,6 @@ export const buildEvent = (draft) => {
     if (draft.value === undefined) throw new EventError('value is required for set');
     event.value = draft.value;
   }
-  if (draft.note !== undefined) event.note = draft.note;
   return event;
 };
 
@@ -147,16 +146,32 @@ export function deletePath(tree, key) {
 // features の葉に初期値を補完する。書き手は trigger/result/route に集中できる
 export const normalizeFeatures = (features) => {
   for (const node of Object.values(features ?? {}))
-    if (node && typeof node === 'object' && 'trigger' in node) node.status ??= 'planned';
+    if (node && typeof node === 'object' && 'trigger' in node) node.stage ??= 'planned';
 };
 
 // meta の葉に初期値を補完する。purpose を持つノードをコンポーネントとみなす。
 // meta は「区画→コンポーネント」の2段構造のため、2レベル走査する。
-// events 側は受動的に畳み込むだけで、整合性監査は opencode/lib 側の責務
+// stage は機械的な段階（planned/ready/commit）、status は常に書く進捗文
 export const normalizeMeta = (meta) => {
   for (const section of Object.values(meta ?? {}))
     for (const node of Object.values(section ?? {}))
-      if (node && typeof node === 'object' && 'purpose' in node) node.status ??= 'planned';
+      if (node && typeof node === 'object' && 'purpose' in node) node.stage ??= 'planned';
+};
+
+// 各名前空間の直近 status（進捗文）を latestStatus として注入する。
+// コンポーネントの status フィールドを走査し、最後に書かれたものを namespace 直下に置く
+export const injectLatestStatus = (trees) => {
+  for (const tree of Object.values(trees)) {
+    if (!tree || typeof tree !== 'object') continue;
+    const statuses = [];
+    const walk = (node) => {
+      if (!node || typeof node !== 'object') return;
+      if (typeof node.status === 'string') statuses.push(node.status);
+      for (const value of Object.values(node)) walk(value);
+    };
+    walk(tree);
+    if (statuses.length > 0) tree.latestStatus = statuses.at(-1);
+  }
 };
 
 // チェックポイント起点 + アクティブログ全体を畳み込む。

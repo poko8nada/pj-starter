@@ -19,11 +19,6 @@ describe('buildEvent', () => {
     expect(event.ts).toMatch(/\+09:00$/);
   });
 
-  it('keeps the note field', () => {
-    const event = buildEvent({ type: 'set', key: 'product.name', value: 'x', note: 'why' });
-    expect(event.note).toBe('why');
-  });
-
   it('rejects unknown types', () => {
     expect(() => buildEvent({ type: 'nope', key: 'product.name' })).toThrow(EventError);
   });
@@ -77,17 +72,17 @@ describe('normalizeFeatures', () => {
       trigger: 't',
       result: 'r',
       route: ['a'],
-      status: 'planned',
+      stage: 'planned',
     });
     expect(features.nested).toEqual({ notASlice: true });
   });
 
   it('keeps explicitly set values', () => {
     const features = {
-      auth: { trigger: 't', result: 'r', route: [], status: 'commit' },
+      auth: { trigger: 't', result: 'r', route: [], stage: 'commit' },
     };
     normalizeFeatures(features);
-    expect(features.auth.status).toBe('commit');
+    expect(features.auth.stage).toBe('commit');
   });
 });
 
@@ -98,16 +93,16 @@ describe('normalizeMeta', () => {
       docs: { plain: { note: 'not a component' } },
     };
     normalizeMeta(meta);
-    expect(meta.skills.agenda).toEqual({ purpose: 'p', status: 'planned' });
+    expect(meta.skills.agenda).toEqual({ purpose: 'p', stage: 'planned' });
     expect(meta.docs.plain).toEqual({ note: 'not a component' });
   });
 
   it('keeps explicitly set values', () => {
     const meta = {
-      harness: { gate: { path: 'lefthook.yaml', purpose: 'gate', status: 'commit' } },
+      harness: { gate: { path: 'lefthook.yaml', purpose: 'gate', stage: 'commit' } },
     };
     normalizeMeta(meta);
-    expect(meta.harness.gate.status).toBe('commit');
+    expect(meta.harness.gate.stage).toBe('commit');
   });
 
   it('rejects empty meta namespace', () => {
@@ -116,13 +111,13 @@ describe('normalizeMeta', () => {
     expect(meta).toEqual({});
   });
 
-  it('stays passive: does not require a path at any status', () => {
-    for (const status of ['planned', 'ready', 'commit']) {
-      const meta = { skills: { x: { purpose: 'p', status } } };
+  it('stays passive: does not require a path at any stage', () => {
+    for (const stage of ['planned', 'ready', 'commit']) {
+      const meta = { skills: { x: { purpose: 'p', stage } } };
       expect(() => {
         normalizeMeta(meta);
       }).not.toThrow();
-      expect(meta.skills.x.status).toBe(status);
+      expect(meta.skills.x.stage).toBe(stage);
     }
   });
 });

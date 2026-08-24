@@ -6,8 +6,8 @@ describe('auditMeta', () => {
   it('flags ready/commit components without a path', () => {
     const meta = {
       skills: {
-        recon: { purpose: 'survey', status: 'ready' },
-        audit: { purpose: 'review', status: 'commit' },
+        recon: { purpose: 'survey', stage: 'ready' },
+        audit: { purpose: 'review', stage: 'commit' },
       },
     };
     const findings = auditMeta(meta);
@@ -22,15 +22,15 @@ describe('auditMeta', () => {
   it('accepts ready/commit with a real path', () => {
     const meta = {
       skills: {
-        agenda: { purpose: 'p', status: 'commit', path: 'a.md' },
-        recon: { purpose: 'p', status: 'ready', path: 'b.md' },
+        agenda: { purpose: 'p', stage: 'commit', path: 'a.md' },
+        recon: { purpose: 'p', stage: 'ready', path: 'b.md' },
       },
     };
     expect(auditMeta(meta)).toEqual([]);
   });
 
   it('produces English agent-facing messages', () => {
-    const findings = auditMeta({ skills: { x: { purpose: 'p', status: 'ready' } } });
+    const findings = auditMeta({ skills: { x: { purpose: 'p', stage: 'ready' } } });
     expect(findings[0].message).toMatch(/has no path/);
   });
 });

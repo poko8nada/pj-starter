@@ -61,7 +61,7 @@ Two scalars plus fixed groups. **Omit keys that do not apply** — a backend-onl
 {
   "tone": "concise, technical",
   "theme": "monochrome base",
-  "mockups": { "lp-a": { "path": "mockups/lp-a.html", "note": "first draft" } }
+  "mockups": { "lp-a": { "path": "mockups/lp-a.html", "description": "first draft" } }
 }
 ```
 
@@ -87,16 +87,16 @@ A feature is a **vertical slice**: the smallest unit that independently complete
 }
 ```
 
-One optional lifecycle field exists on every slice — **omit it at creation**; `rebuild` injects the default (`"status": "planned"`) so snapshots always carry it:
+One optional lifecycle field exists on every slice — **omit it at creation**; `rebuild` injects the default (`"stage": "planned"`) so snapshots always carry it:
 
-- `status` — pipeline stage: `planned` → `ready` → `implement` → `audit` → `commit`. A committed feature re-enters at `ready` whenever new work on it is agreed — keep the status truthful at all times
+- `stage` — pipeline stage: `planned` → `ready` → `implement` → `commit`. A committed feature re-enters at `ready` whenever new work on it is agreed — keep the stage truthful at all times
 
 Lifecycle transitions are ordinary `set`s on deep keys — one line, one concern:
 
 ```jsonl
-{"ts":"…","type":"set","key":"product.features.contact_form.status","value":"implement","note":"uw-001"}
-{"ts":"…","type":"set","key":"product.features.contact_form.status","value":"audit"}
-{"ts":"…","type":"set","key":"product.features.contact_form.status","value":"commit"}
+{"ts":"…","type":"set","key":"product.features.contact_form.stage","value":"implement"}
+{"ts":"…","type":"set","key":"product.features.contact_form.stage","value":"ready"}
+{"ts":"…","type":"set","key":"product.features.contact_form.stage","value":"commit"}
 ```
 
 ### Sizing & splitting

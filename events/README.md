@@ -31,23 +31,22 @@ JSONL. One event per line. **One line carries one concern.** `ts` is always assi
 ```jsonl
 {"ts":"2026-08-24T09:10:00.000+09:00","type":"set","key":"agenda.uw-001","value":{"title":"introduce auth"}}
 {"ts":"2026-08-24T09:25:00.000+09:00","type":"set","key":"product.features.auth","value":{"trigger":"…","result":"…","route":["…"]}}
-{"ts":"2026-08-24T09:26:00.000+09:00","type":"set","key":"product.features.auth.status","value":"implement","note":"first slice of uw-001"}
+{"ts":"2026-08-24T09:26:00.000+09:00","type":"set","key":"product.features.auth.stage","value":"implement"}
 ```
 
 - `ts` — ISO 8601 in JST (`+09:00`). Assignment time
 - `type` — `set` or `del`
 - `key` — dotted path, always required
 - `value` — JSON string or object. **A full-state assertion at that exact path, never a diff**
-- `note` — optional one-line remark for future readers. **Ignored by the fold; never appears in snapshots**
 
-The log serves two readers: the reducer consumes `type`/`key`/`value`; humans and future agents also read `note`.
+The reducer consumes `type`/`key`/`value`; progress text lives in the `status` field of components (see [spec/meta.md](./spec/meta.md)).
 
 ### Event types
 
 - `set` — overwrite the value at the exact path (last-write-wins). Scalar intermediates are replaced by objects when deeper paths are written
 - `del` — remove the leaf at the path; empty ancestors are pruned
 
-Lifecycle facts (implemented / audited / committed) are not special types — they are ordinary `set`s on deep keys such as `product.features.<id>.status`. Audit results themselves stay conversational; only the resulting state is asserted.
+Lifecycle facts (implemented / audited / committed) are not special types — they are ordinary `set`s on deep keys such as `product.features.<id>.stage`. Audit results themselves stay conversational; only the resulting state is asserted.
 
 ### Keys and namespaces
 
@@ -89,16 +88,16 @@ Product structure is specified in [spec/product.md](./spec/product.md). Meta mac
 
 1. Load `checkpoint.json` as the base trees (empty trees when absent)
 2. Apply active-log events in file order: `set` overwrites the leaf, `del` removes it and prunes empty ancestors
-3. Normalize `features`: leaves without `status`/`isDone` receive `"planned"` / `false`
+3. Normalize `features`: leaves without `stage` receive `"planned"`
 4. Regenerate snapshots in full; skip writing when the content is unchanged
 
 ## CLI reference
 
 ```bash
 # Append (value is parsed as JSON; falls back to a raw string)
-node events/scripts/append.mjs --type set --key product.name --value 'Pj Docs' --note 'initial definition'
+node events/scripts/append.mjs --type set --key product.name --value 'Pj Docs'
 node events/scripts/append.mjs --type set --key product.features.auth --value '{"trigger":"…","result":"…","route":["…"]}'
-node events/scripts/append.mjs --type set --key product.features.auth.status --value 'implement'
+node events/scripts/append.mjs --type set --key product.features.auth.stage --value 'implement'
 node events/scripts/append.mjs --type del --key product.features.old_feature
 
 # Batch: one JSONL line per draft event (no ts — assigned by the script).
@@ -116,7 +115,7 @@ For testing, point `EVENTS_DIR` at a scratch copy of this directory.
 
 Recording follows one of three paths, depending on what was agreed:
 
-1. **Plain value changes** — `product.what`, stack entries, status updates outside agenda. Append directly; no skill needed.
+1. **Plain value changes** — `product.what`, stack entries, stage updates outside agenda. Append directly; no skill needed.
 2. **Structural registrations** — new features, new meta components, splits, definition revisions. The `feature` skill records them with complete definitions; new entries enter as `planned`.
 3. **Implementation decisions** — the `agenda` skill selects targets from existing state. On consensus, selected targets become `"ready"` and implementation begins.
 

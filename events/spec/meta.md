@@ -32,25 +32,30 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 {
   "agenda": {
     "purpose": "Fix the unit of work per feature slice",
-    "status": "planned"
+    "stage": "planned",
+    "status": "未着手"
   }
 }
 ```
 
-| Field     | Rule                                                                                                                                |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `path`    | Where the component lives. Omit while only planned; set once implemented                                                            |
-| `purpose` | One-sentence intent. Required — its presence defines a component leaf                                                               |
-| `status`  | Pipeline stage: `planned` → `ready` → `implement` → `audit` → `commit`. Injected by rebuild (`"planned"` default); omit at creation |
+| Field     | Rule                                                                                                                   |
+| --------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `path`    | Where the component lives. Omit while only planned; set once implemented                                               |
+| `purpose` | One-sentence intent. Required — its presence defines a component leaf                                                  |
+| `stage`   | Mechanical pipeline stage: `planned` → `ready` → `commit`. Injected by rebuild (`"planned"` default); omit at creation |
+| `status`  | Free-text progress note (what has been done so far). Required — always write the current progress in one sentence      |
 
-A committed component re-enters at `ready` whenever new work on it is agreed — components never close; change cycles do. Keep the status truthful at all times.
+A committed component re-enters at `ready` whenever new work on it is agreed — components never close; change cycles do. Keep the stage truthful at all times.
 
 Lifecycle transitions are ordinary `set`s on deep keys, identical to product slices:
 
 ```jsonl
 {"ts":"…","type":"set","key":"meta.skills.mockup.path","value":".opencode/skills/mockup/SKILL.md"}
-{"ts":"…","type":"set","key":"meta.skills.mockup.status","value":"implement"}
+{"ts":"…","type":"set","key":"meta.skills.mockup.stage","value":"ready"}
+{"ts":"…","type":"set","key":"meta.skills.mockup.status","value":"要件を整理し、実装に着手する"}
 ```
+
+The rebuild also injects `latestStatus` on each namespace root — the most recent `status` text written in that namespace, for a quick glance at where things stand.
 
 ## Granularity policy
 
@@ -68,76 +73,99 @@ Lifecycle transitions are ordinary `set`s on deep keys, identical to product sli
     "quality-gate": {
       "path": "lefthook.yaml",
       "purpose": "コミット時のformat/lint/typecheck強制",
-      "status": "commit"
+      "stage": "commit",
+      "status": "lefthook で pre-commit フックを運用中"
     },
     "tool-execute-after": {
       "path": ".opencode/plugin/tool-execute-after.ts",
       "purpose": "編集直後のreport-only lint",
-      "status": "commit"
+      "stage": "commit",
+      "status": "edit 直後に oxlint を report-only で実行中"
     },
     "session-idle": {
       "path": ".opencode/plugin/session-idle.ts",
       "purpose": "品質レビューとevents同期の順次実行",
-      "status": "commit"
+      "stage": "commit",
+      "status": "idle 時にレビューと同期を Report 合成で実行中"
     }
   },
   "skills": {
     "agenda": {
       "path": ".opencode/skills/agenda/SKILL.md",
       "purpose": "作業単位をfeatureスライス単位で確定する",
-      "status": "commit"
+      "stage": "commit",
+      "status": "実装決定を既存スナップショットから選択して合意する"
     },
     "feature": {
       "path": ".opencode/skills/feature/SKILL.md",
       "purpose": "featureとコンポーネントの登録・分割・定義改訂",
-      "status": "commit"
+      "stage": "commit",
+      "status": "登録・分割・定義改訂を feature スキルで運用中"
     },
-    "recon": { "purpose": "実装前の調査と記録", "status": "planned" },
-    "audit": { "purpose": "生成物をログで絞り込みレビューする", "status": "planned" },
-    "mockup": { "purpose": "静的HTMLモックアップの作成", "status": "planned" }
+    "recon": { "purpose": "実装前の調査と記録", "stage": "planned", "status": "未着手" },
+    "audit": {
+      "purpose": "生成物をログで絞り込みレビューする",
+      "stage": "planned",
+      "status": "未着手"
+    },
+    "mockup": { "purpose": "静的HTMLモックアップの作成", "stage": "planned", "status": "未着手" }
   },
   "docs": {
     "agents-md": {
       "path": "AGENTS.md",
       "purpose": "行動原則と駆動方式への導線",
-      "status": "commit"
+      "stage": "commit",
+      "status": "駆動システムの導線として運用中"
     },
     "events-readme": {
       "path": "events/README.md",
       "purpose": "駆動方式の仕様",
-      "status": "commit"
+      "stage": "commit",
+      "status": "駆動方式の仕様として運用中"
     },
     "product-spec": {
       "path": "events/spec/product.md",
       "purpose": "productスナップショットの仕様",
-      "status": "commit"
+      "stage": "commit",
+      "status": "product スナップショットの仕様として運用中"
     }
   },
   "scripts": {
     "event-append": {
       "path": "events/scripts/append.mjs",
-      "purpose": "イベントの追記",
-      "status": "commit"
+      "purpose": "イベントの追記（単発・バッチ）",
+      "stage": "commit",
+      "status": "単発・バッチ両対応でイベントを追記中"
     },
     "event-build": {
       "path": "events/scripts/build.mjs",
       "purpose": "スナップショット生成",
-      "status": "commit"
+      "stage": "commit",
+      "status": "ログからスナップショットを生成中"
     },
     "event-compact": {
       "path": "events/scripts/compact.mjs",
       "purpose": "チェックポイント退避",
-      "status": "commit"
+      "stage": "commit",
+      "status": "しきい値超過時にチェックポイントへ退避中"
+    },
+    "event-read": {
+      "path": "events/scripts/read.mjs",
+      "purpose": "スナップショットcontentの読み出し",
+      "stage": "commit",
+      "status": "スナップショットの content を読み出し中"
     },
     "typecheck-staged": {
       "path": "scripts/typecheck-staged.mjs",
       "purpose": "ステージされたファイルだけを型検査",
-      "status": "commit"
+      "stage": "commit",
+      "status": "pre-commit でステージ済みのみ型検査中"
     },
     "sync-config-snapshots": {
       "path": "scripts/sync-config-snapshots.mjs",
       "purpose": "設定スナップショットの同期",
-      "status": "commit"
+      "stage": "commit",
+      "status": "pre-commit で設定スナップショットを同期中"
     }
   }
 }
@@ -146,5 +174,6 @@ Lifecycle transitions are ordinary `set`s on deep keys, identical to product sli
 ## Rebuild behavior
 
 1. Fold `meta.*` events like any namespace
-2. Normalize: every leaf carrying `purpose` receives `"status": "planned"` unless already set
-3. `meta.json` is written only when at least one `meta.*` event exists
+2. Normalize: every leaf carrying `purpose` receives `"stage": "planned"` unless already set
+3. Inject `latestStatus` on each namespace root from the most recent `status` text
+4. `meta.json` is written only when at least one `meta.*` event exists

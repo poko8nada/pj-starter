@@ -1,6 +1,6 @@
 ---
 name: agenda
-description: Select and fix the unit of work before implementation. Use when the user decides to build something (実装しよう / 作ろう), says "agenda", or asks to plan work (作業単位). Picks targets from existing snapshots, settles test policy and file structure, and records status transitions after explicit agreement.
+description: Select and fix the unit of work before implementation. Use when the user decides to build something (実装しよう / 作ろう), says "agenda", or asks to plan work (作業単位). Picks targets from existing snapshots, settles test policy and file structure, and records stage transitions after explicit agreement.
 ---
 
 # Agenda
@@ -10,7 +10,7 @@ Turn an implementation decision into an agreed plan, then record it. Never imple
 ## Scope
 
 - Idea capture ("ログインを作りたい") is not agenda — it is plain discussion: once the content is agreed, append it directly (new features enter as `planned`; stack / roadmap changes surfaced by the same discussion go together).
-- Pure JSON value changes (copy tweaks, status flips) skip agenda entirely — append directly.
+- Pure JSON value changes (copy tweaks, stage flips) skip agenda entirely — append directly.
 - When unsure whether something counts as implementation, run agenda.
 - One agenda = one coherent deliverable; split unrelated areas into separate sessions.
 
@@ -27,7 +27,7 @@ If a required component is missing from the snapshot, **stop agenda immediately*
 3. **Tests** — decide per order using the test criteria below.
 4. **Present** — show the plan in the presentation format below.
 5. **Discuss** — revise until the user explicitly agrees.
-6. **Record** — on consensus, append events. The normal flow causes **status transitions only** (`→ ready`). Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
+6. **Record** — on consensus, append events. The normal flow causes **stage transitions only** (`→ ready`). Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
 
 ## Judgment axes
 
@@ -132,5 +132,5 @@ Meta rules:
 
 - `planned` — recorded intention. Everything captured starts here, even when the user consented at capture time
 - `ready` — passed agenda consensus; awaiting implementation
-- On consensus: set `<key>.status = "ready"` via deep-key appends for the selected existing targets
+- On consensus: set `<key>.stage = "ready"` via deep-key appends for the selected existing targets
 - No manual build: the idle hook syncs snapshots after the turn ends

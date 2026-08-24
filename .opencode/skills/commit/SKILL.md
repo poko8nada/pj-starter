@@ -38,7 +38,7 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 
 After a successful commit, assert lifecycle transitions for the work unit's targets:
 
-- Set `<key>.status = "commit"` for targets that reached it (deep-key append, batch mode).
+- Set `<key>.stage = "commit"` for targets that reached it (deep-key append, batch mode).
 - Plain value changes and doc updates commit alongside.
 
 If a commit succeeds but lifecycle transitions weren't recorded, append them as part of the NEXT work unit (no amending).

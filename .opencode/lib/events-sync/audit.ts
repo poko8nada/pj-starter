@@ -8,12 +8,12 @@ export interface AuditFinding {
 }
 
 // ready/commit のコンポーネントは path を持つべき（agenda で Files を確定するため）
-const PATH_STATUSES = new Set(['ready', 'commit']);
+const PATH_STAGES = new Set(['ready', 'commit']);
 
-type Component = { purpose?: unknown; status?: unknown; path?: unknown };
+type Component = { purpose?: unknown; stage?: unknown; path?: unknown };
 
-const toMessage = (key: string, status: string): string =>
-  `meta component ${key} is "${status}" but has no path; set it per the agreed agenda files`;
+const toMessage = (key: string, stage: string): string =>
+  `meta component ${key} is "${stage}" but has no path; set it per the agreed agenda files`;
 
 export const auditMeta = (meta: unknown): AuditFinding[] => {
   if (!meta || typeof meta !== 'object') return [];
@@ -23,11 +23,11 @@ export const auditMeta = (meta: unknown): AuditFinding[] => {
     for (const [id, node] of Object.entries(comps)) {
       if (!node || typeof node !== 'object' || !('purpose' in node)) continue;
       const component = node as Component;
-      const status = typeof component.status === 'string' ? component.status : '';
-      if (PATH_STATUSES.has(status) && typeof component.path !== 'string')
+      const stage = typeof component.stage === 'string' ? component.stage : '';
+      if (PATH_STAGES.has(stage) && typeof component.path !== 'string')
         findings.push({
           key: `meta.${section}.${id}`,
-          message: toMessage(`meta.${section}.${id}`, status),
+          message: toMessage(`meta.${section}.${id}`, stage),
         });
     }
   }
