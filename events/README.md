@@ -34,22 +34,18 @@ JSONL. One event per line. **One line carries one concern.** `ts` is always assi
 {"ts":"2026-08-24T09:26:00.000+09:00","type":"set","key":"product.features.auth.status","value":"implement","note":"first slice of uw-001"}
 ```
 
-| Field   | Rule                                                                                             |
-| ------- | ------------------------------------------------------------------------------------------------ |
-| `ts`    | ISO 8601 in JST (`+09:00`). Assignment time                                                      |
-| `type`  | `set` or `del`                                                                                   |
-| `key`   | Dotted path, always required                                                                     |
-| `value` | JSON string or object. **A full-state assertion at that exact path, never a diff**               |
-| `note`  | Optional one-line remark for future readers. **Ignored by the fold; never appears in snapshots** |
+- `ts` — ISO 8601 in JST (`+09:00`). Assignment time
+- `type` — `set` or `del`
+- `key` — dotted path, always required
+- `value` — JSON string or object. **A full-state assertion at that exact path, never a diff**
+- `note` — optional one-line remark for future readers. **Ignored by the fold; never appears in snapshots**
 
 The log serves two readers: the reducer consumes `type`/`key`/`value`; humans and future agents also read `note`.
 
 ### Event types
 
-| type  | Meaning                                                                                                                             |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `set` | Overwrite the value at the exact path (last-write-wins). Scalar intermediates are replaced by objects when deeper paths are written |
-| `del` | Remove the leaf at the path; empty ancestors are pruned                                                                             |
+- `set` — overwrite the value at the exact path (last-write-wins). Scalar intermediates are replaced by objects when deeper paths are written
+- `del` — remove the leaf at the path; empty ancestors are pruned
 
 Lifecycle facts (implemented / audited / committed) are not special types — they are ordinary `set`s on deep keys such as `product.features.<id>.status`. Audit results themselves stay conversational; only the resulting state is asserted.
 
@@ -114,15 +110,21 @@ For testing, point `EVENTS_DIR` at a scratch copy of this directory.
 
 ## Operation flow
 
+**Capture** (no skill):
+
 ```
-Session start
- 1. Discuss ──▶ agenda skill fixes the unit of work per feature slice (recorded as agenda.*)
- 2. Implement ──▶ append set/del events as changes happen
- 3. audit ──▶ primary hands the slices to a reviewer subagent; results stay conversational.
-              Fix → re-audit → repeat until acceptable
- 4. Assert outcome ──▶ record status transitions and isDone as plain sets
- 5. Idle hook ──▶ quality review, then events sync (build + conditional compact) run automatically
+discussion ──▶ content agreement ──▶ append
 ```
+
+New features enter as `planned`. Stack / roadmap changes surfaced by the same discussion are appended together.
+
+**Implementation** (triggered by the decision to build something):
+
+```
+agenda skill ──▶ targets selected & agreed ──▶ targets become "ready" ──▶ implement
+```
+
+The idle hook keeps quality checks and snapshots fresh automatically.
 
 ## Harness independence
 

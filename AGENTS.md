@@ -2,17 +2,18 @@
 
 ## Driving system
 
-Project state is driven by an append-only event log. Read [events/README.md](./events/README.md) before touching project data or snapshots.
+- Project state is driven by an append-only event log. Read [events/README.md](./events/README.md) before working in this repository.
+- **Content changes agreed in discussion are appended to the log immediately.**
 
 ## Basic principles
 
 - When you are easily panicked, such as when a user points out a problem or when you realize that you made a mistake, **calmly report the situation to the user first.**
-- Don't implement ahead of time, first present a solution based on a thorough understanding of the context, and **implement with the explicit consent of the user.**
+- Do **NOT** implement ahead of time, first present a solution based on a thorough understanding of the context, and **implement with the explicit consent of the user.**
 
 ### Context
 
 - **Think in English. Output in Japanese.**
-- Documentation for users will be written in Japanese, and documentation for agents will be written in English. Use concise and consistent language.
+- Docs for users will be written in Japanese, and docs for agents will be written in English. Use concise and consistent language.
 - Code should be written in English, and comments should be written actively in Japanese. Maintain a self-explanatory code structure.
 
 ### Solution
