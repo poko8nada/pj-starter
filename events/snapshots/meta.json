@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-24T15:22:45.570+09:00",
-  "asOf": "2026-08-24T15:22:45.544+09:00",
+  "generatedAt": "2026-08-24T15:36:17.471+09:00",
+  "asOf": "2026-08-24T15:36:17.444+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -81,7 +81,7 @@
       },
       "event-append": {
         "path": "events/scripts/append.mjs",
-        "purpose": "イベントの追記",
+        "purpose": "イベントの追記（単発・バッチ）",
         "status": "commit"
       },
       "event-build": {

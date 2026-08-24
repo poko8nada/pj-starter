@@ -1,6 +1,42 @@
 // events/scripts/lib.mjs の畳み込み意味論に関するテスト
 import { describe, expect, it } from 'vitest';
-import { deletePath, normalizeFeatures, normalizeMeta, setPath, stableStringify } from './lib.mjs';
+import {
+  buildEvent,
+  deletePath,
+  EventError,
+  normalizeFeatures,
+  normalizeMeta,
+  setPath,
+  stableStringify,
+} from './lib.mjs';
+
+describe('buildEvent', () => {
+  it('builds a set event with a JST timestamp', () => {
+    const event = buildEvent({ type: 'set', key: 'product.name', value: 'x' });
+    expect(event.type).toBe('set');
+    expect(event.key).toBe('product.name');
+    expect(event.value).toBe('x');
+    expect(event.ts).toMatch(/\+09:00$/);
+  });
+
+  it('keeps the note field', () => {
+    const event = buildEvent({ type: 'set', key: 'product.name', value: 'x', note: 'why' });
+    expect(event.note).toBe('why');
+  });
+
+  it('rejects unknown types', () => {
+    expect(() => buildEvent({ type: 'nope', key: 'product.name' })).toThrow(EventError);
+  });
+
+  it('rejects invalid product sections', () => {
+    expect(() => buildEvent({ type: 'set', key: 'product.bad.x', value: 1 })).toThrow(EventError);
+  });
+
+  it('requires a value for set but not for del', () => {
+    expect(() => buildEvent({ type: 'set', key: 'product.name' })).toThrow(EventError);
+    expect(buildEvent({ type: 'del', key: 'product.name' }).value).toBeUndefined();
+  });
+});
 
 describe('setPath', () => {
   it('creates nested objects along the path', () => {

@@ -55,15 +55,34 @@ export const parseValue = (raw) => {
   }
 };
 
+// 規約違反。CLI 層で fail() へ変換される
+export class EventError extends Error {}
+
 // キーは「名前空間.区画. ...」のドットパス
 export const validateKey = (key) => {
-  if (!key) fail('--key is required');
+  if (!key) throw new EventError('key is required');
   const [ns, section] = key.split('.');
-  if (!NAMESPACES.has(ns)) fail(`unknown namespace: ${ns}`);
+  if (!NAMESPACES.has(ns)) throw new EventError(`unknown namespace: ${ns}`);
   if (ns === 'product' && !PRODUCT_SECTIONS.has(section))
-    fail(`product section must be one of ${[...PRODUCT_SECTIONS].join('/')}: ${key}`);
+    throw new EventError(
+      `product section must be one of ${[...PRODUCT_SECTIONS].join('/')}: ${key}`,
+    );
   if (ns === 'meta' && !META_SECTIONS.has(section))
-    fail(`meta section must be one of ${[...META_SECTIONS].join('/')}: ${key}`);
+    throw new EventError(`meta section must be one of ${[...META_SECTIONS].join('/')}: ${key}`);
+};
+
+// 下書き（ts を除くイベント）を検証して完成させる。ts はここで JST として付与する
+export const buildEvent = (draft) => {
+  if (!EVENT_TYPES.has(draft.type))
+    throw new EventError(`type must be one of ${[...EVENT_TYPES].join('/')}`);
+  validateKey(draft.key);
+  const event = { ts: jstNow(), type: draft.type, key: draft.key };
+  if (draft.type === 'set') {
+    if (draft.value === undefined) throw new EventError('value is required for set');
+    event.value = draft.value;
+  }
+  if (draft.note !== undefined) event.note = draft.note;
+  return event;
 };
 
 // アクティブなログを読み込み、イベントの配列を返す

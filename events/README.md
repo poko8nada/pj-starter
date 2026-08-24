@@ -101,6 +101,10 @@ node events/scripts/append.mjs --type set --key product.features.auth --value '{
 node events/scripts/append.mjs --type set --key product.features.auth.status --value 'implement'
 node events/scripts/append.mjs --type del --key product.features.old_feature
 
+# Batch: one JSONL line per draft event (no ts — assigned by the script).
+# All lines are validated first; any invalid line aborts the whole batch
+node events/scripts/append.mjs --file draft.jsonl
+
 # Regenerate snapshots / force a checkpoint
 node events/scripts/build.mjs
 node events/scripts/compact.mjs
