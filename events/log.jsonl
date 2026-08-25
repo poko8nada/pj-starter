@@ -24,3 +24,10 @@
 {"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.libraries","value":{"oxlint":"linter","oxfmt":"formatter","lefthook":"git hooks","oxlint-tsgolint":"TS lint plugin","@types/node":"Node types"}}
 {"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.status","value":{"text":"スターターの初期スタックとして設定"}}
 {"ts":"2026-08-25T14:44:44.984+09:00","type":"set","key":"meta.agents.auditor","value":{"purpose":"コミット前レビューを担う専任サブエージェント"}}
+{"ts":"2026-08-25T14:52:24.882+09:00","type":"set","key":"meta.skills.audit.purpose","value":"コミット前の変更をコードレビューする"}
+{"ts":"2026-08-25T14:57:24.179+09:00","type":"set","key":"meta.agents.auditor.status","value":{"stage":"ready","text":"実装計画が確定。実装待ち"}}
+{"ts":"2026-08-25T14:57:24.179+09:00","type":"set","key":"meta.skills.audit.status","value":{"stage":"ready","text":"実装計画が確定。実装待ち"}}
+{"ts":"2026-08-25T14:57:33.347+09:00","type":"set","key":"meta.agents.auditor.path","value":".opencode/agent/auditor.md"}
+{"ts":"2026-08-25T14:57:33.347+09:00","type":"set","key":"meta.skills.audit.path","value":".opencode/skills/audit/SKILL.md"}
+{"ts":"2026-08-25T15:26:06.066+09:00","type":"set","key":"meta.agents.auditor.status","value":{"stage":"commit","text":"auditor.md を作成し運用中"}}
+{"ts":"2026-08-25T15:26:06.066+09:00","type":"set","key":"meta.skills.audit.status","value":{"stage":"commit","text":"SKILL.md を作成し運用中"}}

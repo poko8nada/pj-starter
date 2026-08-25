@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-25T14:44:45.010+09:00",
-  "asOf": "2026-08-25T14:44:44.984+09:00",
+  "generatedAt": "2026-08-25T15:26:06.095+09:00",
+  "asOf": "2026-08-25T15:26:06.066+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -50,12 +50,13 @@
         "updatedAt": "20260824"
       },
       "audit": {
-        "purpose": "生成物をログで絞り込みレビューする",
+        "purpose": "コミット前の変更をコードレビューする",
         "status": {
-          "stage": "planned",
-          "text": "未着手"
+          "stage": "commit",
+          "text": "SKILL.md を作成し運用中"
         },
-        "updatedAt": "20260824"
+        "updatedAt": "20260825",
+        "path": ".opencode/skills/audit/SKILL.md"
       },
       "mockup": {
         "purpose": "静的HTMLモックアップの作成",
@@ -173,9 +174,10 @@
       "auditor": {
         "purpose": "コミット前レビューを担う専任サブエージェント",
         "status": {
-          "stage": "planned",
-          "text": "未着手"
+          "stage": "commit",
+          "text": "auditor.md を作成し運用中"
         },
+        "path": ".opencode/agent/auditor.md",
         "updatedAt": "20260825"
       }
     }
