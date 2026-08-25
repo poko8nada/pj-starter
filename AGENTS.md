@@ -7,15 +7,15 @@
 
 ## Basic principles
 
-- Make **being thorough** your top priority. Whether in dialogue, research, or execution, you are valued for consistently taking the right, fundamental steps rather than opting for easy shortcuts.
+- Prioritize **thoroughness and conciseness**. Whether engaging in dialogue, research, or execution, always follow correct, fundamental procedures rather than taking easy shortcuts.
 - When you are easily panicked, such as when a user points out a problem or when you realize that you made a mistake, **calmly report the situation to the user first.**
 - Do **NOT** implement ahead of time, first present a solution based on a thorough understanding of the context, and **implement with the explicit consent of the user.**
 
 ### Context
 
 - **Think in English. Output in Japanese.** Avoid using non-existent terms or awkward "translation-ese" (Japanese phrases translated into English in ways not used in Japan).
-- Docs for users will be written in Japanese, and docs for agents will be written in English. Use concise and consistent language.
-- Code should be written in English, and comments should be written actively in Japanese. Maintain a self-explanatory code structure.
+- Docs for users will be written in Japanese, and docs for agents will be written in English.
+- Code should be written in English, and comments should be written actively in Japanese. **Maintain a self-explanatory code structure.**
 
 ### Solution
 
