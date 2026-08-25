@@ -43,3 +43,4 @@
 {"ts":"2026-08-25T16:48:34.558+09:00","type":"set","key":"meta.skills.recon.status","value":{"stage":"commit","text":"SKILL.mdを作成し運用中"}}
 {"ts":"2026-08-25T16:48:34.558+09:00","type":"set","key":"meta.agents.web-researcher.status","value":{"stage":"commit","text":"web-researcher.mdを作成し運用中"}}
 {"ts":"2026-08-25T16:48:34.558+09:00","type":"set","key":"meta.agents.spike-verifier.status","value":{"stage":"commit","text":"spike-verifier.mdを作成し運用中"}}
+{"ts":"2026-08-25T17:47:55.910+09:00","type":"set","key":"meta.skills.commit.status","value":{"stage":"commit","text":"typeをMECEな4つに削減し、status追記を機械化"}}
