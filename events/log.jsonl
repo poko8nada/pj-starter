@@ -62,3 +62,9 @@
 {"ts":"2026-08-25T22:24:38.261+09:00","type":"del","key":"product.look.mockups.counter"}
 {"ts":"2026-08-25T22:44:16.114+09:00","type":"set","key":"meta.skills.mockup.status","value":{"stage":"commit","text":"ワークベンチ・リセット/サーバー管理スクリプト・SKILL.mdを実装"}}
 {"ts":"2026-08-25T22:44:16.114+09:00","type":"set","key":"meta.harness.mockup-notify.status","value":{"stage":"commit","text":"annotations監視とsession.promptで起床するプラグインを作成"}}
+{"ts":"2026-08-25T22:58:58.609+09:00","type":"set","key":"meta.skills.readme","value":{"purpose":"ルートREADME.mdを起草・更新する"}}
+{"ts":"2026-08-25T23:17:47.648+09:00","type":"set","key":"meta.skills.readme.status","value":{"stage":"ready","text":"実装計画が確定。SKILL.mdを作成する"}}
+{"ts":"2026-08-25T23:18:22.664+09:00","type":"set","key":"meta.skills.readme.status","value":{"stage":"implement","text":"SKILL.mdを作成"}}
+{"ts":"2026-08-25T23:18:22.664+09:00","type":"set","key":"meta.skills.readme.path","value":".opencode/skills/readme/SKILL.md"}
+{"ts":"2026-08-25T23:26:35.956+09:00","type":"set","key":"meta.skills.readme.status","value":{"stage":"implement","text":"Contributing/Licenseセクションの判定手順を具体化"}}
+{"ts":"2026-08-25T23:29:42.773+09:00","type":"set","key":"meta.skills.readme.status","value":{"stage":"commit","text":"SKILL.mdを作成しSection decisionsを具体化"}}
