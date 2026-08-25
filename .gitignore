@@ -32,6 +32,7 @@ lerna-debug.log*
 
 # misc
 .DS_Store
+*.pid
 
 # 一時型チェック tsconfig（異常終了時に残る防御）
 .typecheck-staged-*.json
@@ -42,3 +43,6 @@ lerna-debug.log*
 
 # spike verification worktrees (recon skill)
 .worktrees/
+
+# mockup workbench（独立ワークスペース。ビルド成果物は events から参照されるため追跡する）
+!.opencode/skills/mockup/workbench/dist/

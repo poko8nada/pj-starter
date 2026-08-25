@@ -9,7 +9,7 @@
     "allowJs": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "types": []
+    "types": ["node"]
   },
   "include": ["plugin/**/*.ts", "lib/**/*.ts"]
 }

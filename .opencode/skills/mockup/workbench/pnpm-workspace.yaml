@@ -1,0 +1,3 @@
+# このワークベンチは独立したワークスペースルート。上位リポジトリの pnpm workspace に参加しない
+# （これにより lockfile / node_modules がこのディレクトリ内で完結する）
+packages: []

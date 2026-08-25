@@ -52,3 +52,13 @@
 {"ts":"2026-08-25T20:25:34.986+09:00","type":"set","key":"meta.docs.events-readme.status","value":{"stage":"commit","text":"読み取り導線を新設し記録契約にnode modelを集約"}}
 {"ts":"2026-08-25T20:25:34.986+09:00","type":"set","key":"meta.docs.schema-spec.status","value":{"stage":"commit","text":"product/metaスキーマをschema.mdに統合し旧specを削除"}}
 {"ts":"2026-08-25T20:25:34.986+09:00","type":"set","key":"meta.skills.feature.status","value":{"stage":"commit","text":"Domain schemasの参照先をschema.mdに更新"}}
+{"ts":"2026-08-25T20:57:04.788+09:00","type":"set","key":"meta.skills.mockup.status","value":{"stage":"ready","text":"実装計画が確定（ゲート除外→スキャフォールド→オーバーレイ→SKILL.mdの4オーダー）。実装待ち"}}
+{"ts":"2026-08-25T21:06:39.928+09:00","type":"set","key":"meta.skills.mockup.status","value":{"stage":"implement","text":"4オーダー実装完了。dev/build/除外の各検証済み、コミット待ち"}}
+{"ts":"2026-08-25T21:07:08.712+09:00","type":"set","key":"meta.skills.mockup.path","value":".opencode/skills/mockup/SKILL.md"}
+{"ts":"2026-08-25T22:12:15.785+09:00","type":"set","key":"meta.harness.mockup-notify","value":{"purpose":"mockup指示の追記を検知しエージェントを起床させる"}}
+{"ts":"2026-08-25T22:12:15.785+09:00","type":"set","key":"meta.harness.mockup-notify.status","value":{"stage":"ready","text":"設計合意済み（送信は記録のみ、通知ボタンで起床）。実装待ち"}}
+{"ts":"2026-08-25T22:19:53.533+09:00","type":"set","key":"meta.harness.mockup-notify.path","value":".opencode/plugin/mockup-notify.ts"}
+{"ts":"2026-08-25T22:23:32.388+09:00","type":"set","key":"product.look.mockups.counter","value":{"path":".opencode/skills/mockup/workbench/dist/counter.html","description":"ほんの少しリッチなカウンター。角丸四角ボタン＋tealアクセント、システムフォント+Noto Sans JP"}}
+{"ts":"2026-08-25T22:24:38.261+09:00","type":"del","key":"product.look.mockups.counter"}
+{"ts":"2026-08-25T22:44:16.114+09:00","type":"set","key":"meta.skills.mockup.status","value":{"stage":"commit","text":"ワークベンチ・リセット/サーバー管理スクリプト・SKILL.mdを実装"}}
+{"ts":"2026-08-25T22:44:16.114+09:00","type":"set","key":"meta.harness.mockup-notify.status","value":{"stage":"commit","text":"annotations監視とsession.promptで起床するプラグインを作成"}}

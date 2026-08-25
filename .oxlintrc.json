@@ -121,5 +121,12 @@
       "rules": { "import/no-default-export": "off" }
     }
   ],
-  "ignorePatterns": ["dist", "node_modules", ".next", "coverage", "*.md"]
+  "ignorePatterns": [
+    "dist",
+    "node_modules",
+    ".next",
+    "coverage",
+    "*.md",
+    ".opencode/skills/mockup/workbench"
+  ]
 }

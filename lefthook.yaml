@@ -6,15 +6,21 @@ pre-commit:
         jobs:
           - name: format
             glob: '*.{js,jsx,ts,tsx,mts,cts,mjs,cjs,md,mdx,json,jsonc}'
+            exclude:
+              - .opencode/skills/mockup/workbench/**
             run: pnpm format --no-error-on-unmatched-pattern {staged_files}
             stage_fixed: true
             fail_text: 'Format auto-fixed. Re-stage and re-commit if needed (stage_fixed usually handles this).'
           - name: lint
             glob: '*.{js,jsx,ts,tsx,mts,cts,mjs,cjs}'
+            exclude:
+              - .opencode/skills/mockup/workbench/**
             run: pnpm lint {staged_files}
             fail_text: 'Lint failed. Run: pnpm lint:fix for details. Fix the code, not the config.'
           - name: typecheck
             glob: '*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}'
+            exclude:
+              - .opencode/skills/mockup/workbench/**
             run: pnpm typecheck:staged {staged_files}
             fail_text: 'Type check failed. Run: pnpm typecheck:staged for details.'
     - name: sync-config-snapshots

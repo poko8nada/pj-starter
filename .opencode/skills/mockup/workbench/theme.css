@@ -1,0 +1,12 @@
+/* モックアップ共通のTailwind設定。@theme に登録したトークンがそのまま成果物のテーマになる */
+@import 'tailwindcss';
+
+@theme {
+  /* WebフォントはCDNで読み込み、ファミリー名をここへ登録して使う */
+  --font-sans: 'Noto Sans JP', system-ui, sans-serif;
+
+  /* あしらいの核となるトークン。対話の中で決めていく（初期値は仮置り） */
+  --color-surface: #fafaf9;
+  --color-ink: #1c1917;
+  --color-accent: #0f766e;
+}
