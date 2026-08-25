@@ -27,7 +27,7 @@ If a required component is missing from the snapshot, **stop agenda immediately*
 3. **Tests** — decide per order using the test criteria below.
 4. **Present** — show the plan in the presentation format below.
 5. **Discuss** — revise until the user explicitly agrees.
-6. **Record** — on consensus, append events. The normal flow causes **stage transitions only** (`→ ready`), and each transition carries a `status` update in the same append (e.g. "実装計画が確定。実装待ち"). Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
+6. **Record** — on consensus, append events. The normal flow causes **stage transitions only** (`→ ready`), each recorded as one whole-status assertion per target (e.g. `{"stage":"ready","text":"実装計画が確定。実装待ち"}`). Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
 
 ## Judgment axes
 
@@ -108,7 +108,7 @@ Domain: meta
 
 Component (from snapshots/meta.json):
   Purpose: 生成物をログで絞り込みレビューする
-  Status:  planned
+  Stage:   planned
 
 Order:
   1. SKILL.md creation
@@ -132,5 +132,5 @@ Meta rules:
 
 - `planned` — recorded intention. Everything captured starts here, even when the user consented at capture time
 - `ready` — passed agenda consensus; awaiting implementation
-- On consensus: set `<key>.stage = "ready"` via deep-key appends for the selected existing targets, **together with a `status` update** (progress text) in the same append
+- On consensus: one status assertion per target — `node events/scripts/append.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`. Multiple targets can share one invocation (one shared ts)
 - No manual build: the idle hook syncs snapshots after the turn ends

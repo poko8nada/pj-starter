@@ -7,15 +7,13 @@ import {
   foldAll,
   injectUpdatedAt,
   jstNow,
-  normalizeFeatures,
-  normalizeMeta,
+  normalizeTrees,
   SNAPSHOTS_DIR,
   stableStringify,
 } from './lib.mjs';
 
 const { trees, asOf, events } = foldAll();
-normalizeFeatures(trees.product.features);
-normalizeMeta(trees.meta);
+normalizeTrees(trees);
 injectUpdatedAt(trees, events);
 fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
 

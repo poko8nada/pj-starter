@@ -6,31 +6,38 @@
 
 ```json
 {
-  "generatedAt": "2026-08-24T05:20:00Z",
-  "upToSeq": 10,
+  "generatedAt": "2026-08-25T10:00:00.000+09:00",
+  "asOf": "2026-08-25T10:06:00.000+09:00",
   "content": {}
 }
 ```
 
-- `generatedAt` — when this snapshot was computed; refreshed on every rebuild
-- `upToSeq` — the last log seq folded in. Smaller than the log's latest seq means the snapshot is stale
+- `generatedAt` — when this snapshot was last written; refreshed only when the content changed
+- `asOf` — the newest event timestamp folded in. Smaller than the log's latest ts means the snapshot is stale
 - Consumers read `content` only
+
+## Node model
+
+Every section is an **object**: content fields sit in parallel with an optional `status`. Two kinds of nodes exist:
+
+- **Fact sections** (`name`, `what`, `stack`, `look`, `roadmap`, `deploy`) — assertions of fact. They may carry `status: {text}` recording what was last changed there; without it they stay raw objects
+- **Work units** (`features.<id>`) — trackable slices carrying `status: {stage, text}` and `updatedAt`
+
+`updatedAt` (YYYYMMDD) is injected by rebuild on every status-bearing node — the date its value was last written, derived from the event's `ts`. Nodes never given a status receive no metadata at all.
 
 ## Sections
 
 The second segment of a `product.*` key is fixed to these seven:
 
-| Section    | Type   | Definition                                    |
-| ---------- | ------ | --------------------------------------------- |
-| `name`     | object | `{ "value": "…", "updatedAt": "…" }`          |
-| `what`     | object | `{ "value": "…", "updatedAt": "…" }`          |
-| `stack`    | object | Technology stack (fixed groups below)         |
-| `look`     | object | Design direction                              |
-| `features` | object | Map of slices (see **Features** below)        |
-| `roadmap`  | object | `{ "mvp": [featureId…], "v1": [featureId…] }` |
-| `deploy`   | object | Delivery process                              |
-
-Every node receives `updatedAt` (YYYYMMDD) from the rebuild — the date its value was last written, derived from the event's `ts`. Scalar and array leaves are wrapped as `{ "value": …, "updatedAt": … }` so the date can attach to them.
+| Section    | Kind       | Content                                          |
+| ---------- | ---------- | ------------------------------------------------ |
+| `name`     | fact       | `{ "value": "…" }`                               |
+| `what`     | fact       | `{ "value": "…" }`                               |
+| `stack`    | fact       | Technology stack (fixed groups below)            |
+| `look`     | fact       | Design direction                                 |
+| `features` | collection | Map of work-unit slices (see **Features** below) |
+| `roadmap`  | fact       | `{ "mvp": [featureId…], "v1": [featureId…] }`    |
+| `deploy`   | fact       | Delivery process                                 |
 
 ## stack
 
@@ -49,7 +56,8 @@ Two scalars plus fixed groups. **Omit keys that do not apply** — a backend-onl
   "observability": { "errors": "Sentry", "analytics": null },
   "content":  { "cms": "microCMS" },
   "libraries": { "…other external dependencies…" },
-  "helpers":  { "…in-house utilities…" }
+  "helpers":  { "…in-house utilities…" },
+  "status": { "text": "build グループに pnpm を追加" }
 }
 ```
 
@@ -84,22 +92,25 @@ A feature is a **vertical slice**: the smallest unit that independently complete
       "submit_handler",
       "notification_dispatch",
       "thanks_message"
-    ]
+    ],
+    "status": { "stage": "implement", "text": "submit_handlerまで実装済み" },
+    "updatedAt": "20260825"
   }
 }
 ```
 
-One optional lifecycle field exists on every slice — **omit it at creation**; `rebuild` injects the default (`"stage": "planned"`) so snapshots always carry it:
+One lifecycle field exists on every slice — **omit it at creation**; `rebuild` injects the default (`{"stage": "planned", "text": "未着手"}`) so snapshots always carry it:
 
-- `stage` — pipeline stage: `planned` → `ready` → `implement` → `commit`. A committed feature re-enters at `ready` whenever new work on it is agreed — keep the stage truthful at all times
-- `updatedAt` — injected by rebuild (YYYYMMDD) from the `ts` of the latest event touching the slice
+- `status.stage` — pipeline stage, shared vocabulary across namespaces: `planned` → `ready` → `implement` → `commit`. A committed feature re-enters at `ready` whenever new work on it is agreed — keep the stage truthful at all times
+- `status.text` — free-text progress note (what has been done so far), always written together with the stage
+- `updatedAt` — injected by rebuild (YYYYMMDD)
 
-Lifecycle transitions are ordinary `set`s on deep keys — one line, one concern:
+Lifecycle transitions are single events asserting the whole status — stage and progress note can never drift apart:
 
 ```jsonl
-{"ts":"…","type":"set","key":"product.features.contact_form.stage","value":"implement"}
-{"ts":"…","type":"set","key":"product.features.contact_form.stage","value":"ready"}
-{"ts":"…","type":"set","key":"product.features.contact_form.stage","value":"commit"}
+{"ts":"…","type":"set","key":"product.features.contact_form.status","value":{"stage":"ready","text":"実装計画が確定。実装待ち"}}
+{"ts":"…","type":"set","key":"product.features.contact_form.status","value":{"stage":"implement","text":"submit_handlerまで実装済み"}}
+{"ts":"…","type":"set","key":"product.features.contact_form.status","value":{"stage":"commit","text":"全route stepを実装済み"}}
 ```
 
 ### Sizing & splitting
@@ -178,7 +189,7 @@ Backend-only library (function signatures map directly):
 "array_group_by": {
   "trigger": "groupBy(array, iteratee) is called",
   "result": "An object keyed by iteratee's return values is returned",
-  "route": ["iterate", "key_extraction", "bucket_assign"]
+  "route": ["iteratee", "key_extraction", "bucket_assign"]
 }
 ```
 
@@ -212,10 +223,10 @@ Framework design contracts — component composition models, plugin extension po
 ## roadmap
 
 ```json
-{ "mvp": ["contact_form"], "v1": ["export_pdf"] }
+{ "mvp": ["contact_form"], "v1": [], "status": { "text": "MVP構成を確定" } }
 ```
 
-Arrays of feature IDs only. Membership expresses delivery intent: what MVP ships versus what v1 adds. There is no status vocabulary — implementation intent lives here, identity lives in the slice itself.
+Arrays of feature IDs only. Membership expresses delivery intent: what MVP ships versus what v1 adds. There is no stage vocabulary here — implementation intent lives here, identity lives in the slice itself.
 
 ## deploy
 

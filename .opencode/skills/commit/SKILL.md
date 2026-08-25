@@ -21,7 +21,7 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 
 1. **Verify work is done** — tests pass (`pnpm test:run`), format/typecheck clean.
 2. **Identify the work unit's agreed events** — collected during implementation; nothing new.
-3. **Append lifecycle transitions first** — set `<key>.stage = "commit"` **and** `<key>.status` (progress text) together via batch mode `node events/scripts/append.mjs --file <draft.jsonl>`, then `node events/scripts/build.mjs` to refresh snapshots. The log and snapshots are committed alongside the code.
+3. **Append lifecycle transitions first** — assert each target's whole status in one event (`{"stage":"commit","text":"<progress>"}`); multiple targets share one invocation: `node events/scripts/append.mjs --set <key>.status '{"stage":"commit","text":"…"}' --set …`, then `node events/scripts/build.mjs` to refresh snapshots. The log and snapshots are committed alongside the code.
 4. **Pre-commit inspection**:
    - `git status` — intended files only
    - `git diff` — no secrets, no unintended changes
@@ -38,8 +38,7 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 
 Lifecycle transitions are appended **before** the commit, so the log and snapshots ship in the same commit as the code:
 
-- Set `<key>.stage = "commit"` for targets that reached it.
-- Set `<key>.status` (progress text) **in the same append** — e.g. "〇〇まで実装済み". Stage transitions and status updates always go together.
+- Each target that reached a new stage gets one whole-status assertion: `set <key>.status '{"stage":"commit","text":"〇〇まで実装済み"}'`. Stage and progress note always travel together — the shape enforces it.
 - Plain value changes and doc updates commit alongside.
 
 If a commit succeeds but lifecycle transitions weren't recorded, append them as part of the NEXT work unit (no amending).

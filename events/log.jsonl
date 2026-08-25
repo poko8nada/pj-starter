@@ -1,32 +1,10 @@
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.harness.quality-gate","value":{"path":"lefthook.yaml","purpose":"コミット時のformat/lint/typecheck強制","stage":"commit","status":"lefthook で pre-commit フックを運用中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.harness.tool-execute-after","value":{"path":".opencode/plugin/tool-execute-after.ts","purpose":"編集直後のreport-only lint","stage":"commit","status":"edit 直後に oxlint を report-only で実行中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.harness.session-idle","value":{"path":".opencode/plugin/session-idle.ts","purpose":"品質レビューとevents同期の順次実行","stage":"commit","status":"idle 時にレビューと同期を Report 合成で実行中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.skills.agenda","value":{"path":".opencode/skills/agenda/SKILL.md","purpose":"作業単位をfeatureスライス単位で確定する","stage":"commit","status":"実装決定を既存スナップショットから選択して合意する"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.skills.recon","value":{"purpose":"実装前の調査と記録","stage":"planned","status":"未着手"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.skills.audit","value":{"purpose":"生成物をログで絞り込みレビューする","stage":"planned","status":"未着手"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.skills.mockup","value":{"purpose":"静的HTMLモックアップの作成","stage":"planned","status":"未着手"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.skills.feature","value":{"path":".opencode/skills/feature/SKILL.md","purpose":"featureとコンポーネントの登録・分割・定義改訂","stage":"commit","status":"登録・分割・定義改訂を feature スキルで運用中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.skills.commit","value":{"path":".opencode/skills/commit/SKILL.md","purpose":"コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める","stage":"commit","status":"作業単位のコミット手順を commit スキルで運用中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.docs.agents-md","value":{"path":"AGENTS.md","purpose":"行動原則と駆動方式への導線","stage":"commit","status":"駆動システムの導線として運用中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.docs.events-readme","value":{"path":"events/README.md","purpose":"駆動方式の仕様","stage":"commit","status":"駆動方式の仕様として運用中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.docs.product-spec","value":{"path":"events/spec/product.md","purpose":"productスナップショットの仕様","stage":"commit","status":"product スナップショットの仕様として運用中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.typecheck-staged","value":{"path":"scripts/typecheck-staged.mjs","purpose":"ステージされたファイルだけを型検査","stage":"commit","status":"pre-commit でステージ済みのみ型検査中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.sync-config-snapshots","value":{"path":"scripts/sync-config-snapshots.mjs","purpose":"設定スナップショットの同期","stage":"commit","status":"pre-commit で設定スナップショットを同期中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.event-append","value":{"path":"events/scripts/append.mjs","purpose":"イベントの追記（単発・バッチ）","stage":"commit","status":"単発・バッチ両対応でイベントを追記中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.event-build","value":{"path":"events/scripts/build.mjs","purpose":"スナップショット生成","stage":"commit","status":"ログからスナップショットを生成中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.event-compact","value":{"path":"events/scripts/compact.mjs","purpose":"チェックポイント退避","stage":"commit","status":"しきい値超過時にチェックポイントへ退避中"}}
-{"ts":"2026-08-24T18:40:56.540+09:00","type":"set","key":"meta.scripts.event-read","value":{"path":"events/scripts/read.mjs","purpose":"スナップショットcontentの読み出し","stage":"commit","status":"スナップショットの content を読み出し中"}}
-{"ts":"2026-08-24T20:27:59.436+09:00","type":"set","key":"meta.harness.session-idle.stage","value":"ready"}
-{"ts":"2026-08-24T20:27:59.436+09:00","type":"set","key":"meta.harness.tool-execute-after.stage","value":"ready"}
-{"ts":"2026-08-24T20:29:10.731+09:00","type":"set","key":"meta.harness.session-idle.stage","value":"commit"}
-{"ts":"2026-08-24T20:29:10.731+09:00","type":"set","key":"meta.harness.tool-execute-after.stage","value":"commit"}
-{"ts":"2026-08-24T20:37:04.637+09:00","type":"set","key":"meta.skills.agenda.status","value":"stage遷移時のstatus同時更新を明文化済み"}
-{"ts":"2026-08-24T20:37:04.638+09:00","type":"set","key":"meta.skills.feature.status","value":"登録・改訂時のstatus同時更新を明文化済み"}
-{"ts":"2026-08-24T20:37:04.638+09:00","type":"set","key":"meta.skills.commit.status","value":"append→commit順序とstatus同時更新を明文化済み"}
-{"ts":"2026-08-24T21:08:01.911+09:00","type":"set","key":"meta.scripts.event-build.stage","value":"ready"}
-{"ts":"2026-08-24T21:08:01.911+09:00","type":"set","key":"meta.scripts.event-build.status","value":"updatedAt 注入をシンプルに再実装中"}
-{"ts":"2026-08-24T21:27:23.626+09:00","type":"set","key":"meta.scripts.event-compact.stage","value":"ready"}
-{"ts":"2026-08-24T21:27:23.626+09:00","type":"set","key":"meta.scripts.event-compact.status","value":"コンパクション後も updatedAt を保持する修正を実装中"}
-{"ts":"2026-08-24T21:32:01.663+09:00","type":"set","key":"meta.scripts.event-compact.stage","value":"commit"}
-{"ts":"2026-08-24T21:32:01.663+09:00","type":"set","key":"meta.scripts.event-compact.status","value":"コンパクション後も updatedAt を保持する修正を実装済み"}
-{"ts":"2026-08-24T21:32:01.663+09:00","type":"set","key":"meta.docs.product-spec.status","value":"updatedAt 対応の型定義に整合済み"}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.scripts.event-append.status","value":{"stage":"commit","text":"多値CLI（--set/--del・同一ts）として再実装済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.scripts.event-build.status","value":{"stage":"commit","text":"normalizeTrees呼び出しに差し替え済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.scripts.event-compact.status","value":{"stage":"commit","text":"シグネチャ不変のため無変更、移行で検証済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.scripts.event-read.status","value":{"stage":"commit","text":"agendaオプションを除去済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.docs.events-readme.status","value":{"stage":"commit","text":"新駆動方式の仕様に全面改訂済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.docs.product-spec.status","value":{"stage":"commit","text":"ノードモデルと1イベント遷移の仕様に改訂済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"commit","text":"Record手順を1イベント遷移に改訂済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.skills.feature.status","value":{"stage":"commit","text":"登録・改訂手順を新形式に対応済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.skills.commit.status","value":{"stage":"commit","text":"ライフサイクル手順を1イベント化済み"}}
+{"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.harness.session-idle.status","value":{"stage":"commit","text":"auditをstatus.stage参照に更新し監査clean"}}

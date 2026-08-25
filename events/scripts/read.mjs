@@ -6,12 +6,12 @@ import path from 'node:path';
 import process from 'node:process';
 import { fail, parseArgs, SNAPSHOTS_DIR } from './lib.mjs';
 
-const NAMED = new Set(['product', 'meta', 'agenda']);
+const NAMED = new Set(['product', 'meta']);
 
 const main = () => {
   const args = parseArgs(process.argv.slice(2));
   const name = args.name;
-  if (!name) fail('--name product|meta|agenda is required');
+  if (!name) fail('--name product|meta is required');
   if (!NAMED.has(name)) fail(`--name must be one of ${[...NAMED].join('/')}`);
   const file = path.join(SNAPSHOTS_DIR, `${name}.json`);
   if (!fs.existsSync(file)) {

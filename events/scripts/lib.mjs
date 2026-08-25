@@ -13,7 +13,7 @@ export const SNAPSHOTS_DIR = path.join(EVENTS_DIR, 'snapshots');
 export const CHECKPOINT_PATH = path.join(EVENTS_DIR, 'checkpoint.json');
 
 // 名前空間と検証規則。product / meta の第2セグメントは固定区画のみ許容する
-export const NAMESPACES = new Set(['product', 'meta', 'agenda']);
+export const NAMESPACES = new Set(['product', 'meta']);
 export const PRODUCT_SECTIONS = new Set([
   'name',
   'what',
@@ -23,8 +23,12 @@ export const PRODUCT_SECTIONS = new Set([
   'roadmap',
   'deploy',
 ]);
+// status を持てる事実セクション。features は作業単位の収集点なので対象外
+export const FACT_SECTIONS = new Set(['name', 'what', 'stack', 'look', 'roadmap', 'deploy']);
 export const META_SECTIONS = new Set(['harness', 'skills', 'docs', 'scripts']);
 export const EVENT_TYPES = new Set(['set', 'del']);
+// 作業単位の段階。4段階を product / meta 共通で使う
+export const STAGES = new Set(['planned', 'ready', 'implement', 'commit']);
 
 // JST(+09:00) 固定の ISO 8601 タイムスタンプを生成する
 export const jstNow = () =>
@@ -58,9 +62,24 @@ export const parseValue = (raw) => {
 // 規約違反。CLI 層で fail() へ変換される
 export class EventError extends Error {}
 
-// キーは「名前空間.区画. ...」のドットパス
+// .status の書ける位置は「事実セクションのルート」か「作業単位（第3セグメント）」のみ。
+// それ以外の位置・深さはここで拒否する
+const assertStatusLocation = (key) => {
+  const parts = key.split('.');
+  const isWorkUnit =
+    parts.length === 4 &&
+    ((parts[0] === 'product' && parts[1] === 'features') ||
+      (parts[0] === 'meta' && META_SECTIONS.has(parts[1])));
+  const isFactSection = parts.length === 3 && parts[0] === 'product' && FACT_SECTIONS.has(parts[1]);
+  if (!isWorkUnit && !isFactSection)
+    throw new EventError(`status is only allowed on fact sections or work units: ${key}`);
+};
+
+// キーは「名前空間.区画. ...」のドットパス。status の部分書き込み（.status.stage 等）は
+// 常に拒否し、status は丸ごと主張させる
 export const validateKey = (key) => {
   if (!key) throw new EventError('key is required');
+  if (key.includes('.status.')) throw new EventError(`status must be asserted whole: ${key}`);
   const [ns, section] = key.split('.');
   if (!NAMESPACES.has(ns)) throw new EventError(`unknown namespace: ${ns}`);
   if (ns === 'product' && !PRODUCT_SECTIONS.has(section))
@@ -69,16 +88,35 @@ export const validateKey = (key) => {
     );
   if (ns === 'meta' && !META_SECTIONS.has(section))
     throw new EventError(`meta section must be one of ${[...META_SECTIONS].join('/')}: ${key}`);
+  if (key.endsWith('.status')) assertStatusLocation(key);
 };
 
-// 下書き（ts を除くイベント）を検証して完成させる。ts はここで JST として付与する
-export const buildEvent = (draft) => {
+// status 値の形状。作業単位は {stage, text}、事実セクションは {text} のみを許す
+const assertStatusValue = (key, value) => {
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw new EventError(`status must be an object: ${key}`);
+  const keys = Object.keys(value).toSorted().join(',');
+  if (key.split('.').length === 4) {
+    if (keys !== 'stage,text')
+      throw new EventError(`work-unit status requires exactly {stage, text}: ${key}`);
+    if (!STAGES.has(value.stage))
+      throw new EventError(`stage must be one of ${[...STAGES].join('/')}: ${value.stage}`);
+  } else if (keys !== 'text')
+    throw new EventError(`section status requires exactly {text} without stage: ${key}`);
+  if (typeof value.text !== 'string' || value.text === '')
+    throw new EventError(`status.text must be a non-empty string: ${key}`);
+};
+
+// 下書き（ts を除くイベント）を検証して完成させる。
+// ts は既定でここで JST として付与するが、呼び出し側から同一tsを渡すこともできる
+export const buildEvent = (draft, ts = jstNow()) => {
   if (!EVENT_TYPES.has(draft.type))
     throw new EventError(`type must be one of ${[...EVENT_TYPES].join('/')}`);
   validateKey(draft.key);
-  const event = { ts: jstNow(), type: draft.type, key: draft.key };
+  const event = { ts, type: draft.type, key: draft.key };
   if (draft.type === 'set') {
     if (draft.value === undefined) throw new EventError('value is required for set');
+    if (draft.key.endsWith('.status')) assertStatusValue(draft.key, draft.value);
     event.value = draft.value;
   }
   return event;
@@ -100,7 +138,7 @@ export const readEvents = () =>
 // チェックポイントを読み込み、畳み込みの起点とする
 export const loadBase = () => {
   if (!fs.existsSync(CHECKPOINT_PATH))
-    return { trees: { product: {}, meta: {}, agenda: {} }, compactedAt: null };
+    return { trees: { product: {}, meta: {} }, compactedAt: null };
   const checkpoint = JSON.parse(fs.readFileSync(CHECKPOINT_PATH, 'utf8'));
   return { trees: checkpoint.trees, compactedAt: checkpoint.compactedAt };
 };
@@ -143,44 +181,53 @@ export function deletePath(tree, key) {
   pruneEmpty(tree, parts.slice(0, -1));
 }
 
-// features の葉に初期値を補完する。書き手は trigger/result/route に集中できる
-export const normalizeFeatures = (features) => {
-  for (const node of Object.values(features ?? {}))
-    if (node && typeof node === 'object' && 'trigger' in node) node.stage ??= 'planned';
-};
+// マーカーフィールドを持つ作業単位（オブジェクト）だけを取り出す
+const workUnits = (container, marker) =>
+  Object.values(container ?? {}).filter(
+    (node) => node && typeof node === 'object' && !Array.isArray(node) && marker in node,
+  );
 
-// meta の葉に初期値を補完する。purpose を持つノードをコンポーネントとみなす。
-// meta は「区画→コンポーネント」の2段構造のため、2レベル走査する。
-// stage は機械的な段階（planned/ready/commit）、status は常に書く進捗文
-export const normalizeMeta = (meta) => {
-  for (const section of Object.values(meta ?? {}))
-    for (const node of Object.values(section ?? {}))
-      if (node && typeof node === 'object' && 'purpose' in node) node.stage ??= 'planned';
-};
-
-// 各コンポーネントの最終更新日（YYYYMMDD）を updatedAt として注入する。
-// 対象はログのエントリが指すコンポーネント（meta は meta.<区画>.<id>、product の葉は product.<区画>）。
-// 区画や深い葉には付けない
-export const injectUpdatedAt = (trees, events) => {
-  const lastTs = new Map();
-  for (const event of events) {
-    if (event.type !== 'set') continue;
-    const parts = event.key.split('.');
-    if (parts.length < 2) continue;
-    // コンポーネントの key: meta は 3 つ目まで、product は 2 つ目まで
-    const componentKey =
-      parts[0] === 'meta' ? parts.slice(0, 3).join('.') : parts.slice(0, 2).join('.');
-    lastTs.set(componentKey, event.ts);
+// 作業単位（trigger / purpose を持つノード）に status の初期値を補完し、語彙を検証する。
+// stage は機械的な段階、status.text は常に書く進捗文
+export const normalizeTrees = (trees) => {
+  const units = [
+    ...workUnits(trees.product?.features, 'trigger'),
+    ...Object.values(trees.meta ?? {}).flatMap((section) => workUnits(section, 'purpose')),
+  ];
+  for (const node of units) {
+    if (!node.status || typeof node.status !== 'object' || Array.isArray(node.status))
+      node.status = {};
+    node.status.stage ??= 'planned';
+    node.status.text ??= '未着手';
+    if (!STAGES.has(node.status.stage)) throw new EventError(`invalid stage: ${node.status.stage}`);
   }
-  for (const [componentKey, ts] of lastTs) {
-    const parts = componentKey.split('.');
-    let node = trees[parts[0]];
-    for (const part of parts.slice(1)) {
-      if (!node || typeof node !== 'object') break;
-      node = node[part];
+};
+
+// status を持つノードへ最終更新日（YYYYMMDD）を注入する。
+// ノード自身またはその配下への set イベントのうち最新の ts を使う。
+// 該当イベントがないノードは既存値（checkpoint 由来）を保持する
+export const injectUpdatedAt = (trees, events) => {
+  const stamp = (node, prefix) => {
+    let latest = '';
+    for (const event of events) {
+      if (event.type !== 'set') continue;
+      if ((event.key === prefix || event.key.startsWith(`${prefix}.`)) && event.ts > latest)
+        latest = event.ts;
     }
-    if (node && typeof node === 'object' && !Array.isArray(node))
-      node.updatedAt = ts.slice(0, 10).replaceAll('-', '');
+    if (latest) node.updatedAt = latest.slice(0, 10).replaceAll('-', '');
+  };
+  // status を持たないコンテナはさらに下位へ走査し、持つノードで止まる
+  const walk = (node, prefix) => {
+    for (const [key, child] of Object.entries(node)) {
+      if (!child || typeof child !== 'object' || Array.isArray(child)) continue;
+      const childPath = `${prefix}.${key}`;
+      if ('status' in child) stamp(child, childPath);
+      else walk(child, childPath);
+    }
+  };
+  for (const ns of NAMESPACES) {
+    trees[ns] ??= {};
+    walk(trees[ns], ns);
   }
 };
 
