@@ -13,3 +13,13 @@
 {"ts":"2026-08-25T11:43:35.997+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"commit","text":"定義軸とコード軸の分離、方向合意の手順、リファクタオーダー書式を導入済み"}}
 {"ts":"2026-08-25T13:22:23.784+09:00","type":"set","key":"meta.skills.commit.status","value":{"stage":"ready","text":"コミットメッセージ規約の構造化改訂を実装中"}}
 {"ts":"2026-08-25T13:32:11.037+09:00","type":"set","key":"meta.skills.commit.status","value":{"stage":"commit","text":"構造化コミットメッセージ規約を導入済み"}}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.name.value","value":"Project Starter"}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.what.value","value":"プロダクト駆動開発のためのプロジェクトスターター。コピー先でプロダクト定義に置き換える"}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.name.status","value":{"text":"スターターとして初期設定"}}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.what.status","value":{"text":"スターターとして初期設定"}}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.runtime","value":"Node.js 22+"}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.language","value":"TypeScript"}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.testing","value":{"unit":"vitest"}}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.build","value":{"packageManager":"pnpm"}}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.libraries","value":{"oxlint":"linter","oxfmt":"formatter","lefthook":"git hooks","oxlint-tsgolint":"TS lint plugin","@types/node":"Node types"}}
+{"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.status","value":{"text":"スターターの初期スタックとして設定"}}

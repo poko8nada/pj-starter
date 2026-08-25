@@ -1,5 +1,41 @@
 {
-  "generatedAt": "2026-08-24T11:29:19.579+09:00",
-  "asOf": null,
-  "content": {}
+  "generatedAt": "2026-08-25T13:41:24.560+09:00",
+  "asOf": "2026-08-25T13:41:24.532+09:00",
+  "content": {
+    "name": {
+      "value": "Project Starter",
+      "status": {
+        "text": "スターターとして初期設定"
+      },
+      "updatedAt": "20260825"
+    },
+    "what": {
+      "value": "プロダクト駆動開発のためのプロジェクトスターター。コピー先でプロダクト定義に置き換える",
+      "status": {
+        "text": "スターターとして初期設定"
+      },
+      "updatedAt": "20260825"
+    },
+    "stack": {
+      "runtime": "Node.js 22+",
+      "language": "TypeScript",
+      "testing": {
+        "unit": "vitest"
+      },
+      "build": {
+        "packageManager": "pnpm"
+      },
+      "libraries": {
+        "oxlint": "linter",
+        "oxfmt": "formatter",
+        "lefthook": "git hooks",
+        "oxlint-tsgolint": "TS lint plugin",
+        "@types/node": "Node types"
+      },
+      "status": {
+        "text": "スターターの初期スタックとして設定"
+      },
+      "updatedAt": "20260825"
+    }
+  }
 }
