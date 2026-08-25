@@ -31,3 +31,4 @@
 {"ts":"2026-08-25T14:57:33.347+09:00","type":"set","key":"meta.skills.audit.path","value":".opencode/skills/audit/SKILL.md"}
 {"ts":"2026-08-25T15:26:06.066+09:00","type":"set","key":"meta.agents.auditor.status","value":{"stage":"commit","text":"auditor.md を作成し運用中"}}
 {"ts":"2026-08-25T15:26:06.066+09:00","type":"set","key":"meta.skills.audit.status","value":{"stage":"commit","text":"SKILL.md を作成し運用中"}}
+{"ts":"2026-08-25T15:29:33.943+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"commit","text":"フォーマットをreferences/に分離し本体をスリム化"}}
