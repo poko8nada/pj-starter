@@ -26,7 +26,19 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
    - `git status` — intended files only
    - `git diff` — no secrets, no unintended changes
    - `git log --oneline -10` — match repo message style
-5. **Commit** with a concise message following repo conventions (`add:` / `chore:` / `update:` / `fix:`; lowercase, single paragraph).
+5. **Commit** with a structured message:
+
+   ```
+   <type>(<scope>): <imperative subject in English, ≤50 chars, no period>
+
+   Why: なぜこの変更が必要か
+   What: 何を変えたか
+   How: どう実装したか（自明な場合は省略）
+   ```
+
+   - Types: `feat` / `fix` / `docs` / `refactor` / `chore`. `add:` and `update:` are retired — pick the type by intent.
+   - Scope mirrors the component id (e.g. `(agenda-skill)`, `(event-log)`); omit for repo-wide changes.
+   - Subject is English imperative; body is Japanese in plain form (「〜した」), wrapped at ~72 chars; labels stay English. Blank line between subject and body.
 
 ## Strict no-commit moments
 

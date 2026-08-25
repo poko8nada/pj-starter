@@ -11,3 +11,5 @@
 {"ts":"2026-08-25T11:00:36.665+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"ready","text":"ゲート列・リファクラダー・提示プロトコルの導入改訂を実装中"}}
 {"ts":"2026-08-25T11:32:40.629+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"ready","text":"定義軸とコード軸の分離、Present&discuss統合の改訂を実装中"}}
 {"ts":"2026-08-25T11:43:35.997+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"commit","text":"定義軸とコード軸の分離、方向合意の手順、リファクタオーダー書式を導入済み"}}
+{"ts":"2026-08-25T13:22:23.784+09:00","type":"set","key":"meta.skills.commit.status","value":{"stage":"ready","text":"コミットメッセージ規約の構造化改訂を実装中"}}
+{"ts":"2026-08-25T13:32:11.037+09:00","type":"set","key":"meta.skills.commit.status","value":{"stage":"commit","text":"構造化コミットメッセージ規約を導入済み"}}
