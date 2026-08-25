@@ -10,28 +10,33 @@ Turn an implementation decision into an agreed plan, then record it. Never imple
 ## Scope
 
 - Idea capture ("ログインを作りたい") is not agenda — it is plain discussion: once the content is agreed, append it directly (new features enter as `planned`; stack / roadmap changes surfaced by the same discussion go together).
-- Pure JSON value changes (copy tweaks, stage flips) skip agenda entirely — append directly.
+- Pure JSON value changes (copy tweaks, status flips) skip agenda entirely — append directly.
 - When unsure whether something counts as implementation, run agenda.
 - One agenda = one coherent deliverable; split unrelated areas into separate sessions.
-
-## Existing only
-
-Agenda never creates or defines new components. It works exclusively with the current snapshot state.
-
-If a required component is missing from the snapshot, **stop agenda immediately**, capture it through discussion (append as `planned`), then **restart agenda from scratch**. Never resume mid-way.
 
 ## Procedure
 
 1. **Domain** — decide whether the work targets product or meta.
-2. **Slices & structure** — select targets from the existing snapshot state and design implementation slices with refactoring-aware layering, following the structure axes below.
-3. **Tests** — decide per order using the test criteria below.
-4. **Present** — show the plan in the presentation format below.
-5. **Discuss** — revise until the user explicitly agrees.
+2. **Definition axes** — derive target keys (`product.features.<id>` / `meta.<section>.<id>`) from the request and check them against the definition axes below (snapshots alone are enough). Any hit means agenda cannot proceed: register / revise / split via the feature skill, then restart from scratch.
+3. **Code axes** — read the files the plan would modify and check them against the code axes below. A hit is discussed with the user before any order is designed, using these four labels:
+
+   ```
+   Responsibilities: この変更が触る既存の責務境界
+   Ideal design:     現行コードに引っ張られない望ましい形
+   Gap bridging:     現状から理想へどう着地するか
+   Debt:             増えるならどこで、なぜ許容するか
+   ```
+
+   The agreed refactor enters the plan completely, never partially; if refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle.
+
+4. **Tests** — decide per order using the test criteria below.
+5. **Present & discuss** — show the full plan in the presentation format below and iterate until explicit agreement.
+
 6. **Record** — on consensus, append events. The normal flow causes **stage transitions only** (`→ ready`), each recorded as one whole-status assertion per target (e.g. `{"stage":"ready","text":"実装計画が確定。実装待ち"}`). Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
 
 ## Judgment axes
 
-Both deliberations happen in chat and are **never recorded**; their outcomes materialize as the Files layout and Tests entries of each order.
+All deliberations happen in chat and are **never recorded**; their outcomes materialize as the Files layout and Tests entries of each order.
 
 ### Test criteria
 
@@ -43,18 +48,36 @@ Both deliberations happen in chat and are **never recorded**; their outcomes mat
 
 Keep to the minimum set that catches regressions. Tests live next to their source as `*.test.ts` and run via `pnpm test:run`.
 
-### Structure axes
+### Definition axes
 
-| Axis                       | Rule                                                                                             |
-| -------------------------- | ------------------------------------------------------------------------------------------------ |
-| Pure vs boundary           | Logic and I/O live in separate layers — this drives the test policy                              |
-| Shared extraction          | Logic used by multiple slices is extracted into a shared module                                  |
-| Size limits                | Functions ≤ 80 lines, files ≤ 480 lines (same values as oxlint) — stay under them from the start |
-| Existing file modification | If the target file already exceeds limits or mixes responsibilities, include a split proposal    |
+Checked against snapshots alone. Any hit aborts agenda here — the fix belongs to the feature skill (registration / revision / splitting).
+
+| Axis           | Hit condition                                 |
+| -------------- | --------------------------------------------- |
+| Existence      | no snapshot entry matches the request         |
+| Truth          | definition drifted from reality               |
+| Single purpose | explaining the purpose needs "and" / "etc."   |
+| Route size     | route exceeds 3 steps                         |
+| Session size   | ready → commit cannot fit one working session |
+
+### Code axes
+
+Checked by reading the files to modify. A hit adds refactor orders to this agenda — it never aborts it.
+
+| Axis                 | Rule                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| Replace over accrete | never patch dirty spots; refactor first, then add                                      |
+| Root cause           | fix the cause, not the symptom                                                         |
+| Pattern spread       | same problem elsewhere? include sibling fixes in scope, or state why not               |
+| Size limits          | functions ≤ 80 lines, files ≤ 480 lines; oversized existing files get a split proposal |
+| Pure vs boundary     | logic and I/O live in separate layers — this drives the test policy                    |
+| Shared extraction    | logic used by multiple slices goes into a shared module                                |
+
+Refactoring never creates new entries — it rides on the cycles of the existing units whose code it touches.
 
 ## Presentation formats
 
-Each order is fully independent: implementable and verifiable on its own. `Depends on` always references earlier numbers (one-way dependencies).
+Each order is fully independent: implementable and verifiable on its own. `Depends on` always references earlier numbers (one-way dependencies). Refactor orders look like ordinary orders; their Surface verifies behavior preservation (existing tests stay green).
 
 ### Product
 
@@ -68,12 +91,23 @@ Feature (from snapshots/product.json):
   Route:   [credential_check, session_create, login_endpoint]
 
 Order:
-  1. Session management
+  1. Split session logic out of the route handler (refactor)
      Route step: session_create
      Target: product.features.auth
      Depends on: none
      Files:
-       - src/lib/auth/session.ts (create)
+       - src/lib/auth/session.ts (create) — moved from src/routes/api.ts, behavior unchanged
+     Tests:
+       - existing src/routes/api.test.ts stays green
+     Surface:
+       - pnpm test:run passes with no test changes
+
+  2. Session management
+     Route step: session_create
+     Target: product.features.auth
+     Depends on: 1
+     Files:
+       - src/lib/auth/session.ts (modify)
          - createSession()
          - validateToken()
      Tests:
@@ -81,10 +115,10 @@ Order:
      Surface:
        - pnpm test:run passes
 
-  2. Login endpoint
+  3. Login endpoint
      Route step: credential_check + login_endpoint
      Target: product.features.auth
-     Depends on: 1
+     Depends on: 2
      Files:
        - src/routes/api.ts (modify)
          - handleLogin()

@@ -8,3 +8,6 @@
 {"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.skills.feature.status","value":{"stage":"commit","text":"登録・改訂手順を新形式に対応済み"}}
 {"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.skills.commit.status","value":{"stage":"commit","text":"ライフサイクル手順を1イベント化済み"}}
 {"ts":"2026-08-25T10:05:35.794+09:00","type":"set","key":"meta.harness.session-idle.status","value":{"stage":"commit","text":"auditをstatus.stage参照に更新し監査clean"}}
+{"ts":"2026-08-25T11:00:36.665+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"ready","text":"ゲート列・リファクラダー・提示プロトコルの導入改訂を実装中"}}
+{"ts":"2026-08-25T11:32:40.629+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"ready","text":"定義軸とコード軸の分離、Present&discuss統合の改訂を実装中"}}
+{"ts":"2026-08-25T11:43:35.997+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"commit","text":"定義軸とコード軸の分離、方向合意の手順、リファクタオーダー書式を導入済み"}}
