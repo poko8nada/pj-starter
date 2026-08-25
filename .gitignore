@@ -39,3 +39,6 @@ lerna-debug.log*
 
 # stack-adopt scaffolds
 .stack-adopt/
+
+# spike verification worktrees (recon skill)
+.worktrees/

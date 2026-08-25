@@ -32,3 +32,14 @@
 {"ts":"2026-08-25T15:26:06.066+09:00","type":"set","key":"meta.agents.auditor.status","value":{"stage":"commit","text":"auditor.md を作成し運用中"}}
 {"ts":"2026-08-25T15:26:06.066+09:00","type":"set","key":"meta.skills.audit.status","value":{"stage":"commit","text":"SKILL.md を作成し運用中"}}
 {"ts":"2026-08-25T15:29:33.943+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"commit","text":"フォーマットをreferences/に分離し本体をスリム化"}}
+{"ts":"2026-08-25T16:07:47.092+09:00","type":"set","key":"meta.agents.web-researcher","value":{"purpose":"ライブラリやフレームワークの技術調査。公式サイトやGitHubの有無を確認"}}
+{"ts":"2026-08-25T16:07:47.092+09:00","type":"set","key":"meta.agents.spike-verifier","value":{"purpose":"git worktreeで試験導入し、runbookを生成する検証"}}
+{"ts":"2026-08-25T16:14:03.435+09:00","type":"set","key":"meta.skills.recon.status","value":{"stage":"ready","text":"実装計画が確定。実装待ち"}}
+{"ts":"2026-08-25T16:14:03.435+09:00","type":"set","key":"meta.agents.web-researcher.status","value":{"stage":"ready","text":"実装計画が確定。実装待ち"}}
+{"ts":"2026-08-25T16:14:03.435+09:00","type":"set","key":"meta.agents.spike-verifier.status","value":{"stage":"ready","text":"実装計画が確定。実装待ち"}}
+{"ts":"2026-08-25T16:15:50.445+09:00","type":"set","key":"meta.skills.recon.path","value":".opencode/skills/recon/SKILL.md"}
+{"ts":"2026-08-25T16:15:50.445+09:00","type":"set","key":"meta.agents.web-researcher.path","value":".opencode/agent/web-researcher.md"}
+{"ts":"2026-08-25T16:15:50.445+09:00","type":"set","key":"meta.agents.spike-verifier.path","value":".opencode/agent/spike-verifier.md"}
+{"ts":"2026-08-25T16:48:34.558+09:00","type":"set","key":"meta.skills.recon.status","value":{"stage":"commit","text":"SKILL.mdを作成し運用中"}}
+{"ts":"2026-08-25T16:48:34.558+09:00","type":"set","key":"meta.agents.web-researcher.status","value":{"stage":"commit","text":"web-researcher.mdを作成し運用中"}}
+{"ts":"2026-08-25T16:48:34.558+09:00","type":"set","key":"meta.agents.spike-verifier.status","value":{"stage":"commit","text":"spike-verifier.mdを作成し運用中"}}
