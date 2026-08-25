@@ -2,8 +2,8 @@
 
 ## Drive system
 
-- Projects are represented by event logs. **Read [events/README.md](./events/README.md) first.**
-- Add what the user has agreed to to the log.
+- `events/` represents this project state, check this first. **For overview, read [events/README.md](./events/README.md).**
+- This project primarily focuses on accumulating event logs. Each task is recorded in the logs.
 
 ## Basic principles
 
