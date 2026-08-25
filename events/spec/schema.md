@@ -1,33 +1,12 @@
-# Product Snapshot Specification
+# Snapshot Schema Specification
 
-`events/snapshots/product.json` is a generated artifact, folded from `product.*` events by `rebuild`. Hand-authoring it is forbidden. This document defines what every section means and how to write features for any product type.
+This document defines the content schemas of the snapshots: what every `product.*` and `meta.*` section means, and how to write entries for each collection.
 
-## Envelope
+The shared node model — fact sections vs work units, `status` shapes, the stage vocabulary, whole-status assertions, validation — is specified once in [../README.md](../README.md#recording-contract) (Recording contract) and is not redefined here; the entries below reference it rather than repeating it. Log format, compaction, and rebuild mechanics also live there.
 
-```json
-{
-  "generatedAt": "2026-08-25T10:00:00.000+09:00",
-  "asOf": "2026-08-25T10:06:00.000+09:00",
-  "content": {}
-}
-```
+## product
 
-- `generatedAt` — when this snapshot was last written; refreshed only when the content changed
-- `asOf` — the newest event timestamp folded in. Smaller than the log's latest ts means the snapshot is stale
-- Consumers read `content` only
-
-## Node model
-
-Every section is an **object**: content fields sit in parallel with an optional `status`. Two kinds of nodes exist:
-
-- **Fact sections** (`name`, `what`, `stack`, `look`, `roadmap`, `deploy`) — assertions of fact. They may carry `status: {text}` recording what was last changed there; without it they stay raw objects
-- **Work units** (`features.<id>`) — trackable slices carrying `status: {stage, text}` and `updatedAt`
-
-`updatedAt` (YYYYMMDD) is injected by rebuild on every status-bearing node — the date its value was last written, derived from the event's `ts`. Nodes never given a status receive no metadata at all.
-
-## Sections
-
-The second segment of a `product.*` key is fixed to these seven:
+`product.*` describes the artifacts the project produces. The second segment is fixed to these seven sections:
 
 | Section    | Kind       | Content                                          |
 | ---------- | ---------- | ------------------------------------------------ |
@@ -39,7 +18,7 @@ The second segment of a `product.*` key is fixed to these seven:
 | `roadmap`  | fact       | `{ "mvp": [featureId…], "v1": [featureId…] }`    |
 | `deploy`   | fact       | Delivery process                                 |
 
-## stack
+### stack
 
 Two scalars plus fixed groups. **Omit keys that do not apply** — a backend-only library has no frontend/data groups.
 
@@ -65,7 +44,7 @@ Two scalars plus fixed groups. **Omit keys that do not apply** — a backend-onl
 - `build.bundler` records only bundlers the project operates directly. Framework-internal bundlers (e.g. Turbopack inside Next.js) are not double-recorded; omit the whole `build` group then
 - `libraries` / `helpers` are the catch-alls for long-tail dependencies and in-house utilities. Do not spawn ad-hoc sibling keys for them
 
-## look
+### look
 
 ```json
 {
@@ -77,7 +56,7 @@ Two scalars plus fixed groups. **Omit keys that do not apply** — a backend-onl
 
 `mockups` links static HTML produced by the mockup skill. It is an ID map, not an array, so events can address entries as `look.mockups.<id>`.
 
-## features
+### features
 
 A feature is a **vertical slice**: the smallest unit that independently completes a circuit from an initiating cause (`trigger`) to an observable result (`result`). Write one slice per key; the leaf requires exactly three fields:
 
@@ -99,31 +78,23 @@ A feature is a **vertical slice**: the smallest unit that independently complete
 }
 ```
 
-One lifecycle field exists on every slice — **omit it at creation**; `rebuild` injects the default (`{"stage": "planned", "text": "未着手"}`) so snapshots always carry it:
+One lifecycle field exists on every slice — **omit it at creation**; rebuild injects the default so snapshots always carry it (see [Recording contract](../README.md#recording-contract)):
 
-- `status.stage` — pipeline stage, shared vocabulary across namespaces: `planned` → `ready` → `implement` → `commit`. A committed feature re-enters at `ready` whenever new work on it is agreed — keep the stage truthful at all times
+- `status.stage` — pipeline stage (vocabulary and lifecycle rules: [Recording contract](../README.md#recording-contract))
 - `status.text` — free-text progress note (what has been done so far), always written together with the stage
 - `updatedAt` — injected by rebuild (YYYYMMDD)
 
-Lifecycle transitions are single events asserting the whole status — stage and progress note can never drift apart:
-
-```jsonl
-{"ts":"…","type":"set","key":"product.features.contact_form.status","value":{"stage":"ready","text":"実装計画が確定。実装待ち"}}
-{"ts":"…","type":"set","key":"product.features.contact_form.status","value":{"stage":"implement","text":"submit_handlerまで実装済み"}}
-{"ts":"…","type":"set","key":"product.features.contact_form.status","value":{"stage":"commit","text":"全route stepを実装済み"}}
-```
-
-### Sizing & splitting
+#### Sizing & splitting
 
 - Draft routes with **at most 3 steps**. A request needing more is split at capture time into sibling features — same depth, kebab-composed ids (`auth-session`, `auth-endpoint`) — each with its own trigger / result / sub-route; the oversized key is removed with `del`
 - Each feature is sized so one working session carries it through `ready → commit`
-- Committed features re-enter at `ready` when new work is agreed; remaining route steps mark what is left
+- On re-entry (see [Recording contract](../README.md#recording-contract)), remaining route steps mark what is left of the slice
 
-### The completeness test
+#### The completeness test
 
 Ask: _can this unit be described as "X happens → Y results" while standing on its own?_ If explaining it requires referencing other unfinished pieces ("this renders data fetched by that other thing"), it is not a slice yet — keep splitting or merge until each unit closes its own circuit.
 
-### Field definitions
+#### Field definitions
 
 **trigger** — the initiating cause. All of these are valid forms:
 
@@ -143,7 +114,7 @@ For type-level APIs, generalize trigger/result from runtime causality to input/o
 
 Do not add flags or nested structure to separate them; premature distinction adds attributes without practical gain.
 
-### Decomposition procedure
+#### Decomposition procedure
 
 1. List candidate units where a single cause yields a single observable result
 2. Apply the completeness test to each candidate
@@ -151,7 +122,7 @@ Do not add flags or nested structure to separate them; premature distinction add
 4. **Reject horizontal decomposition**: "all UI components" or "all DB access" groups are not slices — they have no closed circuit
 5. **Small function lists ARE valid slices** for libraries: each function completes call→result on its own, so many small slices are vertical, not horizontal fragmentation
 
-### Worked examples by product type
+#### Worked examples by product type
 
 Content website (passive triggers dominate):
 
@@ -207,20 +178,20 @@ Stateful API pair (split, do not merge):
 
 ```json
 "register_listener": { "trigger": "on('event', cb) is called", "result": "cb is registered as a listener", "route": ["listener_store"] },
-"emit_event":        { "trigger": "emit('event') is called",        "result": "All registered callbacks run",          "route": ["listener_lookup", "invoke_all"] }
+"emit_event":        { "trigger": "emit('event') is called",           "result": "All registered callbacks run",          "route": ["listener_lookup", "invoke_all"] }
 ```
 
-### Reading slices
+#### Reading slices
 
 - Passive triggers clustering across slices reveals shared mechanisms (scroll detection, lazy display)
 - Long routes containing steps unique to one slice mark behavior-heavy complexity hotspots — visible without any Content/Behavior flag
 - Short enumeration routes indicate simple composition
 
-### Boundary
+#### Boundary
 
 Framework design contracts — component composition models, plugin extension points, reactivity architecture — cannot be reduced to trigger/result slices. They are cross-slice constraints and belong to architecture prose outside snapshots. Do not force them into features.
 
-## roadmap
+### roadmap
 
 ```json
 { "mvp": ["contact_form"], "v1": [], "status": { "text": "MVP構成を確定" } }
@@ -228,7 +199,7 @@ Framework design contracts — component composition models, plugin extension po
 
 Arrays of feature IDs only. Membership expresses delivery intent: what MVP ships versus what v1 adds. There is no stage vocabulary here — implementation intent lives here, identity lives in the slice itself.
 
-## deploy
+### deploy
 
 ```json
 {
@@ -240,3 +211,63 @@ Arrays of feature IDs only. Membership expresses delivery intent: what MVP ships
 ```
 
 All four keys optional. Static sites use `method: "rsync"`; libraries use `method: "npm publish"`.
+
+## meta
+
+`meta.*` describes the **driving machinery** of the project: everything that operates the project rather than the output it produces.
+
+### Boundary definition
+
+> **meta = the machinery that drives and operates the project.**
+> **product = the artifacts that machinery produces.**
+
+Practical consequences:
+
+- Agent-executed layers (plugins, skills, driving docs) belong here
+- Quality gates (pre-commit enforcement) belong here — they drive how work ships
+- Plain tool _configuration files_ are not inventoried individually; they appear only as part of a gate-level entry (see Granularity policy)
+
+### Sections
+
+The second segment of a `meta.*` key is fixed to these five:
+
+| Section   | Contents                                                                           |
+| --------- | ---------------------------------------------------------------------------------- |
+| `harness` | Hook runtimes and plugin wiring (harness-dependent execution layer), quality gates |
+| `agents`  | Sub-agents (opencode agent definitions)                                            |
+| `skills`  | Skills, including ones merely planned                                              |
+| `docs`    | Driving documents (AGENTS.md, events specs)                                        |
+| `scripts` | Operational scripts (root `scripts/` and `events/scripts/`)                        |
+
+Every section is a map of components — all five are work-unit collections, so every `meta.<section>.<id>` is a work unit at the same depth as `product.features.<id>`.
+
+### Entry shape
+
+Every component leaf carries a `purpose`; that field marks the object as a meta component:
+
+```json
+{
+  "agenda": {
+    "purpose": "Fix the unit of work per feature slice",
+    "status": { "stage": "planned", "text": "未着手" },
+    "updatedAt": "20260825"
+  }
+}
+```
+
+| Field     | Rule                                                                     |
+| --------- | ------------------------------------------------------------------------ |
+| `path`    | Where the component lives. Omit while only planned; set once implemented |
+| `purpose` | One-sentence intent. Required — its presence defines a component leaf    |
+
+`status` / `updatedAt` follow the shared node model ([Recording contract](../README.md#recording-contract)); rebuild injects their defaults.
+
+### Granularity policy
+
+- **One component = one purpose**, verifiable by **one surface**. An entry whose purpose needs "and" / "etc." is a bundle and must be split into sibling entries at the same depth (the oversized key is removed with `del`)
+- Size each change cycle to complete within one working session (`ready → commit`)
+- One entry per **entry point or mechanism** (a hook runtime, a skill, a script, a gate). Never per configuration file
+- Tool configs (oxlint, oxfmt, tsconfig…) are summarized by their gate entry only — e.g. the pre-commit quality gate is one entry pointing at `lefthook.yaml`
+- Library internals are reachable through the entry's `path`; do not enumerate them
+
+The live inventory is always readable from `events/snapshots/meta.json`; this document deliberately does not duplicate it.

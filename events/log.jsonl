@@ -44,3 +44,11 @@
 {"ts":"2026-08-25T16:48:34.558+09:00","type":"set","key":"meta.agents.web-researcher.status","value":{"stage":"commit","text":"web-researcher.mdを作成し運用中"}}
 {"ts":"2026-08-25T16:48:34.558+09:00","type":"set","key":"meta.agents.spike-verifier.status","value":{"stage":"commit","text":"spike-verifier.mdを作成し運用中"}}
 {"ts":"2026-08-25T17:47:55.910+09:00","type":"set","key":"meta.skills.commit.status","value":{"stage":"commit","text":"typeをMECEな4つに削減し、status追記を機械化"}}
+{"ts":"2026-08-25T18:45:13.219+09:00","type":"del","key":"meta.docs.product-spec"}
+{"ts":"2026-08-25T18:45:13.219+09:00","type":"set","key":"meta.docs.schema-spec.purpose","value":"product/metaスナップショットのコンテンツスキーマと方法論"}
+{"ts":"2026-08-25T18:47:17.952+09:00","type":"set","key":"meta.docs.events-readme.status","value":{"stage":"ready","text":"再構成計画が確定。読み取り導線の追記と記録契約への一本化待ち"}}
+{"ts":"2026-08-25T18:47:17.952+09:00","type":"set","key":"meta.docs.schema-spec.status","value":{"stage":"ready","text":"再構成計画が確定。product/metaスキーマの統合作業待ち"}}
+{"ts":"2026-08-25T18:49:39.603+09:00","type":"set","key":"meta.docs.schema-spec.path","value":"events/spec/schema.md"}
+{"ts":"2026-08-25T20:25:34.986+09:00","type":"set","key":"meta.docs.events-readme.status","value":{"stage":"commit","text":"読み取り導線を新設し記録契約にnode modelを集約"}}
+{"ts":"2026-08-25T20:25:34.986+09:00","type":"set","key":"meta.docs.schema-spec.status","value":{"stage":"commit","text":"product/metaスキーマをschema.mdに統合し旧specを削除"}}
+{"ts":"2026-08-25T20:25:34.986+09:00","type":"set","key":"meta.skills.feature.status","value":{"stage":"commit","text":"Domain schemasの参照先をschema.mdに更新"}}

@@ -9,7 +9,7 @@ Own the lifecycle data of slices: registration, splitting, and definition revisi
 
 ## References
 
-- Domain schemas: `events/spec/product.md`, `events/spec/meta.md`
+- Domain schemas: `events/spec/schema.md`
 - Current state: `events/snapshots/product.json`, `events/snapshots/meta.json`
 - Log rules: `events/README.md`
 
