@@ -23,3 +23,4 @@
 {"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.build","value":{"packageManager":"pnpm"}}
 {"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.libraries","value":{"oxlint":"linter","oxfmt":"formatter","lefthook":"git hooks","oxlint-tsgolint":"TS lint plugin","@types/node":"Node types"}}
 {"ts":"2026-08-25T13:41:24.532+09:00","type":"set","key":"product.stack.status","value":{"text":"スターターの初期スタックとして設定"}}
+{"ts":"2026-08-25T14:44:44.984+09:00","type":"set","key":"meta.agents.auditor","value":{"purpose":"コミット前レビューを担う専任サブエージェント"}}

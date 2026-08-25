@@ -20,6 +20,7 @@ The second segment of a `meta.*` key is fixed to these four:
 | Section   | Contents                                                                           |
 | --------- | ---------------------------------------------------------------------------------- |
 | `harness` | Hook runtimes and plugin wiring (harness-dependent execution layer), quality gates |
+| `agents`  | Sub-agents (opencode agent definitions)                                            |
 | `skills`  | Skills, including ones merely planned                                              |
 | `docs`    | Driving documents (AGENTS.md, events specs)                                        |
 | `scripts` | Operational scripts (root `scripts/` and `events/scripts/`)                        |

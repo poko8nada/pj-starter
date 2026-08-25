@@ -25,7 +25,7 @@ export const PRODUCT_SECTIONS = new Set([
 ]);
 // status を持てる事実セクション。features は作業単位の収集点なので対象外
 export const FACT_SECTIONS = new Set(['name', 'what', 'stack', 'look', 'roadmap', 'deploy']);
-export const META_SECTIONS = new Set(['harness', 'skills', 'docs', 'scripts']);
+export const META_SECTIONS = new Set(['harness', 'agents', 'skills', 'docs', 'scripts']);
 export const EVENT_TYPES = new Set(['set', 'del']);
 // 作業単位の段階。4段階を product / meta 共通で使う
 export const STAGES = new Set(['planned', 'ready', 'implement', 'commit']);

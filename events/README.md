@@ -55,7 +55,7 @@ Lifecycle facts (ready / implemented / committed) are not special types — they
 The first segment must be one of `product` / `meta`. Unknown namespaces are rejected on append.
 
 - `product.*` — second segment is fixed: `name` / `what` / `stack` / `look` / `features` / `roadmap` / `deploy`
-- `meta.*` — second segment is fixed: `harness` / `skills` / `docs` / `scripts` (see [spec/meta.md](./spec/meta.md))
+- `meta.*` — second segment is fixed: `harness` / `agents` / `skills` / `docs` / `scripts` (see [spec/meta.md](./spec/meta.md))
 
 Every section is an object: content fields sit in parallel with an optional `status`. Two kinds of nodes exist:
 

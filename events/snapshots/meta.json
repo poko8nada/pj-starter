@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-25T13:32:11.064+09:00",
-  "asOf": "2026-08-25T13:32:11.037+09:00",
+  "generatedAt": "2026-08-25T14:44:45.010+09:00",
+  "asOf": "2026-08-25T14:44:44.984+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -165,6 +165,16 @@
         "status": {
           "stage": "commit",
           "text": "agendaオプションを除去済み"
+        },
+        "updatedAt": "20260825"
+      }
+    },
+    "agents": {
+      "auditor": {
+        "purpose": "コミット前レビューを担う専任サブエージェント",
+        "status": {
+          "stage": "planned",
+          "text": "未着手"
         },
         "updatedAt": "20260825"
       }
