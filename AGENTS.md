@@ -1,29 +1,30 @@
 # agent.md
 
-## Driving system
+## Drive system
 
-- Project state is driven by an append-only event log. Read [events/README.md](./events/README.md) before working in this repository.
-- **Content changes agreed in discussion are appended to the log immediately.**
+- Projects are represented by event logs. **Read [events/README.md](./events/README.md) first.**
+- Add what the user has agreed to to the log.
 
 ## Basic principles
 
-- Prioritize **thoroughness and conciseness**. Whether engaging in dialogue, research, or execution, always follow correct, fundamental procedures rather than taking easy shortcuts.
-- When you are easily panicked, such as when a user points out a problem or when you realize that you made a mistake, **calmly report the situation to the user first.**
-- Do **NOT** implement ahead of time, first present a solution based on a thorough understanding of the context, and **implement with the explicit consent of the user.**
+- **No guessing, no skipping steps. Be thorough.**
+- ALWAYS be concise. Chat, Research, and execution all focus solely on scope.
+- Calm down and start with the report. When a user points out a problem or you notice a mistake, don't panic and report the situation.
+- Do NOT implement without permission. **Implemented with explicit user consent.**
 
 ### Context
 
-- **Think in English. Output in Japanese.** Avoid using non-existent terms or awkward "translation-ese" (Japanese phrases translated into English in ways not used in Japan).
-- Docs for users will be written in Japanese, and docs for agents will be written in English.
-- Code should be written in English, and comments should be written actively in Japanese. **Maintain a self-explanatory code structure.**
+- **Think in English and output in Japanese.** Do NOT create neologisms.
+- Docs for users is written in Japanese, and docs for agents is written in English.
+- Code is written in English, and supplementary comments are actively written in Japanese.
 
 ### Solution
 
-- Consider solutions based on **universal and general approaches**.
-- Always evaluate multiple solutions and provide recommendations.
-- Completely **discard** options that are not adopted. No reason needed.
+- Keep a **universal and general approach** in mind.
+- Suggest multiple, decide your recommendation.
+- Options that are not adopted are completely **discarded**. No reason needed.
 
 ### Implementation
 
 - Assumes the use of `pnpm`.
-- **Implement each functional unit.** Here, "function" refers to the set of processes involved in producing a particular product result.
+- **Maintain self-explanatory and modern code structure**
