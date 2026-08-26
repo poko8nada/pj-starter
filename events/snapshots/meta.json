@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-26T13:42:28.213+09:00",
-  "asOf": "2026-08-26T13:42:28.183+09:00",
+  "generatedAt": "2026-08-26T15:48:56.588+09:00",
+  "asOf": "2026-08-26T15:48:24.991+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -17,16 +17,16 @@
         "purpose": "編集直後のreport-only lint",
         "status": {
           "stage": "commit",
-          "text": "edit 直後に oxlint を report-only で実行中"
+          "text": "rootをresolveProjectRoot経由に統一"
         },
-        "updatedAt": "20260824"
+        "updatedAt": "20260826"
       },
       "session-idle": {
         "path": ".opencode/plugin/session-idle.ts",
         "purpose": "品質レビューとevents同期の順次実行",
         "status": {
           "stage": "commit",
-          "text": "sync後にターンサマリ記録を呼ぶ順序へ更新"
+          "text": "events syncにroot単位のTTLガードを追加し、resolveProjectRootでworktreeをevents/の存在で正規化"
         },
         "updatedAt": "20260826"
       },
@@ -34,10 +34,10 @@
         "purpose": "mockup指示の追記を検知しエージェントを起床させる",
         "status": {
           "stage": "commit",
-          "text": "annotations監視とsession.promptで起床するプラグインを作成"
+          "text": "annotations.jsonlパスをresolveProjectRoot経由の遅延解決に修正"
         },
         "path": ".opencode/plugin/mockup-notify.ts",
-        "updatedAt": "20260825"
+        "updatedAt": "20260826"
       },
       "turn-summary": {
         "purpose": "ターン完了時に作業サマリをlog名前空間としてeventsログへ記録する",
@@ -167,7 +167,7 @@
         "purpose": "イベントの追記（単発・バッチ）",
         "status": {
           "stage": "commit",
-          "text": "log名前空間を追加しfold対象外の検証を強化"
+          "text": "status assertion追記で更新"
         },
         "updatedAt": "20260826"
       },
@@ -176,9 +176,9 @@
         "purpose": "スナップショット生成",
         "status": {
           "stage": "commit",
-          "text": "normalizeTrees呼び出しに差し替え済み"
+          "text": "build/appendは何も変えていないがsnapshot再生成で更新"
         },
-        "updatedAt": "20260825"
+        "updatedAt": "20260826"
       },
       "event-compact": {
         "path": "events/scripts/compact.mjs",

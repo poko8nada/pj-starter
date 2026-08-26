@@ -1,10 +1,12 @@
 // フックランタイム： mockupワークベンチの annotations.jsonl を監視する。
-// notifyレコード（起床トリガー）を検知したら、最後に活動したセッションへ
-// 未解決指示のまとめを prompt として送る。送信ボタンは記録のみで起きないため、
-// 「指示をまとめて書いてから起こす」運用をここで実現する
+// notifyレコード（起床トリガー）を検知したら、最後に活動したセッションへ未解決指示のまとめを prompt として送る。送信ボタンは記録のみで起きないため、「指示をまとめて書いてから起こす」運用をここで実現する
+// root は resolveProjectRoot 経由で events/ を持つパスに正規化される。
+// worktree / directory はファクトリ引数のクロージャ値で不変だが、events/ 出現タイミングや process.cwd() の変化に対する耐性のため wake() の度に再解決する。
+// watch() 自体はプラグイン起動時に一度だけ張られるため、監視対象ディレクトリ自体は固定される点に注意
 import { readFileSync, watch } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { Plugin } from '@opencode-ai/plugin';
+import { resolveProjectRoot } from '../lib/harness/resolve-root';
 
 interface AnnotationRecord {
   ts?: string;
@@ -27,14 +29,16 @@ const parseRecord = (line: string): AnnotationRecord | null => {
   }
 };
 
-export const MockupNotifyPlugin: Plugin = async ({ client, worktree }) => {
-  const file = join(worktree, WORKBENCH, 'annotations.jsonl');
+const annotationsPath = (worktree: string | undefined, directory: string | undefined): string =>
+  join(resolveProjectRoot({ worktree, directory }), WORKBENCH, 'annotations.jsonl');
+
+export const MockupNotifyPlugin: Plugin = async ({ client, worktree, directory }) => {
   let lastSessionId = '';
   let processedNotifyTs = '';
   // タイマーハンドルの型環境差（Node/DOM/Bun）を吸収するためオブジェクトで包む
   let timer: { id: ReturnType<typeof setTimeout> } | null = null;
 
-  const readRecords = (): AnnotationRecord[] => {
+  const readRecords = (file: string): AnnotationRecord[] => {
     try {
       const raw = readFileSync(file, 'utf8').trim();
       if (raw === '') return [];
@@ -50,7 +54,8 @@ export const MockupNotifyPlugin: Plugin = async ({ client, worktree }) => {
 
   const wake = async (): Promise<void> => {
     if (lastSessionId === '') return;
-    const records = readRecords();
+    const file = annotationsPath(worktree, directory);
+    const records = readRecords(file);
     const last = records.at(-1);
     if (!last || last.type !== 'notify' || last.ts === processedNotifyTs) return;
     processedNotifyTs = last.ts ?? '';
@@ -73,7 +78,7 @@ export const MockupNotifyPlugin: Plugin = async ({ client, worktree }) => {
   };
 
   try {
-    watch(dirname(file), () => {
+    watch(dirname(annotationsPath(worktree, directory)), () => {
       if (timer !== null) clearTimeout(timer.id);
       timer = {
         id: setTimeout(() => {
