@@ -68,3 +68,5 @@
 {"ts":"2026-08-25T23:18:22.664+09:00","type":"set","key":"meta.skills.readme.path","value":".opencode/skills/readme/SKILL.md"}
 {"ts":"2026-08-25T23:26:35.956+09:00","type":"set","key":"meta.skills.readme.status","value":{"stage":"implement","text":"Contributing/Licenseセクションの判定手順を具体化"}}
 {"ts":"2026-08-25T23:29:42.773+09:00","type":"set","key":"meta.skills.readme.status","value":{"stage":"commit","text":"SKILL.mdを作成しSection decisionsを具体化"}}
+{"ts":"2026-08-26T09:15:15.429+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"ready","text":"提示フォーマットをmarkdown構造化に改訂"}}
+{"ts":"2026-08-26T09:17:06.303+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"commit","text":"提示フォーマットをmarkdown構造に改訂"}}

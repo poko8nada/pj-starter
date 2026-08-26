@@ -1,29 +1,36 @@
 # Meta presentation format
 
-Present the plan in this format when the domain is meta.
+Present the plan in this format when the domain is meta. Output it as rendered markdown in chat — never inside a code fence.
 
-```
-Agenda: audit skill implementation
+## Example
+
+```markdown
+# Agenda: audit skill implementation
+
 Domain: meta
 
-Component (from snapshots/meta.json):
-  Purpose: 生成物をログで絞り込みレビューする
-  Stage:   planned
+## Component (from snapshots/meta.json)
 
-Order:
-  1. SKILL.md creation
-     Target: meta.skills.audit
-     Depends on: none
-     Files:
-       - .opencode/skills/audit/SKILL.md (create)
-         - review procedure and scoping rules
-     Tests:
-       - none (documentation)
-     Surface:
-       - skill triggers and presents the review procedure
+- **Purpose:** 生成物をログで絞り込みレビューする
+- **Stage:** planned
+
+## Orders
+
+### 1. SKILL.md creation
+
+- Target: `meta.skills.audit`
+- Depends on: none
+- Files:
+  - `.opencode/skills/audit/SKILL.md` (create)
+    - review procedure and scoping rules
+- Tests:
+  - none (documentation)
+- Surface:
+  - skill triggers and presents the review procedure
 ```
 
 ## Rules
 
 - The component's `purpose` anchors the decomposition; there is no route mapping
+- Component block labels are the only bold text; order fields stay plain with inline code for paths and keys
 - Test criteria apply unchanged (code → pure/boundary tests; documentation → none)
