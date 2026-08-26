@@ -1,6 +1,12 @@
 // compressTurn の圧縮規則に関するテスト。集約・重複排除・対象外ツールの無視を検証する
 import { describe, expect, it } from 'vitest';
-import { compressTurn, currentTurnMessages, type SummaryMessage } from './summary';
+import {
+  compressTurn,
+  currentTurnMessages,
+  isNotable,
+  REASONING_THRESHOLD,
+  type SummaryMessage,
+} from './summary';
 
 const assistant = (reasoning: number, parts: SummaryMessage['parts'] = []): SummaryMessage => ({
   info: { role: 'assistant', tokens: { reasoning } },
@@ -126,6 +132,21 @@ describe('compressTurn', () => {
       '/home/x/pj',
     );
     expect(summary.events).toEqual([{ kind: 'read', paths: ['src/a.ts'] }]);
+  });
+});
+
+describe('isNotable', () => {
+  it('keeps turns with any collected event regardless of reasoning', () => {
+    const summary = compressTurn([assistant(0, [toolPart('edit', { filePath: 'a.ts' })])]);
+    expect(isNotable(summary)).toBe(true);
+  });
+
+  it('drops empty turns below the reasoning threshold', () => {
+    expect(isNotable({ events: [], reasoning: REASONING_THRESHOLD - 1 })).toBe(false);
+  });
+
+  it('keeps thinking-only turns at or above the threshold', () => {
+    expect(isNotable({ events: [], reasoning: REASONING_THRESHOLD })).toBe(true);
   });
 });
 

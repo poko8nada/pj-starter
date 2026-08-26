@@ -2,7 +2,7 @@
 // 親を持つセッション(=サブエージェント実行)は収集対象外。
 // どの失敗も痕跡1行の欠落に留め、ターン整備の流れ自体は止めない
 import type { Plugin } from '@opencode-ai/plugin';
-import { compressTurn, currentTurnMessages } from './summary';
+import { compressTurn, currentTurnMessages, isNotable } from './summary';
 
 type PluginInput = Parameters<Plugin>[0];
 
@@ -20,6 +20,7 @@ export const emitTurnSummary = async (ctx: EmitCtx, sessionId: string): Promise<
     const messages = await ctx.client.session.messages({ path: { id: sessionId } });
     if (!messages.data) return;
     const summary = compressTurn(currentTurnMessages(messages.data), ctx.root);
+    if (!isNotable(summary)) return;
     const key = `log.turn.${crypto.randomUUID().slice(0, 8)}`;
 
     await ctx.$`node events/scripts/append.mjs --set ${key} ${JSON.stringify(summary)}`

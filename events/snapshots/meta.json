@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-26T13:22:53.158+09:00",
-  "asOf": "2026-08-26T13:22:53.121+09:00",
+  "generatedAt": "2026-08-26T13:42:28.213+09:00",
+  "asOf": "2026-08-26T13:42:28.183+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -43,7 +43,7 @@
         "purpose": "ターン完了時に作業サマリをlog名前空間としてeventsログへ記録する",
         "status": {
           "stage": "commit",
-          "text": "ターンサマリの圧縮とidleフック配線を実装"
+          "text": "events空かつreasoning10k未満のターンを記録対象外にした"
         },
         "path": ".opencode/lib/turn-summary/emit.hook.ts",
         "updatedAt": "20260826"

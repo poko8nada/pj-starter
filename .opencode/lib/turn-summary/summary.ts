@@ -16,6 +16,15 @@ export interface TurnSummary {
   reasoning: number;
 }
 
+// 空のターンをどこまで残すかの閾値。触ったファイルがないターンは、
+// 思考量がこの値を超えるときだけ「深考の局面」として残す
+export const REASONING_THRESHOLD = 10_000;
+
+// 運用ターン(append/commit 等 bash のみ)や雑談の空行を落とし、
+// ファイル・スキルを触ったターンと深考の局面だけを記録対象にする
+export const isNotable = (summary: TurnSummary): boolean =>
+  summary.events.length > 0 || summary.reasoning >= REASONING_THRESHOLD;
+
 // SDK の Message/Part を構造的に受けられる最小形。呼び出し側で実型との適合を見る
 export interface SummaryMessage {
   info: {

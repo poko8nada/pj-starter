@@ -83,3 +83,6 @@
 {"ts":"2026-08-26T13:22:53.121+09:00","type":"set","key":"meta.harness.turn-summary.status","value":{"stage":"commit","text":"ターンサマリの圧縮とidleフック配線を実装"}}
 {"ts":"2026-08-26T13:22:53.121+09:00","type":"set","key":"meta.harness.session-idle.status","value":{"stage":"commit","text":"sync後にターンサマリ記録を呼ぶ順序へ更新"}}
 {"ts":"2026-08-26T13:22:53.121+09:00","type":"set","key":"meta.docs.events-readme.status","value":{"stage":"commit","text":"log名前空間の意味論を付録に追記"}}
+{"ts":"2026-08-26T13:35:54.671+09:00","type":"set","key":"meta.harness.turn-summary.status","value":{"stage":"ready","text":"events空かつreasoning10k未満のターンは記録しないよう変更"}}
+{"ts":"2026-08-26T13:38:45.292+09:00","type":"set","key":"log.turn.c4beb94f","value":{"events":[{"kind":"edit","paths":[".opencode/lib/turn-summary/summary.ts",".opencode/lib/turn-summary/emit.hook.ts",".opencode/lib/turn-summary/summary.test.ts"]}],"reasoning":711}}
+{"ts":"2026-08-26T13:42:28.183+09:00","type":"set","key":"meta.harness.turn-summary.status","value":{"stage":"commit","text":"events空かつreasoning10k未満のターンを記録対象外にした"}}
