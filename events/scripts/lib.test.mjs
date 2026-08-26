@@ -1,10 +1,12 @@
 // events/scripts/lib.mjs の畳み込み意味論とstatus検証に関するテスト
 import { describe, expect, it } from 'vitest';
 import {
+  applyFoldable,
   buildEvent,
   deletePath,
   EventError,
   injectUpdatedAt,
+  lastFoldedTs,
   normalizeTrees,
   setPath,
   stableStringify,
@@ -220,6 +222,183 @@ describe('normalizeTrees', () => {
   });
 });
 
+describe('log namespace', () => {
+  const summary = {
+    events: [
+      { kind: 'read', paths: ['events/README.md'] },
+      { kind: 'edit', paths: ['a.ts', 'b.ts'] },
+      { kind: 'skill', name: 'agenda' },
+    ],
+    reasoning: 14200,
+  };
+
+  it('accepts a well-formed turn summary', () => {
+    expect(() => buildEvent({ type: 'set', key: 'log.turn.a83f2', value: summary })).not.toThrow();
+  });
+
+  it('accepts an empty events array for thinking-only turns', () => {
+    expect(() =>
+      buildEvent({ type: 'set', key: 'log.turn.a83f2', value: { events: [], reasoning: 0 } }),
+    ).not.toThrow();
+  });
+
+  it('allows deleting a log entry without a value', () => {
+    expect(() => buildEvent({ type: 'del', key: 'log.turn.a83f2' })).not.toThrow();
+  });
+
+  it('rejects malformed log keys on del too', () => {
+    expect(() => buildEvent({ type: 'del', key: 'log.turn' })).toThrow(/log\.turn\.<id>/);
+  });
+
+  it('rejects malformed log keys', () => {
+    expect(() => buildEvent({ type: 'set', key: 'log.turn', value: summary })).toThrow(
+      /log\.turn\.<id>/,
+    );
+    expect(() => buildEvent({ type: 'set', key: 'log.turn.a.b', value: summary })).toThrow(
+      /log\.turn\.<id>/,
+    );
+    expect(() => buildEvent({ type: 'set', key: 'log.event.x', value: summary })).toThrow(
+      /log\.turn\.<id>/,
+    );
+    expect(() => buildEvent({ type: 'set', key: 'log.turn.', value: summary })).toThrow(
+      /log\.turn\.<id>/,
+    );
+  });
+
+  it('requires exactly {events, reasoning} in the value', () => {
+    expect(() => buildEvent({ type: 'set', key: 'log.turn.x', value: {} })).toThrow(
+      /exactly \{events, reasoning\}/,
+    );
+    expect(() => buildEvent({ type: 'set', key: 'log.turn.x', value: { events: [] } })).toThrow(
+      /exactly \{events, reasoning\}/,
+    );
+    expect(() => buildEvent({ type: 'set', key: 'log.turn.x', value: 'x' })).toThrow(
+      /must be an object/,
+    );
+    expect(() =>
+      buildEvent({ type: 'set', key: 'log.turn.x', value: { events: [], reasoning: 0, extra: 1 } }),
+    ).toThrow(/exactly \{events, reasoning\}/);
+  });
+
+  it('rejects invalid reasoning and events shapes', () => {
+    expect(() =>
+      buildEvent({ type: 'set', key: 'log.turn.x', value: { events: [], reasoning: -1 } }),
+    ).toThrow(/non-negative integer/);
+    expect(() =>
+      buildEvent({ type: 'set', key: 'log.turn.x', value: { events: [], reasoning: 1.5 } }),
+    ).toThrow(/non-negative integer/);
+    expect(() =>
+      buildEvent({ type: 'set', key: 'log.turn.x', value: { events: [], reasoning: '5' } }),
+    ).toThrow(/non-negative integer/);
+    expect(() =>
+      buildEvent({ type: 'set', key: 'log.turn.x', value: { events: [], reasoning: null } }),
+    ).toThrow(/non-negative integer/);
+    expect(() =>
+      buildEvent({ type: 'set', key: 'log.turn.x', value: { events: 'x', reasoning: 0 } }),
+    ).toThrow(/must be an array/);
+  });
+
+  it('requires exact entry shapes per kind', () => {
+    expect(() =>
+      buildEvent({
+        type: 'set',
+        key: 'log.turn.x',
+        value: { events: [{ kind: 'read', paths: ['a'], name: 'x' }], reasoning: 0 },
+      }),
+    ).toThrow(/exactly \{kind, paths\}/);
+    expect(() =>
+      buildEvent({
+        type: 'set',
+        key: 'log.turn.x',
+        value: { events: [{ kind: 'skill', name: 'agenda', paths: ['a'] }], reasoning: 0 },
+      }),
+    ).toThrow(/exactly \{kind, name\}/);
+  });
+
+  it('validates event entries by kind', () => {
+    expect(() =>
+      buildEvent({
+        type: 'set',
+        key: 'log.turn.x',
+        value: { events: [{ kind: 'bash' }], reasoning: 0 },
+      }),
+    ).toThrow(/kind must be one of/);
+    expect(() =>
+      buildEvent({
+        type: 'set',
+        key: 'log.turn.x',
+        value: { events: [{ kind: 'skill' }], reasoning: 0 },
+      }),
+    ).toThrow(/exactly \{kind, name\}/);
+    expect(() =>
+      buildEvent({
+        type: 'set',
+        key: 'log.turn.x',
+        value: { events: [{ kind: 'skill', name: '' }], reasoning: 0 },
+      }),
+    ).toThrow(/non-empty name/);
+    expect(() =>
+      buildEvent({
+        type: 'set',
+        key: 'log.turn.x',
+        value: { events: [{ kind: 'edit', paths: [] }], reasoning: 0 },
+      }),
+    ).toThrow(/non-empty paths/);
+    expect(() =>
+      buildEvent({
+        type: 'set',
+        key: 'log.turn.x',
+        value: { events: ['edit'], reasoning: 0 },
+      }),
+    ).toThrow(/must be an object/);
+  });
+});
+
+describe('applyFoldable', () => {
+  it('applies set and del for fold-participating namespaces', () => {
+    const trees = { product: { features: { auth: { trigger: 't' } } }, meta: {} };
+    applyFoldable(trees, [
+      { type: 'set', key: 'meta.skills.x.purpose', value: 'p' },
+      { type: 'del', key: 'product.features.auth' },
+    ]);
+    expect(trees.product).toEqual({ features: {} });
+    expect(trees.meta.skills.x.purpose).toBe('p');
+  });
+
+  it('skips non-participating namespaces like log', () => {
+    const trees = { product: {}, meta: {} };
+    applyFoldable(trees, [
+      { type: 'set', key: 'log.turn.a', value: { events: [], reasoning: 0 } },
+      { type: 'set', key: 'product.name.value', value: 'X' },
+    ]);
+    expect(trees.log).toBeUndefined();
+    expect(trees.product.name.value).toBe('X');
+  });
+
+  it('skips log del events too', () => {
+    const trees = { product: {}, meta: {} };
+    applyFoldable(trees, [{ type: 'del', key: 'log.turn.a' }]);
+    expect(trees).toEqual({ product: {}, meta: {} });
+  });
+});
+
+describe('lastFoldedTs', () => {
+  it('ignores trailing log events when picking the newest folded ts', () => {
+    const ts = lastFoldedTs([
+      { type: 'set', key: 'product.name', ts: '2026-08-26T10:00:00.000+09:00' },
+      { type: 'set', key: 'log.turn.a', ts: '2026-08-26T10:05:00.000+09:00' },
+    ]);
+    expect(ts).toBe('2026-08-26T10:00:00.000+09:00');
+  });
+
+  it('returns an empty string when nothing folds', () => {
+    const ts = lastFoldedTs([
+      { type: 'set', key: 'log.turn.a', ts: '2026-08-26T10:00:00.000+09:00' },
+    ]);
+    expect(ts).toBe('');
+  });
+});
+
 describe('stableStringify', () => {
   it('is order-insensitive for object keys', () => {
     expect(stableStringify({ b: 1, a: [2, { z: 3, y: 4 }] })).toBe(
@@ -285,5 +464,13 @@ describe('injectUpdatedAt', () => {
     };
     injectUpdatedAt(trees, []);
     expect(trees.meta.skills.x.updatedAt).toBe('20260101');
+  });
+
+  it('ignores log namespace events when stamping', () => {
+    const trees = { product: { name: { value: 'X', status: { text: '確定' } } }, meta: {} };
+    injectUpdatedAt(trees, [
+      { type: 'set', key: 'log.turn.a', value: {}, ts: '2026-08-26T10:00:00+09:00' },
+    ]);
+    expect(trees.product.name.updatedAt).toBeUndefined();
   });
 });

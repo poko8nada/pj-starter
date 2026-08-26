@@ -12,8 +12,13 @@ export const LOG_PATH = path.join(EVENTS_DIR, 'log.jsonl');
 export const SNAPSHOTS_DIR = path.join(EVENTS_DIR, 'snapshots');
 export const CHECKPOINT_PATH = path.join(EVENTS_DIR, 'checkpoint.json');
 
-// 名前空間と検証規則。product / meta の第2セグメントは固定区画のみ許容する
-export const NAMESPACES = new Set(['product', 'meta']);
+// 名前空間ごとの振る舞い宣言。fold:true の名前空間だけがスナップショットに畳み込まれ、
+// asOf 起算の対象になる。log は機械注入の痕跡専用で、build/compact の対象外
+export const NAMESPACES = {
+  product: { fold: true },
+  meta: { fold: true },
+  log: { fold: false },
+};
 export const PRODUCT_SECTIONS = new Set([
   'name',
   'what',
@@ -81,13 +86,18 @@ export const validateKey = (key) => {
   if (!key) throw new EventError('key is required');
   if (key.includes('.status.')) throw new EventError(`status must be asserted whole: ${key}`);
   const [ns, section] = key.split('.');
-  if (!NAMESPACES.has(ns)) throw new EventError(`unknown namespace: ${ns}`);
+  if (!Object.hasOwn(NAMESPACES, ns)) throw new EventError(`unknown namespace: ${ns}`);
   if (ns === 'product' && !PRODUCT_SECTIONS.has(section))
     throw new EventError(
       `product section must be one of ${[...PRODUCT_SECTIONS].join('/')}: ${key}`,
     );
   if (ns === 'meta' && !META_SECTIONS.has(section))
     throw new EventError(`meta section must be one of ${[...META_SECTIONS].join('/')}: ${key}`);
+  if (ns === 'log') {
+    const parts = key.split('.');
+    if (parts.length !== 3 || parts[1] !== 'turn' || parts[2] === '')
+      throw new EventError(`log key must be log.turn.<id>: ${key}`);
+  }
   if (key.endsWith('.status')) assertStatusLocation(key);
 };
 
@@ -107,6 +117,42 @@ const assertStatusValue = (key, value) => {
     throw new EventError(`status.text must be a non-empty string: ${key}`);
 };
 
+// log 名前空間の値形状。ターンサマリの圧縮結果1件 = {events, reasoning}。
+// events の種別は収集対象のみ（task / bash は意図的に収集しない）
+const LOG_KINDS = new Set(['read', 'edit', 'write', 'skill']);
+
+const assertLogValue = (key, value) => {
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw new EventError(`log value must be an object: ${key}`);
+  if (Object.keys(value).toSorted().join(',') !== 'events,reasoning')
+    throw new EventError(`log value requires exactly {events, reasoning}: ${key}`);
+  if (!Number.isInteger(value.reasoning) || value.reasoning < 0)
+    throw new EventError(`log reasoning must be a non-negative integer: ${key}`);
+  if (!Array.isArray(value.events)) throw new EventError(`log events must be an array: ${key}`);
+  for (const entry of value.events) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry))
+      throw new EventError(`log event must be an object: ${key}`);
+    if (!LOG_KINDS.has(entry.kind))
+      throw new EventError(`log event kind must be one of ${[...LOG_KINDS].join('/')}: ${key}`);
+    // status 主張と同じく、entry の形も種別ごとに丸ごと厳密一致させる
+    if (entry.kind === 'skill') {
+      if (Object.keys(entry).toSorted().join(',') !== 'kind,name')
+        throw new EventError(`log skill event requires exactly {kind, name}: ${key}`);
+      if (typeof entry.name !== 'string' || entry.name === '')
+        throw new EventError(`log skill event requires a non-empty name: ${key}`);
+    } else {
+      if (Object.keys(entry).toSorted().join(',') !== 'kind,paths')
+        throw new EventError(`log ${entry.kind} event requires exactly {kind, paths}: ${key}`);
+      if (
+        !Array.isArray(entry.paths) ||
+        entry.paths.length === 0 ||
+        entry.paths.some((p) => typeof p !== 'string' || p === '')
+      )
+        throw new EventError(`log ${entry.kind} event requires non-empty paths: ${key}`);
+    }
+  }
+};
+
 // 下書き（ts を除くイベント）を検証して完成させる。
 // ts は既定でここで JST として付与するが、呼び出し側から同一tsを渡すこともできる
 export const buildEvent = (draft, ts = jstNow()) => {
@@ -117,6 +163,7 @@ export const buildEvent = (draft, ts = jstNow()) => {
   if (draft.type === 'set') {
     if (draft.value === undefined) throw new EventError('value is required for set');
     if (draft.key.endsWith('.status')) assertStatusValue(draft.key, draft.value);
+    if (draft.key.startsWith('log.')) assertLogValue(draft.key, draft.value);
     event.value = draft.value;
   }
   return event;
@@ -225,23 +272,33 @@ export const injectUpdatedAt = (trees, events) => {
       else walk(child, childPath);
     }
   };
-  for (const ns of NAMESPACES) {
+  for (const ns of Object.keys(NAMESPACES).filter((k) => NAMESPACES[k].fold)) {
     trees[ns] ??= {};
     walk(trees[ns], ns);
   }
 };
+
+// fold 参加名前空間のイベントだけを木へ適用する。log など非参加のものは読み飛ばす
+export const applyFoldable = (trees, events) => {
+  for (const event of events) {
+    const [ns, ...rest] = event.key.split('.');
+    if (!NAMESPACES[ns]?.fold) continue;
+    if (event.type === 'set') setPath(trees[ns], rest.join('.'), event.value);
+    else deletePath(trees[ns], rest.join('.'));
+  }
+};
+
+// asOf 起算は fold 参加イベントのみ。log の追記でスナップショットが古く見えないようにする
+export const lastFoldedTs = (events) =>
+  events.findLast((event) => NAMESPACES[event.key.split('.')[0]]?.fold)?.ts ?? '';
 
 // チェックポイント起点 + アクティブログ全体を畳み込む。
 // asOf は「この状態がどの時点のイベントまで反映済みか」を表す
 export const foldAll = () => {
   const base = loadBase();
   const events = readEvents();
-  for (const event of events) {
-    const [ns, ...rest] = event.key.split('.');
-    if (event.type === 'set') setPath(base.trees[ns], rest.join('.'), event.value);
-    else deletePath(base.trees[ns], rest.join('.'));
-  }
-  const lastEventTs = events.at(-1)?.ts ?? '';
+  applyFoldable(base.trees, events);
+  const lastEventTs = lastFoldedTs(events);
   const asOf =
     base.compactedAt !== null && base.compactedAt >= lastEventTs
       ? base.compactedAt

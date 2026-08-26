@@ -70,3 +70,16 @@
 {"ts":"2026-08-25T23:29:42.773+09:00","type":"set","key":"meta.skills.readme.status","value":{"stage":"commit","text":"SKILL.mdを作成しSection decisionsを具体化"}}
 {"ts":"2026-08-26T09:15:15.429+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"ready","text":"提示フォーマットをmarkdown構造化に改訂"}}
 {"ts":"2026-08-26T09:17:06.303+09:00","type":"set","key":"meta.skills.agenda.status","value":{"stage":"commit","text":"提示フォーマットをmarkdown構造に改訂"}}
+{"ts":"2026-08-26T11:51:56.839+09:00","type":"set","key":"meta.harness.turn-summary","value":{"purpose":"ターン完了時に作業サマリをlog名前空間としてeventsログへ記録する"}}
+{"ts":"2026-08-26T11:57:49.514+09:00","type":"set","key":"meta.harness.turn-summary.status","value":{"stage":"ready","text":"ターンサマリ実装の計画が確定"}}
+{"ts":"2026-08-26T11:57:49.514+09:00","type":"set","key":"meta.scripts.event-append.status","value":{"stage":"ready","text":"log名前空間拡張の計画が確定"}}
+{"ts":"2026-08-26T11:58:31.302+09:00","type":"set","key":"meta.harness.turn-summary.path","value":".opencode/lib/turn-summary/emit.ts"}
+{"ts":"2026-08-26T11:59:59.048+09:00","type":"set","key":"meta.harness.turn-summary.path","value":".opencode/lib/turn-summary/emit.hook.ts"}
+{"ts":"2026-08-26T12:21:58.095+09:00","type":"set","key":"log.turn.ac5cd994","value":{"events":[],"reasoning":337}}
+{"ts":"2026-08-26T12:24:13.493+09:00","type":"set","key":"log.turn.21361fb1","value":{"events":[{"kind":"edit","paths":[".opencode/lib/turn-summary/summary.ts",".opencode/lib/turn-summary/summary.test.ts"]}],"reasoning":509}}
+{"ts":"2026-08-26T12:29:36.921+09:00","type":"set","key":"log.turn.99241af5","value":{"events":[{"kind":"skill","name":"audit"}],"reasoning":1885}}
+{"ts":"2026-08-26T13:21:28.326+09:00","type":"set","key":"log.turn.b74e67b0","value":{"events":[{"kind":"write","paths":[".opencode/lib/turn-summary/emit.hook.ts"]},{"kind":"edit","paths":["events/scripts/lib.mjs",".opencode/lib/turn-summary/summary.ts",".opencode/plugin/session-idle.ts","events/scripts/lib.test.mjs",".opencode/lib/turn-summary/summary.test.ts"]},{"kind":"read","paths":["events/scripts/lib.mjs","events/scripts/lib.test.mjs"]}],"reasoning":2080}}
+{"ts":"2026-08-26T13:22:53.121+09:00","type":"set","key":"meta.scripts.event-append.status","value":{"stage":"commit","text":"log名前空間を追加しfold対象外の検証を強化"}}
+{"ts":"2026-08-26T13:22:53.121+09:00","type":"set","key":"meta.harness.turn-summary.status","value":{"stage":"commit","text":"ターンサマリの圧縮とidleフック配線を実装"}}
+{"ts":"2026-08-26T13:22:53.121+09:00","type":"set","key":"meta.harness.session-idle.status","value":{"stage":"commit","text":"sync後にターンサマリ記録を呼ぶ順序へ更新"}}
+{"ts":"2026-08-26T13:22:53.121+09:00","type":"set","key":"meta.docs.events-readme.status","value":{"stage":"commit","text":"log名前空間の意味論を付録に追記"}}

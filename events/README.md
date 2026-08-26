@@ -69,7 +69,7 @@ This section is the single home of the shared node model. What each section cont
 
 ### Keys and namespaces
 
-The first segment must be one of `product` / `meta`. Unknown namespaces are rejected on append.
+The first segment must be one of `product` / `meta`. Unknown namespaces are rejected on append. The `log` namespace is the one exception — an append-only machine trail that never folds into snapshots (see [Appendix](#machine-injected-trail-log)).
 
 - `product.*` — second segment is fixed: `name` / `what` / `stack` / `look` / `features` / `roadmap` / `deploy`
 - `meta.*` — second segment is fixed: `harness` / `agents` / `skills` / `docs` / `scripts`
@@ -116,6 +116,15 @@ This directory is a product-side asset and does not depend on any specific agent
 ## Appendix — machinery
 
 Everything below describes how the machine itself runs; recording agents rarely need it.
+
+### Machine-injected trail (`log`)
+
+The `log` namespace records what the agent did per turn — a coarse activity trail that sits between state events when the log is read top to bottom. It is written by harness plugins (the turn-summary emitter), never by recording agents.
+
+- Key grammar: `log.turn.<id>` (one line per turn)
+- Value shape: `{ "events": [...], "reasoning": <non-negative int> }` where each event is `{ "kind": "read" | "edit" | "write", "paths": [...] }` or `{ "kind": "skill", "name": "..." }`; `events` may be empty
+- Fold participation: **none**. `build.mjs` skips these lines and excludes them from `asOf`, so snapshots are untouched by trail volume
+- Compaction: dropped. The checkpoint stores folded trees only, so trail lines vanish from the active log at compaction — history survives in git alone
 
 ### Compaction
 
