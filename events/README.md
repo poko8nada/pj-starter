@@ -16,19 +16,19 @@ events/
     compact.mjs        # Fold state into checkpoint.json and empty the log
     read.mjs           # Read a snapshot's content
   log.jsonl            # Append-only event log (the truth, git-tracked)
-  checkpoint.json      # Folded state produced by compaction (generated, git-tracked)
+  checkpoint.json      # Base state: compaction result or reset-seeded baseline (generated, git-tracked)
   snapshots/           # The current state lives here (generated — never hand-authored)
     product.json       # Folded product.* state
-    meta.json          # Folded meta.* state (written only when meta.* events exist)
+    meta.json          # Folded meta.* state (written when folded meta state is non-empty)
 ```
 
-`events/scripts/` holds scripts invoked by skills (product-side). Harness-operations scripts live in the root `scripts/`.
+`events/scripts/` holds scripts invoked by skills (product-side). Harness-operations scripts live in the root `scripts/`, and human-operated maintenance tools (project initialization, starter sync) in `scripts/user/`.
 
 Snapshot freshness is maintained automatically: the harness's `session-idle` hook runs `build.mjs` after every turn and `compact.mjs` when the log crosses its line threshold (see `.opencode/lib/events-sync/threshold.ts`). Manual invocation remains available.
 
 ## Reading current state
 
-The current project state is the fold result under `snapshots/`: `product.json` for `product.*`, `meta.json` for `meta.*`. Read the files directly or via `node events/scripts/read.mjs --name product|meta`. On a fresh checkout they may not exist yet — run `node events/scripts/build.mjs` once to generate them (`meta.json` appears only once `meta.*` events exist).
+The current project state is the fold result under `snapshots/`: `product.json` for `product.*`, `meta.json` for `meta.*`. Read the files directly or via `node events/scripts/read.mjs --name product|meta`. On a fresh checkout they may not exist yet — run `node events/scripts/build.mjs` once to generate them (`meta.json` appears once folded `meta.*` state exists — events or a reset-seeded baseline).
 
 ```json
 {
@@ -92,7 +92,7 @@ Lifecycle facts (`ready` / `implement` / `commit`) are not special types — the
 {"ts":"…","type":"set","key":"product.features.auth.status","value":{"stage":"implement","text":"認証APIを実装中"}}
 ```
 
-A node becomes _managed_ by writing its `status`; managed nodes receive `updatedAt` (YYYYMMDD) at rebuild. Work-unit-shaped leaves (carrying `trigger` or `purpose`) are normalized by rebuild even without an explicit status (see Rebuild rules); every other node without status stays raw forever.
+A node becomes _managed_ by writing its `status`; managed nodes receive `updatedAt` (YYYYMMDD) at rebuild. The canonical registration route asserts the whole initial status (`{"stage":"planned","text":"未着手"}`) together with the definition, in both namespaces. As a backstop, rebuild guards product feature slices even when their status was never asserted (see Rebuild rules); every other node without status stays raw forever — including meta components, whose raw form represents the shipped harness baseline.
 
 ### Validation enforced on append
 
@@ -108,6 +108,19 @@ Recording follows one of three paths, depending on what was agreed:
 3. **Implementation decisions** — the `agenda` skill selects targets from existing state. On consensus, each selected target's status is asserted in one event: `{"stage": "ready", "text": "<progress>"}`, and implementation begins.
 
 In every path, stack / roadmap changes surfaced by the discussion are appended together with their related events. After the turn ends, the idle hook keeps quality checks and snapshots fresh automatically.
+
+## Fresh-copy state and the starter boundary
+
+`scripts/user/` holds human-operated maintenance tools (project initialization, upstream sync to the starter). **Agents must not execute them** — initialization wipes recorded state, so it runs only when the user decides. If a task seems to need them, ask the user to run the tool instead.
+
+What agents must be able to read from a fresh copy's state:
+
+- An empty or placeholder `product.*` section means "not yet registered in this project" — register via the normal flow
+- A meta component without `status` is the shipped harness inventory, not pending work; its lifecycle starts when this project first asserts its `status`
+- The log is the truth for everything that happens inside the project; the checkpoint additionally carries the shipped baseline seeded at initialization
+- Pre-copy history lives only in the starter's git
+
+Usage of the tools is documented in `scripts/user/README.md` for the operator.
 
 ## Harness independence
 
@@ -140,11 +153,11 @@ Pre-compaction history lives in git — no archive mechanism exists. Because com
 
 1. Load `checkpoint.json` as the base trees (empty trees when absent)
 2. Apply active-log events in file order: `set` overwrites the leaf, `del` removes it and prunes empty ancestors
-3. Normalize work units: nodes carrying `trigger` (product) or `purpose` (meta) without a complete `status` receive `{"stage": "planned", "text": "未着手"}`; out-of-vocabulary stages fail the build
+3. Guard product features: `trigger`-bearing slices without a complete `status` receive `{"stage": "planned", "text": "未着手"}`; out-of-vocabulary stages fail the build. Meta components are never normalized
 4. Inject `updatedAt` (YYYYMMDD) on every status-bearing node, from the `ts` of the latest event touching the node itself or anything under it
 5. Regenerate snapshots in full; skip writing when the content is unchanged
 
-`meta.json` is written only when at least one `meta.*` event exists.
+`meta.json` is written whenever the folded `meta.*` state is non-empty — from events or a reset-seeded baseline.
 
 ### CLI reference
 

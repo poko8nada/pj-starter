@@ -14,6 +14,8 @@
     "typecheck:product": "tsc --noEmit",
     "typecheck:opencode": "tsc -p .opencode/tsconfig.json --noEmit",
     "typecheck:staged": "node scripts/typecheck-staged.mjs",
+    "starter:reset": "node scripts/user/reset.mjs",
+    "starter:sync": "node scripts/user/sync-to-starter.mjs",
     "prepare": "lefthook install"
   },
   "devDependencies": {

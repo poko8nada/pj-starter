@@ -8,6 +8,7 @@ import {
   injectUpdatedAt,
   lastFoldedTs,
   normalizeTrees,
+  parseCheckpoint,
   setPath,
   stableStringify,
 } from './lib.mjs';
@@ -176,28 +177,79 @@ describe('deletePath', () => {
   });
 });
 
+describe('parseCheckpoint', () => {
+  it('parses a well-formed checkpoint', () => {
+    const parsed = parseCheckpoint(
+      '{"compactedAt":"2026-08-01T00:00:00.000+09:00","trees":{"product":{},"meta":{}}}',
+    );
+    expect(parsed.compactedAt).toBe('2026-08-01T00:00:00.000+09:00');
+    expect(parsed.trees).toEqual({ product: {}, meta: {} });
+  });
+
+  it('falls back to absent for empty, invalid, or shape-broken text', () => {
+    for (const text of [
+      '',
+      'not json',
+      '{}',
+      '[]',
+      '{"noTrees":true}',
+      '{"trees":null}',
+      '{"trees":"x"}',
+      '{"trees":[]}',
+    ])
+      expect(parseCheckpoint(text)).toBeNull();
+  });
+
+  it('normalizes a missing compactedAt to null', () => {
+    expect(parseCheckpoint('{"trees":{"product":{},"meta":{}}}').compactedAt).toBeNull();
+  });
+});
+
 describe('normalizeTrees', () => {
-  it('injects default status into work units of both namespaces', () => {
+  it('injects default status into product feature work units', () => {
     const trees = {
       product: { features: { auth: { trigger: 't', result: 'r', route: [] } } },
-      meta: { skills: { audit: { purpose: 'p' } } },
+      meta: {},
     };
     normalizeTrees(trees);
     expect(trees.product.features.auth.status).toEqual({ stage: 'planned', text: '未着手' });
-    expect(trees.meta.skills.audit.status).toEqual({ stage: 'planned', text: '未着手' });
+  });
+
+  it('completes partial statuses on product features', () => {
+    const trees = {
+      product: { features: { a: { trigger: 't', status: 'broken' }, b: { trigger: 't' } } },
+      meta: {},
+    };
+    normalizeTrees(trees);
+    expect(trees.product.features.a.status).toEqual({ stage: 'planned', text: '未着手' });
+    expect(trees.product.features.b.status).toEqual({ stage: 'planned', text: '未着手' });
+  });
+
+  it('leaves meta components raw as shipped baseline', () => {
+    const trees = {
+      product: {},
+      meta: { skills: { audit: { path: '.opencode/x', purpose: 'p' } } },
+    };
+    normalizeTrees(trees);
+    expect(trees.meta.skills.audit).toEqual({ path: '.opencode/x', purpose: 'p' });
+  });
+
+  it('does not touch meta nodes even with an out-of-vocabulary status', () => {
+    const trees = {
+      product: {},
+      meta: { skills: { x: { purpose: 'p', status: { stage: 'done', text: 'x' } } } },
+    };
+    normalizeTrees(trees);
+    expect(trees.meta.skills.x.status).toEqual({ stage: 'done', text: 'x' });
   });
 
   it('keeps explicitly set status and fills only missing fields', () => {
     const trees = {
-      product: {},
-      meta: {
-        harness: {
-          gate: { purpose: 'p', status: { stage: 'commit' } },
-        },
-      },
+      product: { features: { auth: { trigger: 't', status: { stage: 'commit' } } } },
+      meta: {},
     };
     normalizeTrees(trees);
-    expect(trees.meta.harness.gate.status).toEqual({ stage: 'commit', text: '未着手' });
+    expect(trees.product.features.auth.status).toEqual({ stage: 'commit', text: '未着手' });
   });
 
   it('ignores non-work-unit nodes', () => {
@@ -213,8 +265,8 @@ describe('normalizeTrees', () => {
 
   it('rejects stages outside the vocabulary', () => {
     const trees = {
-      product: {},
-      meta: { skills: { x: { purpose: 'p', status: { stage: 'done', text: 'x' } } } },
+      product: { features: { x: { trigger: 't', status: { stage: 'done', text: 'x' } } } },
+      meta: {},
     };
     expect(() => {
       normalizeTrees(trees);

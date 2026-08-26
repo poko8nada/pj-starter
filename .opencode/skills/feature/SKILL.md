@@ -22,7 +22,7 @@ When a discussion settles on something new:
    - Product: `{trigger, result, route}` with **at most 3 route steps**
    - Meta: `{purpose}` (+ `path` once it exists)
 3. **Size check** — one working session must carry it `ready → commit`. If obviously larger, propose a split instead (see Splitting).
-4. **Append** — `set <key> '<full definition>'`; rebuild injects `{"stage": "planned", "text": "未着手"}` as the initial `status`. Omit `status` at creation unless an intentional progress note is needed.
+4. **Append** — one invocation carries both sets: `set <key> '<full definition>'` and `set <key>.status '{"stage":"planned","text":"未着手"}'`. The explicit assertion is the canonical route in both namespaces; rebuild's injection is only a product-side backstop.
 
 ## Splitting
 
@@ -30,7 +30,7 @@ If an existing component turns out oversized (route > 3 steps, mixed purposes, a
 
 1. Propose sibling components along route-step boundaries (product) or purpose boundaries (meta)
 2. Same depth, kebab-composed ids (`auth-session`, `auth-endpoint`) — never deeper nesting
-3. Record: `del` the original key, then `set` each sibling with its sub-definition entering as `planned`
+3. Record: `del` the original key, then `set` each sibling with its sub-definition plus an explicit `planned` status
 
 ## Definition revisions
 

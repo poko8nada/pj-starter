@@ -78,7 +78,7 @@ A feature is a **vertical slice**: the smallest unit that independently complete
 }
 ```
 
-One lifecycle field exists on every slice — **omit it at creation**; rebuild injects the default so snapshots always carry it (see [Recording contract](../README.md#recording-contract)):
+One lifecycle field exists on every slice. Assert it whole at creation — `{"stage": "planned", "text": "未着手"}` is the canonical entry point (see [Recording contract](../README.md#recording-contract)); rebuild also guards never-asserted slices by injecting the same default:
 
 - `status.stage` — pipeline stage (vocabulary and lifecycle rules: [Recording contract](../README.md#recording-contract))
 - `status.text` — free-text progress note (what has been done so far), always written together with the stage
@@ -248,8 +248,9 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 ```json
 {
   "agenda": {
+    "path": ".opencode/skills/agenda/SKILL.md",
     "purpose": "Fix the unit of work per feature slice",
-    "status": { "stage": "planned", "text": "未着手" },
+    "status": { "stage": "commit", "text": "…" },
     "updatedAt": "20260825"
   }
 }
@@ -260,7 +261,7 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 | `path`    | Where the component lives. Omit while only planned; set once implemented |
 | `purpose` | One-sentence intent. Required — its presence defines a component leaf    |
 
-`status` / `updatedAt` follow the shared node model ([Recording contract](../README.md#recording-contract)); rebuild injects their defaults.
+`status` / `updatedAt` follow the shared node model ([Recording contract](../README.md#recording-contract)). Unlike product features there is **no rebuild injection**: a component without `status` is raw — the shipped baseline — and becomes managed the first time this project asserts its `status`. Fresh copies start from `reset.mjs`, which seeds every definition with the history fields removed; until a component is touched here, the absence of `status` reads as "exists, untouched in this project", not "not yet built".
 
 ### Granularity policy
 

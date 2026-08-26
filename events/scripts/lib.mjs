@@ -12,8 +12,7 @@ export const LOG_PATH = path.join(EVENTS_DIR, 'log.jsonl');
 export const SNAPSHOTS_DIR = path.join(EVENTS_DIR, 'snapshots');
 export const CHECKPOINT_PATH = path.join(EVENTS_DIR, 'checkpoint.json');
 
-// 名前空間ごとの振る舞い宣言。fold:true の名前空間だけがスナップショットに畳み込まれ、
-// asOf 起算の対象になる。log は機械注入の痕跡専用で、build/compact の対象外
+// 名前空間ごとの振る舞い宣言。fold:true の名前空間だけがスナップショットに畳み込まれ、asOf 起算の対象になる。log は機械注入の痕跡専用で、build/compact の対象外
 export const NAMESPACES = {
   product: { fold: true },
   meta: { fold: true },
@@ -80,8 +79,7 @@ const assertStatusLocation = (key) => {
     throw new EventError(`status is only allowed on fact sections or work units: ${key}`);
 };
 
-// キーは「名前空間.区画. ...」のドットパス。status の部分書き込み（.status.stage 等）は
-// 常に拒否し、status は丸ごと主張させる
+// キーは「名前空間.区画. ...」のドットパス。status の部分書き込み（.status.stage 等）は常に拒否し、status は丸ごと主張させる
 export const validateKey = (key) => {
   if (!key) throw new EventError('key is required');
   if (key.includes('.status.')) throw new EventError(`status must be asserted whole: ${key}`);
@@ -182,12 +180,37 @@ export const readEvents = () =>
       return event;
     });
 
-// チェックポイントを読み込み、畳み込みの起点とする
+// チェックポイント本文を畳み込み起点へ変換する。空・不正 JSON・形状欠損は不在扱い
+export const parseCheckpoint = (text) => {
+  let checkpoint;
+  try {
+    checkpoint = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (
+    !checkpoint ||
+    typeof checkpoint !== 'object' ||
+    Array.isArray(checkpoint) ||
+    !checkpoint.trees ||
+    typeof checkpoint.trees !== 'object' ||
+    Array.isArray(checkpoint.trees)
+  )
+    return null;
+  return { trees: checkpoint.trees, compactedAt: checkpoint.compactedAt ?? null };
+};
+
+// チェックポイントを読み込み、畳み込みの起点とする。
+// 空ファイルや不正な JSON も「チェックポイントなし」と同じ起点にする
 export const loadBase = () => {
   if (!fs.existsSync(CHECKPOINT_PATH))
     return { trees: { product: {}, meta: {} }, compactedAt: null };
-  const checkpoint = JSON.parse(fs.readFileSync(CHECKPOINT_PATH, 'utf8'));
-  return { trees: checkpoint.trees, compactedAt: checkpoint.compactedAt };
+  return (
+    parseCheckpoint(fs.readFileSync(CHECKPOINT_PATH, 'utf8')) ?? {
+      trees: { product: {}, meta: {} },
+      compactedAt: null,
+    }
+  );
 };
 
 // ドットパスの位置に値を上書きする。途中のノードがスカラーならオブジェクトへ置き換わる
@@ -234,14 +257,10 @@ const workUnits = (container, marker) =>
     (node) => node && typeof node === 'object' && !Array.isArray(node) && marker in node,
   );
 
-// 作業単位（trigger / purpose を持つノード）に status の初期値を補完し、語彙を検証する。
-// stage は機械的な段階、status.text は常に書く進捗文
+// product features のガード。status 未主張なら planned を補完する保険で、正規ルートは明示アペンド。
+// meta は対象外。初期状態のベースは status なしで正しい
 export const normalizeTrees = (trees) => {
-  const units = [
-    ...workUnits(trees.product?.features, 'trigger'),
-    ...Object.values(trees.meta ?? {}).flatMap((section) => workUnits(section, 'purpose')),
-  ];
-  for (const node of units) {
+  for (const node of workUnits(trees.product?.features, 'trigger')) {
     if (!node.status || typeof node.status !== 'object' || Array.isArray(node.status))
       node.status = {};
     node.status.stage ??= 'planned';
