@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T17:15:27.267+09:00",
-  "asOf": "2026-08-27T17:15:27.240+09:00",
+  "generatedAt": "2026-08-27T17:40:50.569+09:00",
+  "asOf": "2026-08-27T17:40:50.541+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -112,6 +112,15 @@
         },
         "path": ".opencode/skills/readme/SKILL.md",
         "updatedAt": "20260825"
+      },
+      "refactor": {
+        "status": {
+          "stage": "commit",
+          "text": "SKILL.mdを作成。対象をラベル分類し圧縮/再構築の2パスを適用する方式を導入"
+        },
+        "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
+        "path": ".opencode/skills/refactor/SKILL.md",
+        "updatedAt": "20260827"
       }
     },
     "docs": {
