@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T13:27:57.963+09:00",
-  "asOf": "2026-08-27T13:27:53.352+09:00",
+  "generatedAt": "2026-08-27T16:48:12.266+09:00",
+  "asOf": "2026-08-27T16:48:12.237+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -218,12 +218,12 @@
       },
       "user-sync-to-starter": {
         "path": "scripts/user/sync-to-starter.mjs",
-        "purpose": "ハーネスをプロジェクトからスターターへ丸ごと同期するツール。引数なしはdry-run、状態記録はスターター側の通常フローに委ねる",
+        "purpose": "ハーネスをプロジェクトからスターターへ丸ごと同期するツール。meta.* ログイベントをキー単位の ts 比較で注入し、スターター側で build を実行する",
         "status": {
           "stage": "commit",
-          "text": "同期ツールを実装。静的リストのrclone一括コピー"
+          "text": "meta.* ログイベントの注入（キー単位 ts 比較・no-op 除外・build 自動実行）を追加し、境界テストを整備"
         },
-        "updatedAt": "20260826"
+        "updatedAt": "20260827"
       }
     },
     "agents": {

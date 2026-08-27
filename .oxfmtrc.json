@@ -11,7 +11,7 @@
   "arrowParens": "always",
   "insertFinalNewline": true,
   "ignorePatterns": [
-    "tsconfig.json",
+    "*tsconfig.json",
     "tsconfig.*.json",
     "jsconfig.json",
     ".opencode/skills/mockup/workbench"
