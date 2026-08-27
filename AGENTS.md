@@ -1,4 +1,4 @@
-# agent.md
+# AGENTS.md
 
 ## Operational System
 

@@ -5,7 +5,7 @@ description: Perform a git commit for a work unit, appending status assertions f
 
 # Commit
 
-Close out one work unit: append the agreed events, build, then commit everything (code, log, snapshots, docs) together. Never commit unless the user explicitly asked.
+Close out one work unit: append the agreed events, build, then commit everything (code, log, snapshots, docs) together.
 
 ## Commit-failure handling
 
@@ -65,9 +65,4 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 
 ## Lifecycle integration
 
-Status assertions are appended **before** the commit, so the log and snapshots ship in the same commit as the code:
-
-- Every touched component gets one whole-status assertion: `set <key>.status '{"stage":"commit","text":"<今回の変更内容>"}'`. Always `commit` — no stage-transition judgment. Stage and text always travel together — the shape enforces it.
-- Plain value changes and doc updates commit alongside.
-
-If a commit succeeds but status assertions weren't recorded, append them as part of the NEXT work unit (no amending).
+Status assertions are appended **before** the commit so the log and snapshots ship in the same commit as the code. Plain value changes and doc updates commit alongside. If a commit succeeds but status assertions weren't recorded, append them as part of the NEXT work unit (no amending).

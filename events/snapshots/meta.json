@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T21:43:26.150+09:00",
-  "asOf": "2026-08-27T21:43:26.123+09:00",
+  "generatedAt": "2026-08-27T21:55:27.430+09:00",
+  "asOf": "2026-08-27T21:55:27.399+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -17,7 +17,7 @@
         "purpose": "編集直後のreport-only lint",
         "status": {
           "stage": "commit",
-          "text": "buildMessage に統一し root 解決をファクトリ時に移動"
+          "text": "重複コメントを削除"
         },
         "updatedAt": "20260827"
       },
@@ -52,7 +52,7 @@
         "purpose": "events/README.md の読み込みをセッションごとに要求し、読むまでツール実行をブロックする",
         "status": {
           "stage": "commit",
-          "text": "events/README.md 読み込みゲートを実装。createGate ファクトリで per-call を純メモリ化し、ブロック文言で記録契約の理解を要求"
+          "text": "root解決コメントを正規の置き場として維持"
         },
         "path": ".opencode/plugin/tool-execute-before.ts",
         "updatedAt": "20260827"
@@ -64,7 +64,7 @@
         "path": ".opencode/skills/agenda/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "step 2 をスコープ列挙+兄弟ファイル読み取り+規約発見+ユーザー承認に再構成。code-axes.md に軸13(Convention consistency)を追加しセクション名を更新"
+          "text": "Status semantics節を正規の置き場として維持"
         },
         "updatedAt": "20260827"
       },
@@ -72,7 +72,7 @@
         "purpose": "実装前の調査と記録",
         "status": {
           "stage": "commit",
-          "text": "Procedure step 4を条件分岐に構造化し、spike検証時のlib-name割り当てとフラット構成原則を明記"
+          "text": "Status semantics節をevents/README.md参照に圧縮"
         },
         "updatedAt": "20260827",
         "path": ".opencode/skills/recon/SKILL.md"
@@ -109,7 +109,7 @@
         "purpose": "コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める",
         "status": {
           "stage": "commit",
-          "text": "コミット前にメッセージを提示して承認を得る手順を追加"
+          "text": "重複記述を圧縮"
         },
         "updatedAt": "20260827"
       },
@@ -138,7 +138,7 @@
         "purpose": "行動原則と駆動方式への導線",
         "status": {
           "stage": "commit",
-          "text": "セクション名整理、新原則追加、コメント方針をImplementationに移動"
+          "text": "見出しをAGENTS.mdに修正"
         },
         "updatedAt": "20260827"
       },
@@ -221,9 +221,9 @@
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
           "stage": "commit",
-          "text": "normalizeをproductガード専用に変更しloadBaseに空ファイル耐性を追加"
+          "text": "自明なコメントを削除"
         },
-        "updatedAt": "20260826"
+        "updatedAt": "20260827"
       },
       "user-reset": {
         "path": "scripts/user/reset.mjs",
@@ -239,7 +239,7 @@
         "purpose": "ハーネスをプロジェクトからスターターへ丸ごと同期するツール。meta.* ログイベントをキー単位の ts 比較で注入し、スターター側で build を実行する",
         "status": {
           "stage": "commit",
-          "text": "meta.* ログイベントの注入（キー単位 ts 比較・no-op 除外・build 自動実行）を追加し、境界テストを整備"
+          "text": "誤配置・重複コメントを整理"
         },
         "updatedAt": "20260827"
       }

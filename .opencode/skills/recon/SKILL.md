@@ -68,7 +68,4 @@ When in doubt, ask the user which pattern fits.
 
 ## Status semantics
 
-- `planned` — recorded intention. Everything captured starts here, even when the user consented at capture time
-- `ready` — passed agenda consensus; awaiting implementation
-- On consensus: one status assertion per target — `node events/scripts/append.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`. Multiple targets can share one invocation (one shared ts)
-- No manual build: the idle hook syncs snapshots after the turn ends
+Recon records research results; it does not transition stages. The shared stage vocabulary and the append command live in [events/README.md](../README.md#recording-contract).

@@ -58,7 +58,6 @@ export const parseValue = (raw) => {
   try {
     return JSON.parse(raw);
   } catch {
-    // JSON 以外の文字列はそのまま値として使う
     return raw;
   }
 };
@@ -167,7 +166,6 @@ export const buildEvent = (draft, ts = jstNow()) => {
   return event;
 };
 
-// アクティブなログを読み込み、イベントの配列を返す
 export const readEvents = () =>
   fs
     .readFileSync(LOG_PATH, 'utf8')
@@ -251,7 +249,6 @@ export function deletePath(tree, key) {
   pruneEmpty(tree, parts.slice(0, -1));
 }
 
-// マーカーフィールドを持つ作業単位（オブジェクト）だけを取り出す
 const workUnits = (container, marker) =>
   Object.values(container ?? {}).filter(
     (node) => node && typeof node === 'object' && !Array.isArray(node) && marker in node,

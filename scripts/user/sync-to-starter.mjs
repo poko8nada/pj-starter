@@ -75,9 +75,7 @@ const makeLatestTs = (lib, base, starterEvents, trees) => {
   return (key) => latest.get(key) ?? (valueAt(trees, key) !== undefined ? floor : '');
 };
 
-// プロジェクトの meta.* イベントをスターターのログへ注入する。
-// 勝敗はキー単位の ts 比較（プロジェクトがスターターより新しいものだけ注入）。
-// プロジェクトのログから meta.* イベントを抽出し、注入前に検証し直す
+// プロジェクトのログから meta.* イベントを抽出し、キー文法・status 形状を検証して返す
 const readCandidates = (lib, projectLogPath) => {
   const candidates = [];
   const lines = fs

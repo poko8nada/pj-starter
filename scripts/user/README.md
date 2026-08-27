@@ -35,8 +35,12 @@ pnpm starter:sync --run <スターターのパス>  # 実コピー
 ```
 
 - 対象は固定リスト（`.opencode/`、`scripts/`、`AGENTS.md`、`lefthook.yaml`、`events/README.md`、`events/spec/`、`events/scripts/`）の丸ごとコピー。選別ロジックなし
-- 加えて、プロジェクトの `events/log.jsonl` から `meta.*` イベントを抽出し、**キー単位の ts 比較**でスターターのログへ注入する。プロジェクトがスターターより新しいイベントのみ・状態を変えないもの（no-op）は除外。スターター側でログに触れていない checkpoint 由来のキーは `compactedAt` を比較基準とし、未存在キーは常にプロジェクト勝ち。スターターに `log.jsonl` が無い場合（compact 直後など）は空ログとして扱う。元の ts を保持したまま追記し、注入後にスターター側の `build` を自動実行して `meta.json` を更新する
+- 加えて、プロジェクトの `events/log.jsonl` から `meta.*` イベントを抽出し、**キー単位の ts 比較**でスターターのログへ注入する:
+  - プロジェクトがスターターより新しいイベントのみ注入。状態を変えないもの（no-op）は除外
+  - スターター側でログに触れていない checkpoint 由来のキーは `compactedAt` を比較基準とし、未存在キーは常にプロジェクト勝ち
+  - スターターに `log.jsonl` が無い場合（compact 直後など）は空ログとして扱う
+  - 元の ts を保持したまま追記し、注入後にスターター側の `build` を自動実行して `meta.json` を更新する
 - dry-run ではイベントごとの勝敗判定（`INJECT` / `SKIP`）を表示する。`product.*` と `log.turn.*` は注入対象外
 - lock ファイル（package-lock.json / pnpm-lock.yaml）は生成物なので対象外。package.json を同期したら、スターター側の次回 opencode 起動で依存が解決される
-- 不要な変更、もしくはまだ完成していないはコピー後に手動で、restoreなどで戻す
-- 取り込んだ後の状態の記録は（status → build → commit）はスターター側の通常フローで行う
+- 不要な変更や未完成の変更は、コピー後に手動で restore などで戻す
+- 取り込んだ後の状態の記録（status → build → commit）は、スターター側の通常フローで行う

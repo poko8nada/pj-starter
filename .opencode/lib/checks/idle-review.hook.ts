@@ -37,13 +37,11 @@ export const reviewIdle = async (ctx: ReviewCtx, sessionId: string): Promise<Rep
       `[typecheck] tsc found errors:\n${clipLines(tsc.stdout.toString(), MAX_REPORT_LINES)}`,
     );
 
-  // 全て通過したらラウンドカウンタをリセットして終了
   if (errors.length === 0) {
     rounds.reset(sessionId);
     return { errors };
   }
 
-  // 上限に達していたら自動修正をやめて人間へ通知する
   if (rounds.exhausted(sessionId)) {
     try {
       await ctx.client.tui.showToast({

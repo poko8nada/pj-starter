@@ -1,6 +1,5 @@
 // フックランタイム： 編集系ツールの直後（tool.execute.after）。
 // report-only の lint を差し込み、結果をツール出力へ追記する。処理の実体は lib 配下。
-// root は起動時に1回だけ resolveProjectRoot で解決し、per-call の fs I/O を避ける
 import type { Plugin } from '@opencode-ai/plugin';
 import { runEditLint } from '../lib/checks/edit-lint.hook';
 import { resolveProjectRoot } from '../lib/harness/resolve-root';
