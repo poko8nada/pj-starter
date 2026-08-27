@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T16:48:12.266+09:00",
-  "asOf": "2026-08-27T16:48:12.237+09:00",
+  "generatedAt": "2026-08-27T16:50:35.068+09:00",
+  "asOf": "2026-08-27T15:54:25.956+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -63,9 +63,9 @@
         "purpose": "実装前の調査と記録",
         "status": {
           "stage": "commit",
-          "text": "SKILL.mdを作成し運用中"
+          "text": "Procedure step 4を条件分岐に構造化し、spike検証時のlib-name割り当てとフラット構成原則を明記"
         },
-        "updatedAt": "20260825",
+        "updatedAt": "20260827",
         "path": ".opencode/skills/recon/SKILL.md"
       },
       "audit": {
@@ -120,9 +120,9 @@
         "purpose": "行動原則と駆動方式への導線",
         "status": {
           "stage": "commit",
-          "text": "駆動システムの導線として運用中"
+          "text": "セクション名整理、新原則追加、コメント方針をImplementationに移動"
         },
-        "updatedAt": "20260824"
+        "updatedAt": "20260827"
       },
       "events-readme": {
         "path": "events/README.md",
@@ -249,10 +249,10 @@
         "purpose": "git worktreeで試験導入し、runbookを生成する検証",
         "status": {
           "stage": "commit",
-          "text": "spike-verifier.mdを作成し運用中"
+          "text": "lib-name明示ルールとStructural principleセクションを追加"
         },
         "path": ".opencode/agent/spike-verifier.md",
-        "updatedAt": "20260825"
+        "updatedAt": "20260827"
       },
       "agenda-reviewer": {
         "purpose": "アジェンダプランをcode axesに照らして批判レビューし、smell発見を返す",

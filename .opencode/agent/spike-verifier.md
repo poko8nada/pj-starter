@@ -21,6 +21,13 @@ You are the spike verification engine of the recon skill. You receive a target l
 - Never modify files in the main project (outside `.worktrees/`)
 - Never merge into the main branch
 - Multiple spike verifiers may run in parallel; each worktree is an independent git repository, so they never interfere with each other
+- **The main agent assigns a unique `lib-name` per candidate** — use exactly the lib-name provided in the prompt. Never reuse another verifier's lib-name
+
+## Structural principle
+
+- **Flat structure is the default.** Use root-level source directories (e.g. `src/`, `worker/`) with a single `package.json` at root. Do NOT use monorepo layouts (`apps/web`, `apps/api`) unless the user explicitly requests it
+- Monorepo (`apps/` nesting) is an exception reserved for large-scale applications — not for typical projects, libraries, or learning exercises
+- This applies regardless of dependency type (frontend, backend, full-stack, mixed)
 
 ## Verification scope
 

@@ -47,7 +47,11 @@ When in doubt, ask the user which pattern fits.
 1. **Clarify the question** — what is being researched and why.
 2. **Pick the pattern** — web research, spike verification, or comparison (see Pattern selection).
 3. **List the candidates** — from the user's request or the web research results. One candidate per sub-agent.
-4. **Spawn the sub-agent(s)** — one Task call per candidate with the matching sub-agent. Pass a research query for web research, or a candidate and verification conditions for spike verification. Spawn multiple candidates in parallel. The sub-agent reads nothing outside its input.
+4. **Spawn the sub-agent(s)** — one Task call per candidate with the matching sub-agent. Spawn multiple candidates in parallel. The sub-agent reads nothing outside its input.
+   - **Web research**: pass a research query
+   - **Spike verification**:
+     - Assign a unique `lib-name` per candidate (lowercase, hyphens), pass it explicitly in the prompt.
+     - Default to flat project structure; monorepo only when the user explicitly requests it.
 5. **Aggregate** — collect the fixed-format outputs returned by the sub-agents.
 6. **Compare** — for multiple candidates, present them side by side (fit, risk, adoption signals).
 7. **Record** — when the user agrees the result is worth keeping, record it (e.g. the runbook) in the main project. Recording is the main agent's responsibility — sub-agents never write outside their worktree.

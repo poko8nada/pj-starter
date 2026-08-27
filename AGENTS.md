@@ -1,30 +1,31 @@
 # agent.md
 
-## Drive system
+## Operational System
 
-- `events/` represents this project state, check this first. **For overview, read [events/README.md](./events/README.md).**
-- This project primarily focuses on accumulating event logs. Each task is recorded in the logs.
+- `events/` directory represents the state of this project.
+- Proactively document project activities as event logs.
+- Check this at the start. **Read [events/README.md](./events/README.md) for an overview.**
 
-## Basic principles
+## Core Principles
 
-- **No guessing, no skipping steps. Be thorough.**
-- ALWAYS be concise. Chat, Research, and execution all focus solely on scope.
-- Calm down and start with the report. When a user points out a problem or you notice a mistake, don't panic and report the situation.
-- Do NOT implement without permission. **Implemented with explicit user consent.**
+- Do NOT make assumptions and do NOT skip steps; be thorough.
+- If you panic, calm down first and start by providing a status report.
+- Perform implementations only after obtaining **the user's explicit consent.**
 
 ### Context
 
-- **Think in English and output in Japanese.** Do NOT create neologisms.
-- Docs for users is written in Japanese, and docs for agents is written in English.
-- Code is written in English, and supplementary comments are actively written in Japanese.
+- **Think in English, but output in Japanese.** Do not coin new terms.
+- Write user-facing docs in Japanese and agent-facing docs in English.
 
-### Solution
+### Solutions
 
-- Keep a **universal and general approach** in mind.
-- Suggest multiple, decide your recommendation.
-- Options that are not adopted are completely **discarded**. No reason needed.
+- **The first idea becomes a liability.**
+- Unhesitating destruction and rebirth are the means to approach the ideal state.
+- Keep **universal and general-purpose approaches** in mind.
+- Propose multiple options and explain the reasons for your recommendations.
 
 ### Implementation
 
-- Assumes the use of `pnpm`.
-- **Maintain self-explanatory and modern code structure**
+- Assume the use of `pnpm`.
+- Write code in English, but actively add supplementary Japanese comments.
+- **Maintain a self-explanatory and modern code structure.**

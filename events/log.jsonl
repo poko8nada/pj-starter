@@ -190,3 +190,8 @@
 {"ts":"2026-08-27T16:47:32.387+09:00","type":"set","key":"log.turn.cc2ca5d4","value":{"events":[{"kind":"edit","paths":["scripts/user/sync-to-starter.mjs","scripts/user/sync-to-starter.test.mjs","scripts/user/README.md"]},{"kind":"read","paths":["scripts/user/sync-to-starter.test.mjs"]}],"reasoning":0}}
 {"ts":"2026-08-27T16:48:12.237+09:00","type":"set","key":"meta.scripts.user-sync-to-starter.status","value":{"stage":"commit","text":"meta.* ログイベントの注入（キー単位 ts 比較・no-op 除外・build 自動実行）を追加し、境界テストを整備"}}
 {"ts":"2026-08-27T16:48:29.824+09:00","type":"set","key":"log.turn.201e2c3d","value":{"events":[{"kind":"skill","name":"commit"}],"reasoning":0}}
+{"ts":"2026-08-27T15:13:59.625+09:00","type":"set","key":"meta.skills.recon.status","value":{"stage":"commit","text":"ワークツリー並列分離の明示ルールとフラット構成デフォルト原則を追加"}}
+{"ts":"2026-08-27T15:13:59.625+09:00","type":"set","key":"meta.agents.spike-verifier.status","value":{"stage":"commit","text":"フラット構成デフォルト原則とワークツリー分離ルールを追加"}}
+{"ts":"2026-08-27T15:30:37.364+09:00","type":"set","key":"meta.skills.recon.status","value":{"stage":"commit","text":"Procedure step 4を条件分岐に構造化し、spike検証時のlib-name割り当てとフラット構成原則を明記"}}
+{"ts":"2026-08-27T15:30:37.364+09:00","type":"set","key":"meta.agents.spike-verifier.status","value":{"stage":"commit","text":"lib-name明示ルールとStructural principleセクションを追加"}}
+{"ts":"2026-08-27T15:54:25.956+09:00","type":"set","key":"meta.docs.agents-md.status","value":{"stage":"commit","text":"セクション名整理、新原則追加、コメント方針をImplementationに移動"}}
