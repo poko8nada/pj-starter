@@ -26,7 +26,7 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
    - `git status` — intended files only
    - `git diff` — no secrets, no unintended changes
    - `git log --oneline -10` — match repo message style
-5. **Commit** with a structured message:
+5. **Propose the commit message** — present the structured message to the user in chat and wait for approval or corrections:
 
    ```
    <type>(<scope>): <imperative subject in English, ≤50 chars, no period>
@@ -54,6 +54,8 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
      ```
 
    - Subject is English imperative; body is Japanese in plain form (「〜した」), wrapped at ~72 chars; labels stay English. Blank line between subject and body.
+
+6. **Commit** — execute `git commit` only after the user approves the message.
 
 ## Strict no-commit moments
 
