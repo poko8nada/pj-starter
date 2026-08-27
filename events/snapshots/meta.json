@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T22:04:05.231+09:00",
-  "asOf": "2026-08-27T22:04:05.202+09:00",
+  "generatedAt": "2026-08-27T22:11:43.916+09:00",
+  "asOf": "2026-08-27T22:11:43.888+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -125,7 +125,7 @@
       "refactor": {
         "status": {
           "stage": "commit",
-          "text": "References節・タッチコンポーネント特定・Status semanticsを追加"
+          "text": "Step1にドメイン選択を追加し照合スコープを限定。定義乖離のルーティングを追記"
         },
         "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
         "path": ".opencode/skills/refactor/SKILL.md",

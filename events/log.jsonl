@@ -287,3 +287,7 @@
 {"ts":"2026-08-27T22:03:32.231+09:00","type":"set","key":"log.turn.084671e0","value":{"events":[{"kind":"edit","paths":[".opencode/lib/events-sync/sync.hook.ts",".opencode/lib/utils/text.ts",".opencode/lib/checks/edit-lint.hook.ts",".opencode/lib/checks/idle-review.hook.ts","scripts/user/sync-to-starter.mjs","scripts/typecheck-staged.mjs"]}],"reasoning":0}}
 {"ts":"2026-08-27T22:04:05.202+09:00","type":"set","key":"meta.scripts.typecheck-staged.status","value":{"stage":"commit","text":"CHECKABLE_EXTの無意味な別名を除去"}}
 {"ts":"2026-08-27T22:04:05.202+09:00","type":"set","key":"meta.scripts.user-sync-to-starter.status","value":{"stage":"commit","text":"metaキー抽出をmetaPathに集約"}}
+{"ts":"2026-08-27T22:10:17.691+09:00","type":"set","key":"meta.skills.refactor.status","value":{"stage":"ready","text":"Step1にドメイン選択を追加し照合スコープを限定"}}
+{"ts":"2026-08-27T22:10:38.499+09:00","type":"set","key":"meta.skills.refactor.status","value":{"stage":"implement","text":"Step1にドメイン選択を追加し、Step2の照合を該当スナップショット限定に変更。定義乖離のルーティングも追記"}}
+{"ts":"2026-08-27T22:10:44.124+09:00","type":"set","key":"log.turn.1bc91d0c","value":{"events":[{"kind":"edit","paths":[".opencode/skills/refactor/SKILL.md"]},{"kind":"read","paths":[".opencode/skills/refactor/SKILL.md"]}],"reasoning":0}}
+{"ts":"2026-08-27T22:11:43.888+09:00","type":"set","key":"meta.skills.refactor.status","value":{"stage":"commit","text":"Step1にドメイン選択を追加し照合スコープを限定。定義乖離のルーティングを追記"}}

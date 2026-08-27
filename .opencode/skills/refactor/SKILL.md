@@ -10,7 +10,7 @@ A skill for refactoring code and/or documentation, split into two independent tr
 ## References
 
 - Log rules: `events/README.md`
-- Component inventory: `events/snapshots/meta.json` (and `product.json` for product slices)
+- Component inventory: `events/snapshots/product.json` (product) / `events/snapshots/meta.json` (meta) — consult the declared domain's snapshot
 
 ## Core principle
 
@@ -18,21 +18,27 @@ A skill for refactoring code and/or documentation, split into two independent tr
 
 So every target must first be **labeled**, and only then does a rule apply. Never skip labeling and jump straight to "make it shorter."
 
-## Step 1: Determine mode
+## Step 1: Determine mode and domain
 
-Ask or infer from the user's request which mode applies:
+Ask or infer from the user's request:
 
-- **code** — refactor code logic only
-- **doc** — refactor documentation and code comments only
-- **both** — run code and doc independently, then present a combined diff
+- **Mode** — which track applies:
+  - **code** — refactor code logic only
+  - **doc** — refactor documentation and code comments only
+  - **both** — run code and doc independently, then present a combined diff
+- **Domain** — which layer the refactor targets:
+  - **product** — product code and product features
+  - **meta** — the driving machinery (harness, skills, agents, docs, scripts)
 
-Default to asking if ambiguous (e.g. "just say 'refactor'" with no further context). Don't run both tracks unless the user wants both — running code-only when only docs were requested (or vice versa) wastes the user's review time.
+Infer both from the request (e.g. "auth をリファクタ" → code + product; "agenda スキルを整理" → doc + meta); default to asking if ambiguous. The domain sets the consultation scope for Step 2 — a default, not a hard gate: candidates mapping to the other domain are still handled.
 
 ## Step 2: Label every candidate target
 
 Before changing anything, classify each candidate block/comment using the tables below. Do not touch anything until it has a label.
 
-While labeling, also identify the **touched components**: match the candidate locations against component `path`s in `events/snapshots/meta.json` and `events/snapshots/product.json`. Locations matching no component are raw code — they have no status to assert.
+While labeling, also identify the **touched components**: match the candidate locations against component `path`s in the declared domain's snapshot — `events/snapshots/product.json` for product, `events/snapshots/meta.json` for meta. Locations matching no component are raw code — they have no status to assert. Candidates mapping to the other domain are still handled (the domain is a consultation default, not a hard gate).
+
+If labeling reveals that a component's **definition** (trigger/result/route or purpose) has drifted from reality, do not refactor around it — route to the feature skill for a definition revision, then restart.
 
 ### Code labels
 

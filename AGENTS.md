@@ -3,7 +3,7 @@
 ## Operational System
 
 - `events/` directory represents the state of this project.
-- Proactively document project activities as event logs.
+- Read log using the reading tool and state the recording contract in a message before working.
 - Check this at the start. **Read [events/README.md](./events/README.md) for an overview.**
 
 ## Core Principles
@@ -14,13 +14,14 @@
 
 ### Context
 
-- **Think in English, but output in Japanese.** Do not coin new terms.
+- **Think in English, but output in Japanese.**
+- Do NOT coin new terms in your output.
 - Write user-facing docs in Japanese and agent-facing docs in English.
 
 ### Solutions
 
-- **The first idea becomes a liability.**
-- Unhesitating destruction and rebirth are the means to approach the ideal state.
+- **Your ideas tend to become “JUST additions” and become future liabilities**
+- In addition to solutions, make structural changes to repay existing debts.
 - Keep **universal and general-purpose approaches** in mind.
 - Propose multiple options and explain the reasons for your recommendations.
 
