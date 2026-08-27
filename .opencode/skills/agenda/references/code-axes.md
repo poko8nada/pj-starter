@@ -1,6 +1,6 @@
 # Code axes
 
-The review standard for agenda. The axes cover two viewpoints: impact-scope identification and rebuild-not-accrete. The agenda-reviewer checks ONLY these two viewpoints; the design considerations below are handled by the main agent in the design step.
+The review standard for agenda. The axes cover two viewpoints: impact-scope identification and rebuild-not-accrete. The agenda-reviewer checks ONLY these two viewpoints; the main agent considerations below are handled by the main agent, not the reviewer.
 
 ## Impact scope
 
@@ -22,9 +22,10 @@ The target feature is rebuilt together with its impact scope, never added onto:
 9. **Root cause** — fix the cause, not the symptom
 10. **Pattern spread** — same problem elsewhere? include sibling fixes in scope, or state why not
 
-## Design considerations (main agent only, not reviewer scope)
+## Main agent considerations (not reviewer scope)
 
 11. **Size limits** — functions ≤ 80 lines, files ≤ 480 lines; oversized existing files get a split proposal
 12. **Pure vs boundary** — logic and I/O live in separate layers; this drives the test policy
+13. **Convention consistency** — follow the codebase's existing conventions (naming, return types, language). Conventions are discovered by reading sibling files and shared modules
 
 Refactoring never creates new entries — it rides on the cycles of the existing units whose code it touches.

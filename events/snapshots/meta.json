@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T19:00:59.661+09:00",
-  "asOf": "2026-08-27T19:00:59.632+09:00",
+  "generatedAt": "2026-08-27T21:31:40.585+09:00",
+  "asOf": "2026-08-27T21:31:40.555+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -64,7 +64,7 @@
         "path": ".opencode/skills/agenda/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "影響範囲を先に特定し影響範囲ごと作り直す方針を明示。条件をcode-axes.mdに一元化しTarget条件を追加、観点限定の言明とRebuild概念の重複をMECEで整理"
+          "text": "step 2 をスコープ列挙+兄弟ファイル読み取り+規約発見+ユーザー承認に再構成。code-axes.md に軸13(Convention consistency)を追加しセクション名を更新"
         },
         "updatedAt": "20260827"
       },

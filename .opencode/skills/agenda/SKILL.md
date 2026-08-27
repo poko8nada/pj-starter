@@ -16,22 +16,47 @@ Turn an implementation decision into an agreed plan, then record it. Never imple
 
 ## Responsibilities
 
-|          | Main agent (YOU)                    | agenda-reviewer                                   |
-| -------- | ----------------------------------- | ------------------------------------------------- |
-| Scope    | Decide the plan, targets, and scope | Receive the plan and the impact scope             |
-| Review   | Never (delegate to the sub-agent)   | Check plan and files against the review viewpoint |
-| Judgment | Integrate findings, decide adoption | Never                                             |
-| Output   | Present the plan and findings       | Return findings in a fixed format                 |
+|          | Main agent (YOU)                                 | agenda-reviewer                                   |
+| -------- | ------------------------------------------------ | ------------------------------------------------- |
+| Scope    | Decide the plan, targets, scope, and conventions | Receive the plan and the impact scope             |
+| Review   | Never (delegate to the sub-agent)                | Check plan and files against the review viewpoint |
+| Judgment | Integrate findings, decide adoption              | Never                                             |
+| Output   | Present the plan and findings                    | Return findings in a fixed format                 |
 
 ## Procedure
 
-1. **Domain & Definition axes** — decide whether the work targets product or meta, then check the target keys against the definition axes below. Any hit means agenda cannot proceed: register / revise / split via the feature skill, then restart from scratch.
-2. **Impact scope** — identify the impact scope FIRST, before any design. Enumerate every file the change touches using the scope conditions in [references/code-axes.md](./references/code-axes.md). The scope is the unit of rebuild: the target feature is rebuilt together with its impact scope, never added onto.
-3. **Design** — read the files in the impact scope, check them against the code axes below, and decide the design direction with the four labels below. The agreed refactor enters the plan completely, never partially; if refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle.
-4. **Tests** — decide the test policy per order using the test criteria below.
-5. **Review & Integrate** — spawn the `agenda-reviewer` subagent with the draft plan and the impact scope. It checks ONLY the impact-scope/rebuild viewpoint (see code-axes.md) and returns findings. Fold the findings into the plan: address each or defer with a reason. Never silently drop a finding.
-6. **Present & discuss** — show the plan and the findings to the user, and iterate until explicit agreement.
-7. **Record** — on consensus, append the stage transitions. Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
+1. **Domain & Definition axes**: Decide whether the work targets product or meta, then check the target keys against the definition axes below. Any hit means agenda cannot proceed; register / revise / split via the feature skill, then restart from scratch.
+2. **Impact scope & conventions**:
+   1. Enumerate the impact scope using the scope conditions in code-axes.md
+   2. Read each file in the scope and their siblings (same directory)
+   3. Discover conventions (naming, return types, language) from what was read (code-axes.md 軸13)
+   4. Present in the format below; wait for user approval. If rejected, revise and repeat from step 2.1
+
+   The approved scope and conventions become the premise for step 3.
+
+   ```markdown
+   ## Impact scope
+
+   - `<path>`: <scope condition> (<create/modify>)
+
+   ## Conventions
+
+   - <category>: <discovered pattern>
+
+   If no conventions are discovered, state 'none discovered'.
+   ```
+
+3. **Design**:
+   - Using the approved scope and conventions as premises, check the files against the code axes below and decide the design direction with the four labels below.
+   - The agreed refactor enters the plan completely, never partially; if refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle.
+
+4. **Tests**: Decide the test policy per order using the test criteria below.
+5. **Review & Integrate**:
+   - Spawn the `agenda-reviewer` subagent with the draft plan and the impact scope.
+   - It checks ONLY the impact-scope/rebuild viewpoint code-axes and returns findings.
+   - Fold the findings into the plan, address each or defer with a reason. Never silently drop a finding.
+6. **Present & discuss**: Show the plan and the findings to the user, and iterate until explicit agreement.
+7. **Record**: On consensus, append the stage transitions. Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
 
 ## Judgment axes
 

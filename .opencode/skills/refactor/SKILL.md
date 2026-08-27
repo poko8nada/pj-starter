@@ -1,6 +1,6 @@
 ---
 name: refactor
-description: Refactor code, documentation (including code comments), or both, with mode selection. Use when the user asks to refactor (リファクタして / 整理して), clean up code, tidy up comments/docs, or reduce duplication. Supports three modes — code, doc, or both — and applies different rules depending on whether the target is compaction (diff must shrink) or restructuring/correction (diff direction is free). Never delete WHY-comments, error handling, or content flagged as insufficient; those are out of scope for compaction.
+description: Refactor code, documentation (including code comments), or both, with mode selection. Use when the user asks to refactor (リファクタして / 整理して), clean up code, tidy up comments/docs, or reduce duplication.
 ---
 
 # Refactor
@@ -46,7 +46,17 @@ Before changing anything, classify each candidate block/comment using the tables
 | `insufficient`                | Missing explanation the reader needs                                     | Free — never delete to satisfy a compaction goal          |
 | `why-explanation`             | Explains a design decision or rationale                                  | Out of scope — wording cleanup only, never delete content |
 
-## Step 3: Apply the matching pass
+## Step 3: Human review of labels (required)
+
+Before applying any changes, present to the user:
+
+1. A list of all candidate locations with the label you assigned
+2. A one-line reason for each label
+3. Ask: "これらのラベル付けで進めてよいですか？ 修正したいラベルがあれば指示してください。"
+
+Do not proceed to Step 4 until the user explicitly approves (or provides corrections).
+
+## Step 4: Apply the matching pass
 
 **Compaction pass** (labels: `duplicate`, `dead`, `equivalent-simplifiable`, `redundant-with-code`, `duplicated-across-locations`)
 
@@ -61,7 +71,7 @@ Before changing anything, classify each candidate block/comment using the tables
 - Docs: judge by accuracy and alignment with current code — not line count.
 - Never delete a `why-explanation` or `insufficient` item to hit a length target.
 
-## Step 4: Summarize
+## Step 5: Summarize
 
 When presenting the result, report per label:
 
