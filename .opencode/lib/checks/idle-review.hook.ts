@@ -5,7 +5,7 @@ import type { Plugin } from '@opencode-ai/plugin';
 import type { Report } from '../utils/report';
 import { consumeDirty } from './edit-lint.hook';
 import { createRounds, MAX_AUTO_FIX_ROUNDS } from './rounds';
-import { clipLines } from '../utils/text';
+import { clipLines, MAX_REPORT_LINES } from '../utils/text';
 
 type PluginInput = Parameters<Plugin>[0];
 
@@ -15,7 +15,6 @@ export interface ReviewCtx {
   root: string;
 }
 
-const MAX_REPORT_LINES = 20;
 const rounds = createRounds();
 
 export const reviewIdle = async (ctx: ReviewCtx, sessionId: string): Promise<Report> => {

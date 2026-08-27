@@ -26,21 +26,18 @@ export const syncEvents = async (ctx: SyncCtx): Promise<Report> => {
   const errors: string[] = [];
   let syncFailed = false;
 
-  const wc = await ctx.$`wc -l events/log.jsonl`.cwd(ctx.root).nothrow().quiet();
-  const lines = Number.parseInt(wc.stdout.toString().trim(), 10);
-  if (shouldCompact(Number.isNaN(lines) ? 0 : lines)) {
-    const compact = await ctx.$`node events/scripts/compact.mjs`.cwd(ctx.root).nothrow().quiet();
-    if (compact.exitCode !== 0) {
-      errors.push(`[events] compact failed:\n${compact.stderr.toString().trim()}`);
+  const runScript = async (name: 'compact' | 'build'): Promise<void> => {
+    const result = await ctx.$`node events/scripts/${name}.mjs`.cwd(ctx.root).nothrow().quiet();
+    if (result.exitCode !== 0) {
+      errors.push(`[events] ${name} failed:\n${result.stderr.toString().trim()}`);
       syncFailed = true;
     }
-  }
+  };
 
-  const build = await ctx.$`node events/scripts/build.mjs`.cwd(ctx.root).nothrow().quiet();
-  if (build.exitCode !== 0) {
-    errors.push(`[events] build failed:\n${build.stderr.toString().trim()}`);
-    syncFailed = true;
-  }
+  const wc = await ctx.$`wc -l events/log.jsonl`.cwd(ctx.root).nothrow().quiet();
+  const lines = Number.parseInt(wc.stdout.toString().trim(), 10);
+  if (shouldCompact(Number.isNaN(lines) ? 0 : lines)) await runScript('compact');
+  await runScript('build');
 
   // read.mjs で meta を読み出し、監査する。読み出しは events 側、判定はこちら
   const read = await ctx.$`node events/scripts/read.mjs --name meta`

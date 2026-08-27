@@ -8,11 +8,10 @@ import * as path from 'node:path';
 // ---- 設定 ----
 // 型チェックの対象拡張子（.js 系は allowJs で構文まで検査する）
 const CODE_EXTENSIONS = ['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'];
-const CHECKABLE_EXT = CODE_EXTENSIONS;
 // 専用 tsconfig を持つハーネスディレクトリ
 const HARNESS_DIRS = ['.opencode'];
 
-const checkableExt = new Set(CHECKABLE_EXT);
+const checkableExt = new Set(CODE_EXTENSIONS);
 
 const root = process.cwd();
 const bin = (name) => path.join(root, 'node_modules', '.bin', name);

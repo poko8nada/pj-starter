@@ -3,7 +3,7 @@
 // 返り値は Report（整形済み英語メッセージ）。ツール出力への追記は plugin 直下の責務
 import type { Plugin } from '@opencode-ai/plugin';
 import type { Report } from '../utils/report';
-import { clipLines } from '../utils/text';
+import { clipLines, MAX_REPORT_LINES } from '../utils/text';
 
 type PluginInput = Parameters<Plugin>[0];
 
@@ -12,7 +12,6 @@ export interface EditLintCtx {
   root: string;
 }
 
-const MAX_REPORT_LINES = 20;
 const EDIT_TOOLS = new Set(['edit', 'write']);
 
 // dirty の有効期限。これを過ぎた dirty は無視する（強制停止後のループ防止）

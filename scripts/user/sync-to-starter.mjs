@@ -112,6 +112,7 @@ const decideInjection = (lib, starter, candidates) => {
   const rows = [];
   for (const event of candidates) {
     const key = event.key;
+    const metaPath = key.slice('meta.'.length);
     const starterTs = latestTs(key);
     if (starterTs !== '' && event.ts <= starterTs) {
       rows.push([
@@ -125,13 +126,13 @@ const decideInjection = (lib, starter, candidates) => {
         rows.push([`SKIP   ${key}  set`, 'no-op（既に同値）']);
         continue;
       }
-      lib.setPath(working.meta, key.slice('meta.'.length), event.value);
+      lib.setPath(working.meta, metaPath, event.value);
     } else {
       if (valueAt(working, key) === undefined) {
         rows.push([`SKIP   ${key}  del`, 'no-op（キーなし）']);
         continue;
       }
-      lib.deletePath(working.meta, key.slice('meta.'.length));
+      lib.deletePath(working.meta, metaPath);
     }
     pending.push(event);
     rows.push([

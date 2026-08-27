@@ -279,3 +279,11 @@
 {"ts":"2026-08-27T21:55:27.399+09:00","type":"set","key":"meta.scripts.user-sync-to-starter.status","value":{"stage":"commit","text":"誤配置・重複コメントを整理"}}
 {"ts":"2026-08-27T21:55:27.399+09:00","type":"set","key":"meta.scripts.event-lib.status","value":{"stage":"commit","text":"自明なコメントを削除"}}
 {"ts":"2026-08-27T21:55:37.528+09:00","type":"set","key":"log.turn.c1d5c40e","value":{"events":[{"kind":"skill","name":"commit"}],"reasoning":0}}
+{"ts":"2026-08-27T21:58:59.693+09:00","type":"set","key":"log.turn.b456930c","value":{"events":[{"kind":"read","paths":["events/README.md"]}],"reasoning":0}}
+{"ts":"2026-08-27T22:01:50.713+09:00","type":"set","key":"meta.scripts.user-sync-to-starter.status","value":{"stage":"ready","text":"metaキー抽出の重複を整理"}}
+{"ts":"2026-08-27T22:01:50.713+09:00","type":"set","key":"meta.scripts.typecheck-staged.status","value":{"stage":"ready","text":"無意味な別名を除去"}}
+{"ts":"2026-08-27T22:03:26.102+09:00","type":"set","key":"meta.scripts.user-sync-to-starter.status","value":{"stage":"implement","text":"metaキー抽出をループ冒頭のmetaPathに集約"}}
+{"ts":"2026-08-27T22:03:26.102+09:00","type":"set","key":"meta.scripts.typecheck-staged.status","value":{"stage":"implement","text":"CHECKABLE_EXTの無意味な別名を除去"}}
+{"ts":"2026-08-27T22:03:32.231+09:00","type":"set","key":"log.turn.084671e0","value":{"events":[{"kind":"edit","paths":[".opencode/lib/events-sync/sync.hook.ts",".opencode/lib/utils/text.ts",".opencode/lib/checks/edit-lint.hook.ts",".opencode/lib/checks/idle-review.hook.ts","scripts/user/sync-to-starter.mjs","scripts/typecheck-staged.mjs"]}],"reasoning":0}}
+{"ts":"2026-08-27T22:04:05.202+09:00","type":"set","key":"meta.scripts.typecheck-staged.status","value":{"stage":"commit","text":"CHECKABLE_EXTの無意味な別名を除去"}}
+{"ts":"2026-08-27T22:04:05.202+09:00","type":"set","key":"meta.scripts.user-sync-to-starter.status","value":{"stage":"commit","text":"metaキー抽出をmetaPathに集約"}}
