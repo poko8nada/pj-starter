@@ -12,6 +12,7 @@
   "rules": {
     "curly": ["error", "multi"],
     "eqeqeq": "error",
+    "import/no-cycle": "error",
     "max-lines-per-function": [
       "error",
       {
