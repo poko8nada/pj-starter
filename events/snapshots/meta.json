@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T16:50:35.068+09:00",
-  "asOf": "2026-08-27T15:54:25.956+09:00",
+  "generatedAt": "2026-08-27T17:15:27.267+09:00",
+  "asOf": "2026-08-27T17:15:27.240+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -55,7 +55,7 @@
         "path": ".opencode/skills/agenda/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "サブエージェントレビューを組み込み、Procedureを6ステップに整理し、Responsibilities表とJudgment axesを追加"
+          "text": "影響範囲を先に特定し影響範囲ごと作り直す方針を明示。条件をcode-axes.mdに一元化しTarget条件を追加、観点限定の言明とRebuild概念の重複をMECEで整理"
         },
         "updatedAt": "20260827"
       },
@@ -259,7 +259,7 @@
         "path": ".opencode/agent/agenda-reviewer.md",
         "status": {
           "stage": "commit",
-          "text": "agenda-reviewer.mdを作成し運用開始"
+          "text": "レビュー観点を影響範囲/作り直しの2点のみに限定し、code-axes.md参照に簡略化"
         },
         "updatedAt": "20260827"
       }

@@ -1,6 +1,6 @@
 ---
 name: agenda
-description: Select and fix the unit of work before implementation. Use when the user decides to build something (実装しよう / 作ろう), says "agenda", or asks to plan work (作業単位). Picks targets from existing snapshots, settles test policy and file structure, reviews the plan via the agenda-reviewer subagent, and records stage transitions after explicit agreement.
+description: Select and fix the unit of work before implementation. Use when the user decides to build something (実装しよう / 作ろう), says "agenda", or asks to plan work (作業単位). Identifies the impact scope first, plans a rebuild of the feature including that scope (never an accretion), reviews the plan via the agenda-reviewer subagent, and records stage transitions after explicit agreement.
 ---
 
 # Agenda
@@ -16,21 +16,22 @@ Turn an implementation decision into an agreed plan, then record it. Never imple
 
 ## Responsibilities
 
-|          | Main agent (YOU)                    | agenda-reviewer                        |
-| -------- | ----------------------------------- | -------------------------------------- |
-| Scope    | Decide the plan, targets, and scope | Receive the plan and file paths        |
-| Review   | Never (delegate to the sub-agent)   | Check plan and files against code axes |
-| Judgment | Integrate findings, decide adoption | Never                                  |
-| Output   | Present the plan and findings       | Return findings in a fixed format      |
+|          | Main agent (YOU)                    | agenda-reviewer                                   |
+| -------- | ----------------------------------- | ------------------------------------------------- |
+| Scope    | Decide the plan, targets, and scope | Receive the plan and the impact scope             |
+| Review   | Never (delegate to the sub-agent)   | Check plan and files against the review viewpoint |
+| Judgment | Integrate findings, decide adoption | Never                                             |
+| Output   | Present the plan and findings       | Return findings in a fixed format                 |
 
 ## Procedure
 
 1. **Domain & Definition axes** — decide whether the work targets product or meta, then check the target keys against the definition axes below. Any hit means agenda cannot proceed: register / revise / split via the feature skill, then restart from scratch.
-2. **Design** — read the files the plan would modify, check them against the code axes below, and decide the design direction with the four labels below. The agreed refactor enters the plan completely, never partially; if refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle.
-3. **Tests** — decide the test policy per order using the test criteria below.
-4. **Review & Integrate** — spawn the `agenda-reviewer` subagent with the draft plan and the file paths it touches plus adjacent neighbors (files that share the same module, import the same dependencies, or sit in the same directory). It checks the plan and files against the code axes and returns findings. Fold the findings into the plan: address each or defer with a reason. Never silently drop a finding.
-5. **Present & discuss** — show the plan and the findings to the user, and iterate until explicit agreement.
-6. **Record** — on consensus, append the stage transitions. Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
+2. **Impact scope** — identify the impact scope FIRST, before any design. Enumerate every file the change touches using the scope conditions in [references/code-axes.md](./references/code-axes.md). The scope is the unit of rebuild: the target feature is rebuilt together with its impact scope, never added onto.
+3. **Design** — read the files in the impact scope, check them against the code axes below, and decide the design direction with the four labels below. The agreed refactor enters the plan completely, never partially; if refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle.
+4. **Tests** — decide the test policy per order using the test criteria below.
+5. **Review & Integrate** — spawn the `agenda-reviewer` subagent with the draft plan and the impact scope. It checks ONLY the impact-scope/rebuild viewpoint (see code-axes.md) and returns findings. Fold the findings into the plan: address each or defer with a reason. Never silently drop a finding.
+6. **Present & discuss** — show the plan and the findings to the user, and iterate until explicit agreement.
+7. **Record** — on consensus, append the stage transitions. Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
 
 ## Judgment axes
 
@@ -48,22 +49,28 @@ Checked against snapshots alone. Any hit aborts agenda here — the fix belongs 
 | Route size     | route exceeds 3 steps                         |
 | Session size   | ready → commit cannot fit one working session |
 
-### Code axes (step 2)
+### Impact scope conditions (step 2)
 
-Checked by reading the files to modify. A hit does not abort agenda — it routes to the step 2 design decision, and the agreed refactor is added as orders in this agenda.
+The impact scope is the set of files the change touches. Enumerate it before design using the scope conditions in [references/code-axes.md](./references/code-axes.md) — a file is in scope when it matches any condition there.
 
-The six axes are defined in [references/code-axes.md](./references/code-axes.md).
+Files outside the scope stay untouched.
 
-### Design labels (step 2)
+### Code axes (step 3)
+
+Checked by reading the files in the impact scope. A hit does not abort agenda — it routes to the step 3 design decision, and the agreed refactor is added as orders in this agenda.
+
+The axes are defined in [references/code-axes.md](./references/code-axes.md).
+
+### Design labels (step 3)
 
 ```
 Responsibilities: the existing responsibility boundaries this change touches
-Ideal design:     the desired shape, not pulled by the current code
-Gap bridging:     how to land from the current state to the ideal
+Ideal design:     the desired shape of the impact scope, not pulled by the current code
+Gap bridging:     how to rebuild from the current state to the ideal, scope included
 Debt:             where debt grows and why it is accepted
 ```
 
-### Test criteria (step 3)
+### Test criteria (step 4)
 
 | Target                                        | Policy                                  |
 | --------------------------------------------- | --------------------------------------- |

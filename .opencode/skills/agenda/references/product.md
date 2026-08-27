@@ -15,6 +15,12 @@ Domain: product
 - **Result:** セッションが確立する
 - **Route:** [credential_check, session_create, login_endpoint]
 
+## Impact scope
+
+- `src/routes/api.ts` — target (modify)
+- `src/lib/auth/session.ts` — shared (used by login + logout)
+- `src/routes/api.test.ts` — test (covers handleLogin)
+
 ## Orders
 
 ### 1. Split session logic out of the route handler (refactor)
@@ -60,6 +66,7 @@ Domain: product
 ## Rules
 
 - Feature block is read-only display from the snapshot; its labels are the only bold text
+- Impact scope lists every file the change touches, each tagged with the scope condition that brought it in (target / shared / test / …)
 - Order fields stay plain — inline code marks paths, keys, and commands
 - Orders map to the feature's route steps; every route step is covered at least once, and dependency direction matches route order
 - The last order's Surface verifies trigger → result end-to-end
