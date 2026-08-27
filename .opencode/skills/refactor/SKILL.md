@@ -7,6 +7,11 @@ description: Refactor code, documentation (including code comments), or both, wi
 
 A skill for refactoring code and/or documentation, split into two independent tracks (code, doc) that can be run individually or together.
 
+## References
+
+- Log rules: `events/README.md`
+- Component inventory: `events/snapshots/meta.json` (and `product.json` for product slices)
+
 ## Core principle
 
 "Diff must shrink" is only valid for a narrow subset of changes — duplicate code, dead code, provably-equivalent simplifications, redundant comments, and duplicated doc content. It is NOT a goal for the whole refactor. Applying it broadly causes real damage: WHY-comments get deleted, error handling gets stripped, function splits get blocked because they add lines.
@@ -26,6 +31,8 @@ Default to asking if ambiguous (e.g. "just say 'refactor'" with no further conte
 ## Step 2: Label every candidate target
 
 Before changing anything, classify each candidate block/comment using the tables below. Do not touch anything until it has a label.
+
+While labeling, also identify the **touched components**: match the candidate locations against component `path`s in `events/snapshots/meta.json` and `events/snapshots/product.json`. Locations matching no component are raw code — they have no status to assert.
 
 ### Code labels
 
@@ -52,7 +59,8 @@ Before applying any changes, present to the user:
 
 1. A list of all candidate locations with the label you assigned
 2. A one-line reason for each label
-3. Ask: "これらのラベル付けで進めてよいですか？ 修正したいラベルがあれば指示してください。"
+3. The touched components (matched against snapshots) — or "none"
+4. Ask: "これらのラベル付けで進めてよいですか？ 修正したいラベルがあれば指示してください。"
 
 Do not proceed to Step 4 until the user explicitly approves (or provides corrections).
 
@@ -79,3 +87,12 @@ When presenting the result, report per label:
 - What was restructured/corrected (with a one-line reason, not a line delta)
 
 This keeps the "diff shrank" claim honest — it only applies to the subset where it was supposed to apply.
+
+## Status semantics
+
+Refactoring is re-entry work on existing components — a committed unit re-enters at `ready` when new work is agreed.
+
+- On label approval (step 3): assert `ready` for every touched managed component. One status assertion per target, all in one invocation — `node events/scripts/append.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`
+- On completion (step 5): assert `implement` — the refactor is applied, awaiting commit
+- At commit: the commit skill asserts `commit` — never assert it from here
+- No manual build: the idle hook syncs snapshots after the turn ends

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T21:31:40.585+09:00",
-  "asOf": "2026-08-27T21:31:40.555+09:00",
+  "generatedAt": "2026-08-27T21:43:26.150+09:00",
+  "asOf": "2026-08-27T21:43:26.123+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -125,7 +125,7 @@
       "refactor": {
         "status": {
           "stage": "commit",
-          "text": "SKILL.mdを作成。対象をラベル分類し圧縮/再構築の2パスを適用する方式を導入"
+          "text": "References節・タッチコンポーネント特定・Status semanticsを追加"
         },
         "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
         "path": ".opencode/skills/refactor/SKILL.md",
