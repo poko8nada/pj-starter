@@ -15,6 +15,8 @@ import {
   foldAll,
   jstNow,
   LOG_PATH,
+  stripHistory,
+  writeCheckpoint,
 } from '../../events/scripts/lib.mjs';
 
 const ROOT_DIR = path.resolve(EVENTS_DIR, '..');
@@ -25,18 +27,6 @@ const BUILD_SCRIPT = path.resolve(
 );
 const DEFAULT_NAME = 'プロジェクト名が入ります';
 const WHAT_TEXT = '今からプロジェクトを作り始める段階です';
-
-// status / updatedAt を再帰除去する。checkpoint で運ぶのは定義のみ。
-const stripHistory = (value) => {
-  if (Array.isArray(value)) return value.map(stripHistory);
-  if (value && typeof value === 'object')
-    return Object.fromEntries(
-      Object.entries(value)
-        .filter(([key]) => key !== 'status' && key !== 'updatedAt')
-        .map(([key, child]) => [key, stripHistory(child)]),
-    );
-  return value;
-};
 
 // 種まき素材の収集。meta 全体と product.stack のみ引き継ぐ。
 const collectBaseline = () => {
@@ -103,10 +93,7 @@ const main = () => {
   // wipe は baseline 収集の後。スターター本体での実行は git 履歴で復元できる
   for (const file of [CHECKPOINT_PATH, ...readmeFiles]) if (fs.existsSync(file)) fs.rmSync(file);
   fs.writeFileSync(LOG_PATH, '');
-  fs.writeFileSync(
-    CHECKPOINT_PATH,
-    `${JSON.stringify({ compactedAt: jstNow(), asOf: null, trees: { product: { stack }, meta } }, null, 2)}\n`,
-  );
+  writeCheckpoint({ product: { stack }, meta });
   const ts = jstNow();
   const events = [
     buildEvent({ type: 'set', key: 'product.name.value', value: projectName }, ts),

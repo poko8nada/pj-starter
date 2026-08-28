@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-27T22:11:43.916+09:00",
-  "asOf": "2026-08-27T22:11:43.888+09:00",
+  "generatedAt": "2026-08-28T10:50:46.374+09:00",
+  "asOf": "2026-08-28T10:50:46.340+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -221,27 +221,27 @@
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
           "stage": "commit",
-          "text": "自明なコメントを削除"
+          "text": "stripHistory / writeCheckpoint を抽出し reset / sync で共有"
         },
-        "updatedAt": "20260827"
+        "updatedAt": "20260828"
       },
       "user-reset": {
         "path": "scripts/user/reset.mjs",
         "purpose": "スターター複製の初期化ツール。checkpointへstatus/updatedAtなしの初期状態を書き、logをname/whatだけで始める。引数なしはdry-run",
         "status": {
           "stage": "commit",
-          "text": "初期化ツールを実装。dry-run既定でcheckpointへベースライン種まき"
+          "text": "stripHistory / writeCheckpoint を lib からの import に変更"
         },
-        "updatedAt": "20260826"
+        "updatedAt": "20260828"
       },
       "user-sync-to-starter": {
         "path": "scripts/user/sync-to-starter.mjs",
-        "purpose": "ハーネスをプロジェクトからスターターへ丸ごと同期するツール。meta.* ログイベントをキー単位の ts 比較で注入し、スターター側で build を実行する",
+        "purpose": "ハーネスをプロジェクトとスターター間で双方向同期するツール。ファイルは rclone bisync、meta.* ログはコミット済みのみ双方向へ流し、プロジェクト側は reset 同様にストリップする",
         "status": {
           "stage": "commit",
-          "text": "metaキー抽出をmetaPathに集約"
+          "text": "双方向シンクを実装: bisync 単位同期 + コミット済みメタのみ双方向 + プロジェクト側ストリップ"
         },
-        "updatedAt": "20260827"
+        "updatedAt": "20260828"
       }
     },
     "agents": {

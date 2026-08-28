@@ -1,4 +1,4 @@
-// events/ 駆動システムの共有ライブラリ。append / build / compact の各スクリプトから使われる
+// events/ 駆動システムの共有ライブラリ。append / build / compact に加え、reset / sync-to-starter のベースライン生成（stripHistory / writeCheckpoint）でも使われる
 // 詳細な仕様は events/README.md を参照
 import fs from 'node:fs';
 import path from 'node:path';
@@ -196,6 +196,28 @@ export const parseCheckpoint = (text) => {
   )
     return null;
   return { trees: checkpoint.trees, compactedAt: checkpoint.compactedAt ?? null };
+};
+
+// status / updatedAt を再帰除去する。checkpoint で運ぶのは定義のみ。
+// reset と sync-to-starter のベースライン生成で共有する
+export const stripHistory = (value) => {
+  if (Array.isArray(value)) return value.map(stripHistory);
+  if (value && typeof value === 'object')
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([key]) => key !== 'status' && key !== 'updatedAt')
+        .map(([key, child]) => [key, stripHistory(child)]),
+    );
+  return value;
+};
+
+// ベースライン checkpoint を書き込む。compactedAt は既定で現在時刻。
+// asOf は null（ベースラインはイベント履歴を持たない）
+export const writeCheckpoint = (trees, compactedAt = jstNow()) => {
+  fs.writeFileSync(
+    CHECKPOINT_PATH,
+    `${JSON.stringify({ compactedAt, asOf: null, trees }, null, 2)}\n`,
+  );
 };
 
 // チェックポイントを読み込み、畳み込みの起点とする。

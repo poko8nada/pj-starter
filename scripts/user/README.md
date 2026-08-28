@@ -25,22 +25,36 @@ pnpm starter:reset --run "My Project"  # 実行（名前を指定）
 - `product.*` = プロジェクトの初期段階を表す。
 - `meta.*` = 初期状態のハーネス。
 
-## starter:sync — ハーネスのスターターへの取り込み
+## starter:sync — ハーネスのスターターとの双方向同期
 
-プロジェクト内でスキルやプラグインを更新した場合、それをスターターへ同期する際に実行する。
+プロジェクトとスターターの間でハーネスを双方向同期する際に実行する。
 
 ```bash
 pnpm starter:sync <スターターのパス>        # dry-run プレビュー
 pnpm starter:sync --run <スターターのパス>  # 実コピー
 ```
 
-- 対象は固定リスト（`.opencode/`、`scripts/`、`AGENTS.md`、`lefthook.yaml`、`events/README.md`、`events/spec/`、`events/scripts/`）の丸ごとコピー。選別ロジックなし
-- 加えて、プロジェクトの `events/log.jsonl` から `meta.*` イベントを抽出し、**キー単位の ts 比較**でスターターのログへ注入する:
-  - プロジェクトがスターターより新しいイベントのみ注入。状態を変えないもの（no-op）は除外
-  - スターター側でログに触れていない checkpoint 由来のキーは `compactedAt` を比較基準とし、未存在キーは常にプロジェクト勝ち
-  - スターターに `log.jsonl` が無い場合（compact 直後など）は空ログとして扱う
-  - 元の ts を保持したまま追記し、注入後にスターター側の `build` を自動実行して `meta.json` を更新する
-- dry-run ではイベントごとの勝敗判定（`INJECT` / `SKIP`）を表示する。`product.*` と `log.turn.*` は注入対象外
-- lock ファイル（package-lock.json / pnpm-lock.yaml）は生成物なので対象外。package.json を同期したら、スターター側の次回 opencode 起動で依存が解決される
+### ファイル同期（rclone bisync）
+
+- 同期単位は静的定義（`sync-to-starter.mjs` の `SYNC_UNITS`）: harness（`.opencode/lib` + `.opencode/plugin`）/ agents（`.opencode/agent`）/ skills（`.opencode/skills`）/ config（`.opencode` ルートの設定ファイル）/ scripts / events（状態ファイルを除外）/ docs（`AGENTS.md` + `lefthook.yaml`）
+- 双方向同期で、コンフリクト（両側で変更）は `.conflict` サフィックス付きで両バージョンが保持される（rclone の既定動作）。手動解決が必要
+- 状態は OS のキャッシュディレクトリに置かれ（rclone の既定動作）、リポジトリにはファイルを追加しない
+- 初回（状態なし）は `--resync --resync-mode newer` で自動再試行する
+- 追跡ファイル全件が変更されると安全 abort する（稀。変更内容を確認して手動解決）
+- 除外: `node_modules/**` / `.DS_Store` / lock ファイル。`events/log.jsonl` / `checkpoint.json` / `snapshots/` は状態なので対象外
+
+### meta.* ログのフロー（コミット済みのみ双方向）
+
+- **コミット済み**コンポーネントのイベントのみが双方向へ流れる:
+  - プロジェクト → スターター: 勝者イベントをスターターのログへ注入（スターターの履歴は消さない）
+  - スターター → プロジェクト: 定義（path/purpose）がプロジェクトのベースラインへ入る（raw）
+- **非コミット**（planned / ready / implement）はホーム側に留まる。プロジェクトの進行中作業はプロジェクトのログに残る
+- ファイル同期は stage 非依存（非コミットのファイルも流れる）。メタ記録との非対称は許容し、不要なら手動で restore する
+
+### プロジェクト側のストリップ（reset と同様）
+
+- シンクの最後に、プロジェクトの checkpoint を「コミット済み在庫（status/updatedAt を除去した定義のみ）+ 折りたたみ済み product」で書き換える
+- プロジェクトのログからコミット済みコンポーネントのイベントを除去し、非コミットのイベント（+ `product.*` / `log.turn.*`）だけを残す
+- 履歴はスターター側が保持する。プロジェクトのメタは「最新ハーネスの在庫」として読める
 - 不要な変更や未完成の変更は、コピー後に手動で restore などで戻す
 - 取り込んだ後の状態の記録（status → build → commit）は、スターター側の通常フローで行う

@@ -1,5 +1,8 @@
 // events/scripts/lib.mjs の畳み込み意味論とstatus検証に関するテスト
-import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { describe, expect, it, vi } from 'vitest';
 import {
   applyFoldable,
   buildEvent,
@@ -11,6 +14,7 @@ import {
   parseCheckpoint,
   setPath,
   stableStringify,
+  stripHistory,
 } from './lib.mjs';
 
 describe('buildEvent', () => {
@@ -456,6 +460,74 @@ describe('stableStringify', () => {
     expect(stableStringify({ b: 1, a: [2, { z: 3, y: 4 }] })).toBe(
       stableStringify({ a: [2, { y: 4, z: 3 }], b: 1 }),
     );
+  });
+});
+
+describe('stripHistory', () => {
+  it('removes status and updatedAt recursively', () => {
+    const value = {
+      skills: {
+        agenda: {
+          path: '.opencode/skills/agenda/SKILL.md',
+          purpose: 'p',
+          status: { stage: 'commit', text: 't' },
+          updatedAt: '20260801',
+        },
+      },
+    };
+    expect(stripHistory(value)).toEqual({
+      skills: { agenda: { path: '.opencode/skills/agenda/SKILL.md', purpose: 'p' } },
+    });
+  });
+
+  it('keeps arrays and scalars intact', () => {
+    expect(stripHistory(['a', { status: 'x' }])).toEqual(['a', {}]);
+    expect(stripHistory('plain')).toBe('plain');
+    expect(stripHistory(null)).toBeNull();
+  });
+
+  it('strips nested status inside arrays and multi-level objects', () => {
+    const value = {
+      a: [{ status: 'x', updatedAt: 'y', keep: 1 }],
+      b: { c: { d: { status: { stage: 'commit' }, updatedAt: 'z', keep: 2 } } },
+    };
+    expect(stripHistory(value)).toEqual({
+      a: [{ keep: 1 }],
+      b: { c: { d: { keep: 2 } } },
+    });
+  });
+
+  it('handles empty objects and undefined', () => {
+    expect(stripHistory({})).toEqual({});
+    expect(stripHistory(undefined)).toBeUndefined();
+  });
+
+  it('does not mutate the input', () => {
+    const value = { a: { status: 'x', updatedAt: 'y', keep: 1 } };
+    stripHistory(value);
+    expect(value).toEqual({ a: { status: 'x', updatedAt: 'y', keep: 1 } });
+  });
+});
+
+describe('writeCheckpoint', () => {
+  it('writes a baseline checkpoint with asOf null', async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lib-test-'));
+    const prev = process.env.EVENTS_DIR;
+    process.env.EVENTS_DIR = root;
+    try {
+      // モジュールキャッシュを破棄して EVENTS_DIR を再評価した lib を読み込む
+      vi.resetModules();
+      const lib = await import('./lib.mjs');
+      lib.writeCheckpoint({ product: { stack: {} }, meta: {} });
+      const checkpoint = JSON.parse(fs.readFileSync(path.join(root, 'checkpoint.json'), 'utf8'));
+      expect(checkpoint.asOf).toBeNull();
+      expect(checkpoint.compactedAt).toMatch(/\+09:00$/);
+      expect(checkpoint.trees).toEqual({ product: { stack: {} }, meta: {} });
+    } finally {
+      if (prev === undefined) delete process.env.EVENTS_DIR;
+      else process.env.EVENTS_DIR = prev;
+      fs.rmSync(root, { recursive: true, force: true });
+    }
   });
 });
 
