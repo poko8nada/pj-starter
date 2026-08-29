@@ -87,4 +87,60 @@ describe('createGate', () => {
     const gate = createGate({ enabled: false });
     expect(gate.evaluate({ sessionID: 's1', tool: 'edit' }).errors).toEqual([]);
   });
+
+  it('allows edits from exempt sessions', () => {
+    const gate = createGate();
+    gate.exempt('s1');
+    expect(gate.evaluate({ sessionID: 's1', tool: 'edit' }).errors).toEqual([]);
+  });
+
+  it('keeps exempt sessions allowed after close', () => {
+    const gate = createGate();
+    gate.exempt('s1');
+    gate.close('s1');
+    expect(gate.evaluate({ sessionID: 's1', tool: 'edit' }).errors).toEqual([]);
+  });
+
+  it('keeps other sessions blocked when one session is exempt', () => {
+    const gate = createGate();
+    gate.exempt('s1');
+    expect(gate.evaluate({ sessionID: 's2', tool: 'edit' }).errors.length).toBe(1);
+  });
+
+  it('lets exempt bypass the inside-root block', () => {
+    const gate = createGate({ root: '/project' });
+    gate.exempt('s1');
+    expect(
+      gate.evaluate({ sessionID: 's1', tool: 'edit', filePath: '/project/src/file.ts' }).errors,
+    ).toEqual([]);
+  });
+
+  it('allows edits outside the project root even when armed', () => {
+    const gate = createGate({ root: '/project' });
+    expect(
+      gate.evaluate({ sessionID: 's1', tool: 'edit', filePath: '/outside/file.ts' }).errors,
+    ).toEqual([]);
+  });
+
+  it('blocks edits inside the project root when armed', () => {
+    const gate = createGate({ root: '/project' });
+    expect(
+      gate.evaluate({ sessionID: 's1', tool: 'edit', filePath: '/project/src/file.ts' }).errors
+        .length,
+    ).toBe(1);
+  });
+
+  it('blocks edits with a relative path inside the root when armed', () => {
+    const gate = createGate({ root: '/project' });
+    expect(
+      gate.evaluate({ sessionID: 's1', tool: 'edit', filePath: 'src/file.ts' }).errors.length,
+    ).toBe(1);
+  });
+
+  it('treats a non-string filePath as inside the root', () => {
+    const gate = createGate({ root: '/project' });
+    expect(
+      gate.evaluate({ sessionID: 's1', tool: 'edit', filePath: undefined }).errors.length,
+    ).toBe(1);
+  });
 });
