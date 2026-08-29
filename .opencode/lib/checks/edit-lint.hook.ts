@@ -4,6 +4,7 @@
 import type { Plugin } from '@opencode-ai/plugin';
 import type { Report } from '../utils/report';
 import { clipLines, MAX_REPORT_LINES } from '../utils/text';
+import { isEditTool } from '../utils/tools';
 
 type PluginInput = Parameters<Plugin>[0];
 
@@ -11,8 +12,6 @@ export interface EditLintCtx {
   $: PluginInput['$'];
   root: string;
 }
-
-const EDIT_TOOLS = new Set(['edit', 'write']);
 
 // dirty の有効期限。これを過ぎた dirty は無視する（強制停止後のループ防止）
 const DIRTY_TTL_MS = 5 * 60 * 1000;
@@ -34,7 +33,7 @@ export const runEditLint = async (
   ctx: EditLintCtx,
   input: { tool: string; args?: { filePath?: unknown } },
 ): Promise<Report> => {
-  if (!EDIT_TOOLS.has(input.tool)) return { errors: [] };
+  if (!isEditTool(input.tool)) return { errors: [] };
   const file = input.args?.filePath;
   if (typeof file !== 'string' || file === '') return { errors: [] };
   markDirty();

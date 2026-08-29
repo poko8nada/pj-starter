@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-28T10:50:46.374+09:00",
-  "asOf": "2026-08-28T10:50:46.340+09:00",
+  "generatedAt": "2026-08-29T21:56:55.909+09:00",
+  "asOf": "2026-08-29T21:56:55.878+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -17,9 +17,9 @@
         "purpose": "編集直後のreport-only lint",
         "status": {
           "stage": "commit",
-          "text": "重複コメントを削除"
+          "text": "isEditTool を utils/tools に共有化し edit-lint から利用"
         },
-        "updatedAt": "20260827"
+        "updatedAt": "20260829"
       },
       "session-idle": {
         "path": ".opencode/plugin/session-idle.ts",
@@ -49,13 +49,13 @@
         "updatedAt": "20260826"
       },
       "tool-execute-before": {
-        "purpose": "events/README.md の読み込みをセッションごとに要求し、読むまでツール実行をブロックする",
+        "purpose": "ステータス記録（append.mjs + .status）を要求し、記録まで edit/write をブロックする。idle で git クリーンならゲートを復活、git 未使用時はスルー",
         "status": {
           "stage": "commit",
-          "text": "root解決コメントを正規の置き場として維持"
+          "text": "README 読了ゲートを廃止し、ステータス記録ゲート（edit-gate）へ再設計"
         },
         "path": ".opencode/plugin/tool-execute-before.ts",
-        "updatedAt": "20260827"
+        "updatedAt": "20260829"
       }
     },
     "skills": {

@@ -1,31 +1,34 @@
-// フックランタイム： 全ツール実行のゲート（tool.execute.before）。
-// セッションごとに events/README.md の読み込みを一度要求し、読むまで他のツール実行をthrow でブロックする。解除は read ツールで events/README.md を開いた時のみ。
-// session.created で解除状態をリセットし、「1回読めばそのセッションはOK」を実現する。
+// フックランタイム： 編集ツールのゲート（tool.execute.before）。
+// ステータス記録（append.mjs + .status を含む bash）を観測するまで edit/write をブロックし、記録後に編集を許可する。session.idle で git がクリーンならゲートを復活させる
+// git が使われていない（リポジトリなし・コミット前）プロジェクトではゲートを無効化してスルーする。enabled は起動時に1回だけ決定し、プロセス中は再評価しない
 // root は起動時に1回だけ resolveProjectRoot で解決し、per-call の fs I/O を避ける
 import type { Plugin } from '@opencode-ai/plugin';
-import { createGate } from '../lib/events-read-gate/gate.hook';
+import { createGate } from '../lib/edit-gate/gate.hook';
+import { isGitClean, isGitRepo } from '../lib/edit-gate/git.hook';
 import { resolveProjectRoot } from '../lib/harness/resolve-root';
 import { buildMessage } from '../lib/utils/message';
 
-export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory }) => {
-  const gate = createGate(resolveProjectRoot({ worktree, directory }));
+export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }) => {
+  const root = resolveProjectRoot({ worktree, directory });
+  const enabled = await isGitRepo({ $, root });
+  const gate = createGate({ enabled });
 
   return {
     'tool.execute.before': async (input, output) => {
       const report = gate.evaluate({
         sessionID: input.sessionID,
         tool: input.tool,
-        filePath: output.args?.filePath,
+        command: output.args?.command,
       });
       const message = buildMessage(
-        '[gate] events/README.md has not been read in this session. It is the operating spec of this project — the recording contract (namespaces, keys, status shapes, stage vocabulary) that every append is validated against. Read it with the read tool, then state the recording contract in your next message before any other tool call; actions that violate it are rejected.',
+        '[gate] Record a status transition before editing. Read events/README.md (the recording contract), load the matching skill, then append via events/scripts/append.mjs.',
         report,
       );
       if (message !== null) throw new Error(message);
     },
     event: async ({ event }) => {
-      if (event.type !== 'session.created') return;
-      gate.close(event.properties.info.id);
+      if (event.type !== 'session.idle') return;
+      if (await isGitClean({ $, root })) gate.close(event.properties.sessionID);
     },
   };
 };
