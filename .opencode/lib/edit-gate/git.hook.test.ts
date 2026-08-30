@@ -1,32 +1,13 @@
 // git 境界ヘルパのテスト
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { isGitClean, isGitRepo } from './git.hook';
+import { createShellMock, type ShellResult } from '../utils/shell-mock';
 
-type ShellResult = { exitCode: number; stdout: string | Buffer; stderr: string };
 type GitCtx = Parameters<typeof isGitRepo>[0];
 
 const buildCtx = (results: Record<string, ShellResult>, root: string): GitCtx => {
-  const handler = vi.fn<GitCtx['$']>();
-  handler.mockImplementation((strings, ...values) => {
-    const cmd = strings.reduce(
-      (acc, s, i) =>
-        acc + s + (i < values.length ? (values[i] as { toString(): string }).toString() : ''),
-      '',
-    );
-    const result: ShellResult = results[cmd] ?? { exitCode: 0, stdout: '', stderr: '' };
-    const stub = {
-      cwd: (cwdDir: string) => {
-        if (cwdDir !== root) throw new Error(`unexpected cwd: ${cwdDir}`);
-        return {
-          nothrow: () => ({
-            quiet: () => Promise.resolve(result),
-          }),
-        };
-      },
-    };
-    return stub as unknown as ReturnType<GitCtx['$']>; // oxlint-disable-line typescript/no-unsafe-type-assertion
-  });
-  return { $: handler, root };
+  const { ctx } = createShellMock(results, root);
+  return ctx as GitCtx; // oxlint-disable-line typescript/no-unsafe-type-assertion
 };
 
 describe('isGitRepo', () => {

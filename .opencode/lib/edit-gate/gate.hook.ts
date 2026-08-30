@@ -16,7 +16,6 @@ export interface GateInput {
 
 export interface Gate {
   evaluate: (input: GateInput) => Report;
-  open: (sessionID: string) => void;
   close: (sessionID: string) => void;
   exempt: (sessionID: string) => void;
 }
@@ -51,9 +50,6 @@ export const createGate = (options?: { enabled?: boolean; root?: string }): Gate
       )
         return { errors: ['no status transition recorded in this session'] };
       return { errors: [] };
-    },
-    open: (sessionID) => {
-      openSessions.add(sessionID);
     },
     close: (sessionID) => {
       openSessions.delete(sessionID);

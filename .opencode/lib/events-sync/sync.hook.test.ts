@@ -5,38 +5,16 @@
 // - 成功するとその root の失敗記録は消える
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SYNC_FAILURE_TTL_MS, syncEvents, syncFailureStates } from './sync.hook';
+import { createShellMock, type ShellResult } from '../utils/shell-mock';
 
-type ShellResult = { exitCode: number; stdout: string; stderr: string };
 type BuildCtxResult = {
   ctx: Parameters<typeof syncEvents>[0];
   handler: ReturnType<typeof vi.fn>;
 };
 
 const buildCtx = (results: Record<string, ShellResult>, root: string): BuildCtxResult => {
-  const handler = vi.fn<Parameters<typeof syncEvents>[0]['$']>();
-  handler.mockImplementation((strings, ...values) => {
-    const cmd = strings.reduce(
-      (acc, s, i) =>
-        acc + s + (i < values.length ? (values[i] as { toString(): string }).toString() : ''),
-      '',
-    );
-    const result: ShellResult = results[cmd] ?? { exitCode: 0, stdout: '', stderr: '' };
-    const stub = {
-      cwd: (cwdDir: string) => {
-        if (cwdDir !== root) throw new Error(`unexpected cwd: ${cwdDir}`);
-        return {
-          nothrow: () => ({
-            quiet: () => Promise.resolve(result),
-          }),
-        };
-      },
-    };
-    // BunShellPromise は stdin/env/quiet/lines 等 10+ メソッドを持つため、
-    // テストで完全モックするのは非現実的。unknown 段で widening して逃げる
-    return stub as unknown as ReturnType<Parameters<typeof syncEvents>[0]['$']>; // oxlint-disable-line typescript/no-unsafe-type-assertion
-  });
-  const ctx: Parameters<typeof syncEvents>[0] = { $: handler, root };
-  return { ctx, handler };
+  const { ctx, handler } = createShellMock(results, root);
+  return { ctx: ctx as Parameters<typeof syncEvents>[0], handler }; // oxlint-disable-line typescript/no-unsafe-type-assertion
 };
 
 describe('syncEvents TTL guard', () => {

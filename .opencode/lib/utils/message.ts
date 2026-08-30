@@ -3,10 +3,8 @@
 // prefix は省略可能（空なら body のみ。エラー内にタグを持つ Report 向け）
 import type { Report } from './report';
 
-export function buildMessage(prefix: string, ...reports: Report[]): string | null;
-export function buildMessage(...reports: Report[]): string | null;
 export function buildMessage(
-  prefixOrReport: string | Report | undefined,
+  prefixOrReport?: string | Report,
   ...reports: Report[]
 ): string | null {
   const prefix = typeof prefixOrReport === 'string' ? prefixOrReport : '';

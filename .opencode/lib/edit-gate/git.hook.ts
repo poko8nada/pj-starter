@@ -1,7 +1,5 @@
 // git 境界ヘルパ。ゲートの有効性（リポジトリ内 + 初回コミット有無）とサイクル完了（ワークツリーがクリーンか）を判定する。$ はプラグインから注入される
-import type { Plugin } from '@opencode-ai/plugin';
-
-type PluginInput = Parameters<Plugin>[0];
+import type { PluginInput } from '../utils/plugin';
 
 export interface GitCtx {
   $: PluginInput['$'];

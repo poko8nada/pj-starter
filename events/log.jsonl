@@ -1,0 +1,74 @@
+{"ts":"2026-08-30T14:26:14.915+09:00","type":"set","key":"log.try.81dc336e","value":{"tool":"skill","gap":1338,"name":"refactor"}}
+{"ts":"2026-08-30T14:26:16.244+09:00","type":"set","key":"log.try.27fce523","value":{"tool":"read","gap":1114,"path":"events/README.md"}}
+{"ts":"2026-08-30T14:26:18.352+09:00","type":"set","key":"log.try.3ce83826","value":{"tool":"read","gap":1659,"path":"events/snapshots/meta.json"}}
+{"ts":"2026-08-30T14:26:30.828+09:00","type":"set","key":"log.try.9b4eeca2","value":{"tool":"read","gap":2715,"path":".opencode/plugin/session-idle.ts"}}
+{"ts":"2026-08-30T14:26:30.993+09:00","type":"set","key":"log.try.4d595e79","value":{"tool":"read","gap":157,"path":".opencode/plugin/tool-execute-before.ts"}}
+{"ts":"2026-08-30T14:26:31.275+09:00","type":"set","key":"log.try.1a54f738","value":{"tool":"read","gap":278,"path":".opencode/plugin/tool-execute-after.ts"}}
+{"ts":"2026-08-30T14:26:31.284+09:00","type":"set","key":"log.try.c33286bd","value":{"tool":"read","gap":3,"path":".opencode/lib/tool-trail/trail.hook.ts"}}
+{"ts":"2026-08-30T14:26:32.878+09:00","type":"set","key":"log.try.13ebaca2","value":{"tool":"read","gap":1406,"path":".opencode/lib/checks/idle-review.hook.ts"}}
+{"ts":"2026-08-30T14:26:33.053+09:00","type":"set","key":"log.try.76842b50","value":{"tool":"read","gap":165,"path":".opencode/lib/checks/edit-lint.hook.ts"}}
+{"ts":"2026-08-30T14:26:33.238+09:00","type":"set","key":"log.try.013aabec","value":{"tool":"read","gap":182,"path":".opencode/lib/events-sync/sync.hook.ts"}}
+{"ts":"2026-08-30T14:26:33.359+09:00","type":"set","key":"log.try.940f19e1","value":{"tool":"read","gap":115,"path":".opencode/lib/edit-gate/gate.hook.ts"}}
+{"ts":"2026-08-30T14:26:34.985+09:00","type":"set","key":"log.try.fd927b70","value":{"tool":"read","gap":1433,"path":".opencode/lib/utils/message.ts"}}
+{"ts":"2026-08-30T14:26:35.055+09:00","type":"set","key":"log.try.9ce397e3","value":{"tool":"read","gap":65,"path":".opencode/lib/utils/report.ts"}}
+{"ts":"2026-08-30T14:26:35.146+09:00","type":"set","key":"log.try.0b485d4d","value":{"tool":"read","gap":87,"path":".opencode/lib/utils/tools.ts"}}
+{"ts":"2026-08-30T14:26:35.266+09:00","type":"set","key":"log.try.ea3fe734","value":{"tool":"read","gap":115,"path":".opencode/lib/utils/path.ts"}}
+{"ts":"2026-08-30T14:26:35.415+09:00","type":"set","key":"log.try.a9f4cd74","value":{"tool":"read","gap":146,"path":".opencode/lib/utils/text.ts"}}
+{"ts":"2026-08-30T14:26:35.551+09:00","type":"set","key":"log.try.d04a56a3","value":{"tool":"read","gap":132,"path":".opencode/lib/harness/resolve-root.ts"}}
+{"ts":"2026-08-30T14:26:37.522+09:00","type":"set","key":"log.try.e7574407","value":{"tool":"read","gap":1789,"path":".opencode/lib/tool-trail/trail.ts"}}
+{"ts":"2026-08-30T14:26:37.709+09:00","type":"set","key":"log.try.3e0c2b8a","value":{"tool":"read","gap":183,"path":".opencode/lib/checks/rounds.ts"}}
+{"ts":"2026-08-30T14:26:37.850+09:00","type":"set","key":"log.try.fbe54e0d","value":{"tool":"read","gap":127,"path":".opencode/lib/events-sync/audit.ts"}}
+{"ts":"2026-08-30T14:26:37.998+09:00","type":"set","key":"log.try.6639c533","value":{"tool":"read","gap":142,"path":".opencode/lib/events-sync/threshold.ts"}}
+{"ts":"2026-08-30T14:26:38.144+09:00","type":"set","key":"log.try.203c033c","value":{"tool":"read","gap":136,"path":".opencode/lib/edit-gate/git.hook.ts"}}
+{"ts":"2026-08-30T14:26:40.621+09:00","type":"set","key":"log.try.831f920b","value":{"tool":"read","gap":2300,"path":".opencode/plugin/mockup-notify.ts"}}
+{"ts":"2026-08-30T14:26:40.765+09:00","type":"set","key":"log.try.bc9f91bb","value":{"tool":"read","gap":141,"path":".opencode/package.json"}}
+{"ts":"2026-08-30T14:26:40.903+09:00","type":"set","key":"log.try.0a05112c","value":{"tool":"read","gap":135,"path":"opencode.json"}}
+{"ts":"2026-08-30T14:27:19.005+09:00","type":"set","key":"log.try.9d4f3f18","value":{"tool":"read","gap":2599,"path":".opencode/lib/tool-trail/trail.hook.test.ts"}}
+{"ts":"2026-08-30T14:27:19.165+09:00","type":"set","key":"log.try.ff7946b2","value":{"tool":"read","gap":150,"path":".opencode/lib/tool-trail/trail.test.ts"}}
+{"ts":"2026-08-30T14:27:19.307+09:00","type":"set","key":"log.try.c7459d38","value":{"tool":"read","gap":137,"path":".opencode/lib/checks/rounds.test.ts"}}
+{"ts":"2026-08-30T14:27:19.462+09:00","type":"set","key":"log.try.c1655861","value":{"tool":"read","gap":150,"path":".opencode/lib/checks/edit-lint.test.ts"}}
+{"ts":"2026-08-30T14:27:21.017+09:00","type":"set","key":"log.try.a41d3c38","value":{"tool":"read","gap":1245,"path":".opencode/lib/events-sync/sync.hook.test.ts"}}
+{"ts":"2026-08-30T14:27:21.182+09:00","type":"set","key":"log.try.0918bf9e","value":{"tool":"read","gap":157,"path":".opencode/lib/events-sync/audit.test.ts"}}
+{"ts":"2026-08-30T14:27:21.329+09:00","type":"set","key":"log.try.e98e22d4","value":{"tool":"read","gap":144,"path":".opencode/lib/events-sync/threshold.test.ts"}}
+{"ts":"2026-08-30T14:27:21.472+09:00","type":"set","key":"log.try.2bc920f8","value":{"tool":"read","gap":134,"path":".opencode/lib/edit-gate/gate.hook.test.ts"}}
+{"ts":"2026-08-30T14:27:22.966+09:00","type":"set","key":"log.try.453f9763","value":{"tool":"read","gap":1312,"path":".opencode/lib/edit-gate/git.hook.test.ts"}}
+{"ts":"2026-08-30T14:27:23.112+09:00","type":"set","key":"log.try.3d85e0d5","value":{"tool":"read","gap":143,"path":".opencode/lib/harness/resolve-root.test.ts"}}
+{"ts":"2026-08-30T14:27:23.256+09:00","type":"set","key":"log.try.462ba00e","value":{"tool":"read","gap":141,"path":".opencode/lib/utils/message.test.ts"}}
+{"ts":"2026-08-30T14:27:23.387+09:00","type":"set","key":"log.try.ffa032e9","value":{"tool":"read","gap":128,"path":".opencode/lib/utils/path.test.ts"}}
+{"ts":"2026-08-30T14:27:23.530+09:00","type":"set","key":"log.try.cc86787b","value":{"tool":"read","gap":135,"path":".opencode/lib/utils/text.test.ts"}}
+{"ts":"2026-08-30T14:27:23.664+09:00","type":"set","key":"log.try.2f35fb76","value":{"tool":"read","gap":131,"path":".opencode/lib/utils/tools.test.ts"}}
+{"ts":"2026-08-30T14:36:23.047+09:00","type":"set","key":"meta.harness.edit-gate.status","value":{"stage":"ready","text":"リファクタ合意: gate.open デッドコード除去・テストモック共通化・PluginInput 集約"}}
+{"ts":"2026-08-30T14:36:23.047+09:00","type":"set","key":"meta.harness.edit-lint.status","value":{"stage":"ready","text":"リファクタ合意: DIRTY_TTL_MS の export 化・PluginInput 集約"}}
+{"ts":"2026-08-30T14:36:23.047+09:00","type":"set","key":"meta.harness.idle-review.status","value":{"stage":"ready","text":"リファクタ合意: stale コメント修正・PluginInput 集約"}}
+{"ts":"2026-08-30T14:36:23.047+09:00","type":"set","key":"meta.harness.events-sync.status","value":{"stage":"ready","text":"リファクタ合意: テストモック共通化・PluginInput 集約"}}
+{"ts":"2026-08-30T14:36:28.741+09:00","type":"set","key":"log.try.d8769155","value":{"tool":"edit","gap":2945,"path":".opencode/lib/edit-gate/gate.hook.ts"}}
+{"ts":"2026-08-30T14:36:31.805+09:00","type":"set","key":"log.try.47151958","value":{"tool":"edit","gap":2392,"path":".opencode/lib/edit-gate/gate.hook.ts"}}
+{"ts":"2026-08-30T14:36:34.832+09:00","type":"set","key":"log.try.2f729e2b","value":{"tool":"edit","gap":2483,"path":".opencode/lib/utils/message.ts"}}
+{"ts":"2026-08-30T14:36:41.599+09:00","type":"set","key":"log.try.cb667b42","value":{"tool":"write","gap":6230,"path":".opencode/lib/utils/shell-mock.ts"}}
+{"ts":"2026-08-30T14:36:46.482+09:00","type":"set","key":"log.try.f10208f8","value":{"tool":"edit","gap":4313,"path":".opencode/lib/events-sync/sync.hook.test.ts"}}
+{"ts":"2026-08-30T14:36:50.332+09:00","type":"set","key":"log.try.9c86add5","value":{"tool":"edit","gap":3282,"path":".opencode/lib/edit-gate/git.hook.test.ts"}}
+{"ts":"2026-08-30T14:36:52.968+09:00","type":"set","key":"log.try.33dcf9a5","value":{"tool":"edit","gap":2076,"path":".opencode/lib/checks/edit-lint.hook.ts"}}
+{"ts":"2026-08-30T14:36:55.609+09:00","type":"set","key":"log.try.784cf7b8","value":{"tool":"edit","gap":2078,"path":".opencode/lib/checks/edit-lint.test.ts"}}
+{"ts":"2026-08-30T14:37:01.118+09:00","type":"set","key":"log.try.f6e67e82","value":{"tool":"write","gap":4909,"path":".opencode/lib/utils/plugin.ts"}}
+{"ts":"2026-08-30T14:37:04.119+09:00","type":"set","key":"log.try.f60415ca","value":{"tool":"edit","gap":2449,"path":".opencode/lib/checks/idle-review.hook.ts"}}
+{"ts":"2026-08-30T14:37:08.009+09:00","type":"set","key":"log.try.48779e8e","value":{"tool":"edit","gap":3335,"path":".opencode/lib/checks/edit-lint.hook.ts"}}
+{"ts":"2026-08-30T14:37:11.040+09:00","type":"set","key":"log.try.5b920e61","value":{"tool":"edit","gap":2479,"path":".opencode/lib/events-sync/sync.hook.ts"}}
+{"ts":"2026-08-30T14:37:15.845+09:00","type":"set","key":"log.try.d84ce55f","value":{"tool":"edit","gap":4253,"path":".opencode/lib/edit-gate/git.hook.ts"}}
+{"ts":"2026-08-30T14:37:19.386+09:00","type":"set","key":"log.try.81a8ee39","value":{"tool":"edit","gap":2975,"path":".opencode/lib/checks/idle-review.hook.ts"}}
+{"ts":"2026-08-30T14:37:30.064+09:00","type":"set","key":"log.try.045c2e0d","value":{"tool":"edit","gap":4676,"path":".opencode/lib/utils/message.ts"}}
+{"ts":"2026-08-30T14:37:32.889+09:00","type":"set","key":"log.try.26292717","value":{"tool":"edit","gap":2281,"path":".opencode/lib/utils/shell-mock.ts"}}
+{"ts":"2026-08-30T14:39:04.464+09:00","type":"set","key":"log.try.16e0ec6a","value":{"tool":"write","gap":55190,"path":".opencode/lib/utils/shell-mock.ts"}}
+{"ts":"2026-08-30T14:39:07.545+09:00","type":"set","key":"log.try.7ab9f6d6","value":{"tool":"edit","gap":2513,"path":".opencode/lib/events-sync/sync.hook.test.ts"}}
+{"ts":"2026-08-30T14:39:10.450+09:00","type":"set","key":"log.try.574853f1","value":{"tool":"edit","gap":2345,"path":".opencode/lib/edit-gate/git.hook.test.ts"}}
+{"ts":"2026-08-30T14:39:16.990+09:00","type":"set","key":"log.try.9de4bf06","value":{"tool":"edit","gap":2466,"path":".opencode/lib/events-sync/sync.hook.test.ts"}}
+{"ts":"2026-08-30T14:39:19.656+09:00","type":"set","key":"log.try.dc1582b8","value":{"tool":"edit","gap":2108,"path":".opencode/lib/edit-gate/git.hook.test.ts"}}
+{"ts":"2026-08-30T14:39:30.489+09:00","type":"set","key":"meta.harness.edit-gate.status","value":{"stage":"implement","text":"gate.open 除去・テストモック共通化・PluginInput 集約を適用済み"}}
+{"ts":"2026-08-30T14:39:30.489+09:00","type":"set","key":"meta.harness.edit-lint.status","value":{"stage":"implement","text":"DIRTY_TTL_MS の export 化・PluginInput 集約を適用済み"}}
+{"ts":"2026-08-30T14:39:30.489+09:00","type":"set","key":"meta.harness.idle-review.status","value":{"stage":"implement","text":"stale コメント修正・PluginInput 集約を適用済み"}}
+{"ts":"2026-08-30T14:39:30.489+09:00","type":"set","key":"meta.harness.events-sync.status","value":{"stage":"implement","text":"テストモック共通化・PluginInput 集約を適用済み"}}
+{"ts":"2026-08-30T14:39:50.421+09:00","type":"set","key":"log.try.08942622","value":{"tool":"skill","gap":2294,"name":"audit"}}
+{"ts":"2026-08-30T14:42:35.739+09:00","type":"set","key":"log.try.49893cbc","value":{"tool":"skill","gap":2702,"name":"commit"}}
+{"ts":"2026-08-30T14:42:48.430+09:00","type":"set","key":"meta.harness.edit-gate.status","value":{"stage":"commit","text":"gate.open 除去・テストモック共通化・PluginInput 集約"}}
+{"ts":"2026-08-30T14:42:48.430+09:00","type":"set","key":"meta.harness.edit-lint.status","value":{"stage":"commit","text":"DIRTY_TTL_MS の export 化・PluginInput 集約"}}
+{"ts":"2026-08-30T14:42:48.430+09:00","type":"set","key":"meta.harness.idle-review.status","value":{"stage":"commit","text":"stale コメント修正・PluginInput 集約"}}
+{"ts":"2026-08-30T14:42:48.430+09:00","type":"set","key":"meta.harness.events-sync.status","value":{"stage":"commit","text":"テストモック共通化・PluginInput 集約"}}

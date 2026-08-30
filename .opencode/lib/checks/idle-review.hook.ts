@@ -1,13 +1,10 @@
-// ターン完了時の品質整備。編集があったターンに限り lint --fix と typecheck を実行し、
-// 残った問題をエージェント自身の修正ターンへ還流する。
+// ターン完了時の品質整備。編集があったターンに限り lint --fix と typecheck を実行し、残った問題をエージェント自身の修正ターンへ還流する。
 // 監査の結果そのものはログに残さず、この会話的なサイクルで処理する
-import type { Plugin } from '@opencode-ai/plugin';
 import type { Report } from '../utils/report';
+import type { PluginInput } from '../utils/plugin';
 import { consumeDirty } from './edit-lint.hook';
 import { createRounds, MAX_AUTO_FIX_ROUNDS } from './rounds';
 import { clipLines, MAX_REPORT_LINES } from '../utils/text';
-
-type PluginInput = Parameters<Plugin>[0];
 
 export interface ReviewCtx {
   client: PluginInput['client'];
@@ -57,6 +54,6 @@ export const reviewIdle = async (ctx: ReviewCtx, sessionId: string): Promise<Rep
   }
   rounds.advance(sessionId);
 
-  // ラウンド数ヒントを込めたプロンプトは plugin 直下で組み立てる。errors だけを返す
+  // プロンプト本文の組み立て（prefix 付与・連結）は plugin 直下（buildMessage）の責務。errors だけを返す
   return { errors };
 };

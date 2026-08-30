@@ -8,9 +8,9 @@
 
 ## Core Principles
 
-- Do NOT make assumptions and do NOT skip steps; be thorough.
+- **Do NOT make assumptions and do NOT skip steps; be thorough.**
 - If you panic, calm down first and start by providing a status report.
-- Perform implementations only after obtaining **the user's explicit consent.**
+- Perform implementations only after obtaining the user's explicit consent.
 
 ### Context
 
@@ -20,9 +20,9 @@
 
 ### Solutions
 
-- **Your ideas tend to become “JUST additions” and become future liabilities**
-- In addition to solutions, make structural changes to repay existing debts.
-- Keep **universal and general-purpose approaches** in mind.
+- Your ideas tend to become “JUST additions” and become future liabilities
+- **In addition to solutions, make structural changes to repay existing debts.**
+- Keep universal and general-purpose approaches in mind.
 - Propose multiple options and explain the reasons for your recommendations.
 
 ### Implementation

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-30T14:07:27.188+09:00",
-  "asOf": "2026-08-30T14:07:27.153+09:00",
+  "generatedAt": "2026-08-30T14:42:48.457+09:00",
+  "asOf": "2026-08-30T14:42:48.430+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -35,7 +35,7 @@
         "path": ".opencode/lib/edit-gate/gate.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "配線にトライル記録（trail.before）を追加"
+          "text": "gate.open 除去・テストモック共通化・PluginInput 集約"
         },
         "updatedAt": "20260830"
       },
@@ -44,7 +44,7 @@
         "path": ".opencode/lib/checks/edit-lint.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "配線にギャップ基準更新（trail.after）を追加"
+          "text": "DIRTY_TTL_MS の export 化・PluginInput 集約"
         },
         "updatedAt": "20260830"
       },
@@ -53,7 +53,7 @@
         "path": ".opencode/lib/checks/idle-review.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "配線にトライルセッション管理（trail.event）を追加"
+          "text": "stale コメント修正・PluginInput 集約"
         },
         "updatedAt": "20260830"
       },
@@ -62,7 +62,7 @@
         "path": ".opencode/lib/events-sync/sync.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "audit.ts のコメント整形"
+          "text": "テストモック共通化・PluginInput 集約"
         },
         "updatedAt": "20260830"
       },

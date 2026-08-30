@@ -1,8 +1,6 @@
 // dirty フラグの TTL テスト。期限切れの dirty は無視され、ループを防ぐ
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { consumeDirty, markDirty } from './edit-lint.hook';
-
-const DIRTY_TTL_MS = 5 * 60 * 1000;
+import { consumeDirty, DIRTY_TTL_MS, markDirty } from './edit-lint.hook';
 
 afterEach(() => {
   vi.useRealTimers();

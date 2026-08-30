@@ -1,11 +1,9 @@
 // ターン完了時の events 同期。build/compact 失敗が TTL 内なら再実行せず空 Report を返し、session.idle → build.mjs 失敗 → prompt 再注入のループを断つ。
 // root ごとに抑止状態を分離し、audit 由来はトリガーに含めない（TTL 中は audit 自体も走らない点に注意）
-import type { Plugin } from '@opencode-ai/plugin';
 import { auditMeta, type AuditFinding } from './audit';
 import type { Report } from '../utils/report';
+import type { PluginInput } from '../utils/plugin';
 import { shouldCompact } from './threshold';
-
-type PluginInput = Parameters<Plugin>[0];
 
 export interface SyncCtx {
   $: PluginInput['$'];
