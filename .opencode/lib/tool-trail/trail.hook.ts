@@ -1,5 +1,4 @@
-// ツールトレイルのフック配線。tool.execute.before で思考ギャップを測り、
-// 対象ツールの試行を log.try.<id> として直接追記する。
+// ツールトレイルのフック配線。tool.execute.before で思考ギャップを測り、対象ツールの試行を log.try.<id> として直接追記する。
 // after で lastActivity を更新し、ターン境界（busy でリセット / idle・error で削除）で整える。
 // どの失敗も痕跡1行の欠落に留め、ツール実行の流れ自体は止めない
 import fs from 'node:fs';

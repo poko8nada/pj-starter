@@ -1,6 +1,5 @@
 // createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・
-// サブエージェント除外・ベストエフォートを、スクラッチの events ディレクトリへ
-// 実際に書き込んで検証する
+// サブエージェント除外・ベストエフォートを、スクラッチの events ディレクトリへ実際に書き込んで検証する
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

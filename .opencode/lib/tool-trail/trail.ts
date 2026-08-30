@@ -1,6 +1,5 @@
 // ツールトレイルの純粋コア。ツール試行1件を log.try.<id> のイベントへ構築する。
-// 検証と ts 付与は events 側の正規経路（buildEvent）に委ね、ここでは機械固有の
-// ロジック（ホワイトリスト・パス抽出・root相対化）だけを持つ
+// 検証と ts 付与は events 側の正規経路（buildEvent）に委ね、ここでは機械固有のロジック（ホワイトリスト・パス抽出・root相対化）だけを持つ
 import { randomUUID } from 'node:crypto';
 import { buildEvent } from '../../../events/scripts/lib.mjs';
 import { toRootRelative } from '../utils/path';
