@@ -1,7 +1,6 @@
 // データ整合性監査。events 側は受動（read.mjs で読み出すだけ）に保ち、
 // 能動的な違反判定は opencode/lib 側の責務とする。
-// 渡された meta オブジェクトに、実装が進んでいる (ready/implement/commit) のに
-// path を持たないコンポーネントを検出して、既に整形済みの英語メッセージを返す
+// 渡された meta オブジェクトに、実装が進んでいる (ready/implement/commit) のにpath を持たないコンポーネントを検出して、既に整形済みの英語メッセージを返す
 export interface AuditFinding {
   key: string;
   message: string;

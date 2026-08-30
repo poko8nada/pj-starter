@@ -92,8 +92,8 @@ export const validateKey = (key) => {
     throw new EventError(`meta section must be one of ${[...META_SECTIONS].join('/')}: ${key}`);
   if (ns === 'log') {
     const parts = key.split('.');
-    if (parts.length !== 3 || parts[1] !== 'turn' || parts[2] === '')
-      throw new EventError(`log key must be log.turn.<id>: ${key}`);
+    if (parts.length !== 3 || parts[1] !== 'try' || parts[2] === '')
+      throw new EventError(`log key must be log.try.<id>: ${key}`);
   }
   if (key.endsWith('.status')) assertStatusLocation(key);
 };
@@ -114,39 +114,28 @@ const assertStatusValue = (key, value) => {
     throw new EventError(`status.text must be a non-empty string: ${key}`);
 };
 
-// log 名前空間の値形状。ターンサマリの圧縮結果1件 = {events, reasoning}。
-// events の種別は収集対象のみ（task / bash は意図的に収集しない）
-const LOG_KINDS = new Set(['read', 'edit', 'write', 'skill']);
+// log 名前空間の値形状。ツール試行1件 = {tool, gap, path|name}。
+// tool は収集対象のみ（read/edit/write/skill）。gap は思考時間（ms）で、試行の開始時点を記録する
+const LOG_TOOLS = new Set(['read', 'edit', 'write', 'skill']);
 
 const assertLogValue = (key, value) => {
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw new EventError(`log value must be an object: ${key}`);
-  if (Object.keys(value).toSorted().join(',') !== 'events,reasoning')
-    throw new EventError(`log value requires exactly {events, reasoning}: ${key}`);
-  if (!Number.isInteger(value.reasoning) || value.reasoning < 0)
-    throw new EventError(`log reasoning must be a non-negative integer: ${key}`);
-  if (!Array.isArray(value.events)) throw new EventError(`log events must be an array: ${key}`);
-  for (const entry of value.events) {
-    if (!entry || typeof entry !== 'object' || Array.isArray(entry))
-      throw new EventError(`log event must be an object: ${key}`);
-    if (!LOG_KINDS.has(entry.kind))
-      throw new EventError(`log event kind must be one of ${[...LOG_KINDS].join('/')}: ${key}`);
-    // status 主張と同じく、entry の形も種別ごとに丸ごと厳密一致させる
-    if (entry.kind === 'skill') {
-      if (Object.keys(entry).toSorted().join(',') !== 'kind,name')
-        throw new EventError(`log skill event requires exactly {kind, name}: ${key}`);
-      if (typeof entry.name !== 'string' || entry.name === '')
-        throw new EventError(`log skill event requires a non-empty name: ${key}`);
-    } else {
-      if (Object.keys(entry).toSorted().join(',') !== 'kind,paths')
-        throw new EventError(`log ${entry.kind} event requires exactly {kind, paths}: ${key}`);
-      if (
-        !Array.isArray(entry.paths) ||
-        entry.paths.length === 0 ||
-        entry.paths.some((p) => typeof p !== 'string' || p === '')
-      )
-        throw new EventError(`log ${entry.kind} event requires non-empty paths: ${key}`);
-    }
+  if (typeof value.tool !== 'string' || !LOG_TOOLS.has(value.tool))
+    throw new EventError(`log tool must be one of read/edit/write/skill: ${key}`);
+  if (!Number.isInteger(value.gap) || value.gap < 0)
+    throw new EventError(`log gap must be a non-negative integer: ${key}`);
+  // status 主張と同じく、値の形も種別ごとに丸ごと厳密一致させる
+  if (value.tool === 'skill') {
+    if (Object.keys(value).toSorted().join(',') !== 'gap,name,tool')
+      throw new EventError(`log skill value requires exactly {tool, gap, name}: ${key}`);
+    if (typeof value.name !== 'string' || value.name === '')
+      throw new EventError(`log skill value requires a non-empty name: ${key}`);
+  } else {
+    if (Object.keys(value).toSorted().join(',') !== 'gap,path,tool')
+      throw new EventError(`log file value requires exactly {tool, gap, path}: ${key}`);
+    if (typeof value.path !== 'string' || value.path === '')
+      throw new EventError(`log file value requires a non-empty path: ${key}`);
   }
 };
 

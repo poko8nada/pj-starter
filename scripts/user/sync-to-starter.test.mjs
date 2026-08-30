@@ -152,7 +152,7 @@ const PROJECT_LOG = [
   },
   { ts: T.project, type: 'del', key: 'meta.skills.old' },
   { ts: T.project, type: 'set', key: 'product.name.value', value: 'x' },
-  { ts: T.project, type: 'set', key: 'log.turn.1', value: { events: [], reasoning: 0 } },
+  { ts: T.project, type: 'set', key: 'log.try.1', value: { tool: 'read', gap: 0, path: 'a.ts' } },
 ];
 
 const writeLog = (eventsDir, events) => {
@@ -276,7 +276,7 @@ describe('sync-to-starter.mjs の双方向シンク', () => {
     expect(result.stdout).toContain('スターター勝ち');
     expect(result.stdout).toContain('コミット済みイベント 8 件を除去');
     expect(result.stdout).not.toContain('product.name.value');
-    expect(result.stdout).not.toContain('log.turn.1');
+    expect(result.stdout).not.toContain('log.try.1');
     expect(fs.readFileSync(path.join(starter, 'events', 'log.jsonl'), 'utf8')).toBe(
       beforeStarterLog,
     );
@@ -330,7 +330,7 @@ describe('sync-to-starter.mjs の双方向シンク', () => {
     expect(projectLog.map((event) => event.key)).toEqual([
       'meta.skills.recon.status',
       'product.name.value',
-      'log.turn.1',
+      'log.try.1',
     ]);
 
     // プロジェクトの meta.json: コミット済みは raw、recon は implement のまま

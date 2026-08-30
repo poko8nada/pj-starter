@@ -44,7 +44,7 @@ The current project state is the fold result under `snapshots/`: `product.json` 
 
 ## Log format
 
-JSONL. One event per line. **One line carries one concern** — a value assertion, or a whole status assertion. `ts` is always assigned by `append.mjs` (never handwritten), and **all events from one invocation share one ts**. Timestamps are fixed-offset JST (`+09:00`, ISO 8601). There is no sequence number — ordering is simply file order.
+JSONL. One event per line. **One line carries one concern** — a value assertion, or a whole status assertion. `ts` is always assigned by `append.mjs` (never handwritten) — except machine-injected `log.*` lines, which the harness plugin assigns via the same builder — and **all events from one invocation share one ts**. Timestamps are fixed-offset JST (`+09:00`, ISO 8601). There is no sequence number — ordering is simply file order.
 
 ```jsonl
 {"ts":"2026-08-25T10:00:00.000+09:00","type":"set","key":"product.name.value","value":"Pj Docs"}
@@ -132,10 +132,11 @@ Everything below describes how the machine itself runs; recording agents rarely 
 
 ### Machine-injected trail (`log`)
 
-The `log` namespace records what the agent did per turn — a coarse activity trail that sits between state events when the log is read top to bottom. It is written by harness plugins (the turn-summary emitter), never by recording agents.
+The `log` namespace records what the agent tried per tool call — a coarse activity trail that sits between state events when the log is read top to bottom. It is written by harness plugins (the tool-trail emitter), never by recording agents.
 
-- Key grammar: `log.turn.<id>` (one line per turn)
-- Value shape: `{ "events": [...], "reasoning": <non-negative int> }` where each event is `{ "kind": "read" | "edit" | "write", "paths": [...] }` or `{ "kind": "skill", "name": "..." }`; `events` may be empty
+- Key grammar: `log.try.<id>` (one line per tool try)
+- Value shape: `{ "tool": "read" | "edit" | "write", "gap": <non-negative int>, "path": "…" }` or `{ "tool": "skill", "gap": <non-negative int>, "name": "…" }`; `gap` is the thinking time (ms) since the previous tool call in the same turn
+- Semantics: a **try** — the tool was started after the thinking gap; success, failure, and user rejection are not distinguished
 - Fold participation: **none**. `build.mjs` skips these lines and excludes them from `asOf`, so snapshots are untouched by trail volume
 - Compaction: dropped. The checkpoint stores folded trees only, so trail lines vanish from the active log at compaction — history survives in git alone
 

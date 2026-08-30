@@ -328,3 +328,34 @@
 {"ts":"2026-08-29T22:21:19.166+09:00","type":"set","key":"log.turn.2bb3c0d4","value":{"events":[{"kind":"write","paths":[".opencode/lib/utils/path.ts",".opencode/lib/utils/path.test.ts"]},{"kind":"edit","paths":[".opencode/lib/edit-gate/gate.hook.ts",".opencode/lib/edit-gate/gate.hook.test.ts"]},{"kind":"read","paths":[".opencode/lib/edit-gate/gate.hook.ts",".opencode/lib/edit-gate/gate.hook.test.ts"]}],"reasoning":0}}
 {"ts":"2026-08-29T22:33:58.829+09:00","type":"set","key":"meta.harness.tool-execute-before.status","value":{"stage":"commit","text":"監査指摘（path.relative 厳密判定・exempt 分離テスト・チルダ境界等）を修正し再監査 OK"}}
 {"ts":"2026-08-29T22:34:06.059+09:00","type":"set","key":"log.turn.265a54d5","value":{"events":[{"kind":"edit","paths":[".opencode/lib/utils/path.ts",".opencode/plugin/tool-execute-before.ts",".opencode/lib/edit-gate/gate.hook.test.ts",".opencode/lib/utils/path.test.ts"]},{"kind":"read","paths":[".opencode/lib/utils/path.ts"]}],"reasoning":0}}
+{"ts":"2026-08-30T10:43:04.500+09:00","type":"set","key":"log.turn.cd9aa831","value":{"events":[{"kind":"read","paths":["events/README.md",".opencode/lib/turn-summary/emit.hook.ts",".opencode/lib/turn-summary/summary.ts",".opencode/plugin/session-idle.ts",".opencode/plugin/tool-execute-after.ts",".opencode/plugin/tool-execute-before.ts",".opencode/lib/events-sync/sync.hook.ts","events/snapshots/meta.json","events/scripts/append.mjs","events/scripts/lib.mjs",".opencode/lib/events-sync/threshold.ts",".opencode/node_modules/@opencode-ai/plugin/dist/index.d.ts",".opencode/lib/turn-summary/summary.test.ts",".opencode/package.json",".opencode/tsconfig.json","events/spec/schema.md",".opencode/node_modules/@opencode-ai/sdk/dist/gen/types.gen.d.ts",".opencode/skills/agenda/references/code-axes.md",".opencode/skills/agenda/references/meta.md","scripts/user/sync-to-starter.mjs","scripts/user/README.md","package.json",".opencode/lib/utils/tools.ts",".opencode/lib/utils/path.ts",".opencode/lib/utils/path.test.ts",".opencode/lib/utils/tools.test.ts"]},{"kind":"skill","name":"agenda"},{"kind":"skill","name":"feature"}],"reasoning":0}}
+{"ts":"2026-08-30T12:50:37.138+09:00","type":"set","key":"log.turn.6a3c6054","value":{"events":[{"kind":"read","paths":[".opencode/node_modules/@opencode-ai/sdk/dist/gen/types.gen.d.ts"]}],"reasoning":0}}
+{"ts":"2026-08-30T12:53:23.305+09:00","type":"set","key":"meta.harness.tool-trail","value":{"purpose":"ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する"}}
+{"ts":"2026-08-30T12:53:23.305+09:00","type":"set","key":"meta.harness.tool-trail.status","value":{"stage":"planned","text":"未着手"}}
+{"ts":"2026-08-30T12:53:23.305+09:00","type":"del","key":"meta.harness.turn-summary"}
+{"ts":"2026-08-30T13:02:45.395+09:00","type":"del","key":"meta.harness.tool-trail"}
+{"ts":"2026-08-30T13:12:30.151+09:00","type":"set","key":"meta.harness.tool-trail","value":{"purpose":"ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する"}}
+{"ts":"2026-08-30T13:12:30.151+09:00","type":"set","key":"meta.harness.tool-trail.status","value":{"stage":"planned","text":"未着手"}}
+{"ts":"2026-08-30T13:12:30.151+09:00","type":"set","key":"meta.harness.tool-trail.status","value":{"stage":"ready","text":"実装計画が確定。実装待ち"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"del","key":"meta.harness.tool-execute-before"}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"del","key":"meta.harness.tool-execute-after"}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"del","key":"meta.harness.session-idle"}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.edit-gate","value":{"purpose":"ステータス記録を要求し、記録まで edit/write をブロックするゲート","path":".opencode/lib/edit-gate/gate.hook.ts"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.edit-gate.status","value":{"stage":"commit","text":"既存メカニズムをコンポーネントとして登録"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.edit-lint","value":{"purpose":"編集直後のreport-only lint","path":".opencode/lib/checks/edit-lint.hook.ts"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.edit-lint.status","value":{"stage":"commit","text":"既存メカニズムをコンポーネントとして登録"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.idle-review","value":{"purpose":"ターン完了時の品質レビュー","path":".opencode/lib/checks/idle-review.hook.ts"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.idle-review.status","value":{"stage":"commit","text":"既存メカニズムをコンポーネントとして登録"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.events-sync","value":{"purpose":"ターン完了時のevents同期（build/compact）","path":".opencode/lib/events-sync/sync.hook.ts"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.events-sync.status","value":{"stage":"commit","text":"既存メカニズムをコンポーネントとして登録"}}
+{"ts":"2026-08-30T13:52:44.741+09:00","type":"set","key":"meta.harness.tool-trail.path","value":".opencode/lib/tool-trail/trail.hook.ts"}
+{"ts":"2026-08-30T14:06:11.381+09:00","type":"set","key":"log.try.0f0f87b3","value":{"tool":"skill","gap":3677,"name":"commit"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.tool-trail.status","value":{"stage":"commit","text":"ツール試行の思考ギャップ記録（log.try）を実装し、turn-summary を置換"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.edit-gate.status","value":{"stage":"commit","text":"配線にトライル記録（trail.before）を追加"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.edit-lint.status","value":{"stage":"commit","text":"配線にギャップ基準更新（trail.after）を追加"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.idle-review.status","value":{"stage":"commit","text":"配線にトライルセッション管理（trail.event）を追加"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.events-sync.status","value":{"stage":"commit","text":"audit.ts のコメント整形"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.event-lib.status","value":{"stage":"commit","text":"log 名前空間を log.try.<id> と {tool, gap, path|name} に更新"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.events-readme.status","value":{"stage":"commit","text":"機械注入トレイル節と ts 契約を log.try に更新"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.user-reset.status","value":{"stage":"commit","text":"テストフィクスチャを log.try に更新"}}
+{"ts":"2026-08-30T14:07:27.153+09:00","type":"set","key":"meta.harness.user-sync-to-starter.status","value":{"stage":"commit","text":"テストフィクスチャを log.try に更新"}}
