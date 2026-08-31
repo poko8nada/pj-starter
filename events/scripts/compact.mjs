@@ -9,8 +9,8 @@ import { CHECKPOINT_PATH, foldAll, injectUpdatedAt, jstNow, LOG_PATH } from './l
 const { trees, asOf, events } = foldAll();
 injectUpdatedAt(trees, events);
 fs.writeFileSync(
-  CHECKPOINT_PATH,
+  CHECKPOINT_PATH(),
   `${JSON.stringify({ compactedAt: jstNow(), asOf, trees }, null, 2)}\n`,
 );
-fs.writeFileSync(LOG_PATH, '');
+fs.writeFileSync(LOG_PATH(), '');
 console.log(`compacted (asOf: ${asOf ?? 'none'})`);

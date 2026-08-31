@@ -9,7 +9,7 @@ import { fail, findUnresolved, parseArgs, SNAPSHOTS_DIR } from './lib.mjs';
 const NAMED = new Set(['product', 'meta']);
 
 const loadContent = (name) => {
-  const file = path.join(SNAPSHOTS_DIR, `${name}.json`);
+  const file = path.join(SNAPSHOTS_DIR(), `${name}.json`);
   if (!fs.existsSync(file)) return null;
   return JSON.parse(fs.readFileSync(file, 'utf8')).content;
 };

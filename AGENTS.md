@@ -1,6 +1,7 @@
 # AGENTS.md
 
-Do NOT procrastinate and do NOT skip steps. Be thorough.
+Do NOT procrastinate and do NOT skip steps. Be thorough.  
+Your understand is bound to be incorrect, so **discuss the matter with the user before everything.**  
 What user really want is for you to respond to the requests while **ALWAYS adhering to the following:**
 
 ## Operational System

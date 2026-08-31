@@ -19,7 +19,7 @@ import {
   writeCheckpoint,
 } from '../../events/scripts/lib.mjs';
 
-const ROOT_DIR = path.resolve(EVENTS_DIR, '..');
+const ROOT_DIR = path.resolve(EVENTS_DIR(), '..');
 // 同リポジトリの build を子プロセスで実行。EVENTS_DIR は引き継がれる。
 const BUILD_SCRIPT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -69,14 +69,14 @@ const main = () => {
   const { meta, stack } = collectBaseline();
 
   const readmeFiles = ['README.md', 'README.ja.md'].map((file) => path.join(ROOT_DIR, file));
-  const logLines = fs.existsSync(LOG_PATH)
+  const logLines = fs.existsSync(LOG_PATH())
     ? fs
-        .readFileSync(LOG_PATH, 'utf8')
+        .readFileSync(LOG_PATH(), 'utf8')
         .split('\n')
         .filter((line) => line.trim() !== '').length
     : 0;
 
-  console.log(`削除: ${path.relative(ROOT_DIR, CHECKPOINT_PATH)} / README.md / README.ja.md`);
+  console.log(`削除: ${path.relative(ROOT_DIR, CHECKPOINT_PATH())} / README.md / README.ja.md`);
   console.log(`log: ${logLines} 行を初期化し、name/what の 2 イベントをアペンド`);
   console.log(
     `checkpoint 種まき: meta ${countUnits(meta)} unit / stack ${
@@ -92,15 +92,15 @@ const main = () => {
   }
 
   // wipe は baseline 収集の後。スターター本体での実行は git 履歴で復元できる
-  for (const file of [CHECKPOINT_PATH, ...readmeFiles]) if (fs.existsSync(file)) fs.rmSync(file);
-  fs.writeFileSync(LOG_PATH, '');
+  for (const file of [CHECKPOINT_PATH(), ...readmeFiles]) if (fs.existsSync(file)) fs.rmSync(file);
+  fs.writeFileSync(LOG_PATH(), '');
   writeCheckpoint({ product: { stack }, meta });
   const ts = jstNow();
   const events = [
     buildEvent({ type: 'set', key: 'product.name.value', value: projectName }, ts),
     buildEvent({ type: 'set', key: 'product.what.value', value: WHAT_TEXT }, ts),
   ];
-  fs.appendFileSync(LOG_PATH, `${events.map((event) => JSON.stringify(event)).join('\n')}\n`);
+  fs.appendFileSync(LOG_PATH(), `${events.map((event) => JSON.stringify(event)).join('\n')}\n`);
   const build = spawnSync(process.execPath, [BUILD_SCRIPT], { stdio: 'inherit' });
   if (build.error || build.status !== 0) fail('build に失敗しました');
   console.log('reset 完了');

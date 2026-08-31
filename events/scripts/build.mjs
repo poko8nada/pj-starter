@@ -15,11 +15,11 @@ import {
 const { trees, asOf, events } = foldAll();
 normalizeTrees(trees);
 injectUpdatedAt(trees, events);
-fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
+fs.mkdirSync(SNAPSHOTS_DIR(), { recursive: true });
 
 // 生成物を書き出す。既存内容と同一なら何もしない
 const writeSnapshot = (name, content) => {
-  const file = path.join(SNAPSHOTS_DIR, `${name}.json`);
+  const file = path.join(SNAPSHOTS_DIR(), `${name}.json`);
   if (fs.existsSync(file)) {
     try {
       const current = JSON.parse(fs.readFileSync(file, 'utf8'));

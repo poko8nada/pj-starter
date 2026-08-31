@@ -2,21 +2,27 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { describe, expect, it, vi } from 'vitest';
+import { fileURLToPath } from 'node:url';
+import { describe, expect, it } from 'vitest';
 import {
   applyFoldable,
   auditMetaIntegrity,
   buildEvent,
+  CHECKPOINT_PATH,
   deletePath,
   EventError,
+  EVENTS_DIR,
   findUnresolved,
   injectUpdatedAt,
   lastFoldedTs,
+  LOG_PATH,
   normalizeTrees,
   parseCheckpoint,
   setPath,
+  SNAPSHOTS_DIR,
   stableStringify,
   stripHistory,
+  writeCheckpoint,
 } from './lib.mjs';
 
 describe('buildEvent', () => {
@@ -563,15 +569,12 @@ describe('stripHistory', () => {
 });
 
 describe('writeCheckpoint', () => {
-  it('writes a baseline checkpoint with asOf null', async () => {
+  it('writes a baseline checkpoint with asOf null', () => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lib-test-'));
     const prev = process.env.EVENTS_DIR;
     process.env.EVENTS_DIR = root;
     try {
-      // モジュールキャッシュを破棄して EVENTS_DIR を再評価した lib を読み込む
-      vi.resetModules();
-      const lib = await import('./lib.mjs');
-      lib.writeCheckpoint({ product: { stack: {} }, meta: {} });
+      writeCheckpoint({ product: { stack: {} }, meta: {} });
       const checkpoint = JSON.parse(fs.readFileSync(path.join(root, 'checkpoint.json'), 'utf8'));
       expect(checkpoint.asOf).toBeNull();
       expect(checkpoint.compactedAt).toMatch(/\+09:00$/);
@@ -580,6 +583,45 @@ describe('writeCheckpoint', () => {
       if (prev === undefined) delete process.env.EVENTS_DIR;
       else process.env.EVENTS_DIR = prev;
       fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
+// パス関数は呼び出し時に EVENTS_DIR を読む（遅延解決）。env 設定だけで解決先が切り替わることを検証する
+describe('path resolution', () => {
+  it('resolves all paths from the current EVENTS_DIR at call time', () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lib-test-'));
+    const prev = process.env.EVENTS_DIR;
+    process.env.EVENTS_DIR = root;
+    try {
+      expect(EVENTS_DIR()).toBe(root);
+      expect(LOG_PATH()).toBe(path.join(root, 'log.jsonl'));
+      expect(SNAPSHOTS_DIR()).toBe(path.join(root, 'snapshots'));
+      expect(CHECKPOINT_PATH()).toBe(path.join(root, 'checkpoint.json'));
+
+      // env を差し替えれば同じモジュールのまま解決先が変わる（キャッシュ破棄不要）
+      const other = fs.mkdtempSync(path.join(os.tmpdir(), 'lib-test-other-'));
+      process.env.EVENTS_DIR = other;
+      expect(LOG_PATH()).toBe(path.join(other, 'log.jsonl'));
+      expect(CHECKPOINT_PATH()).toBe(path.join(other, 'checkpoint.json'));
+      fs.rmSync(other, { recursive: true, force: true });
+    } finally {
+      if (prev === undefined) delete process.env.EVENTS_DIR;
+      else process.env.EVENTS_DIR = prev;
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('falls back to the repo events/ directory when EVENTS_DIR is unset', () => {
+    const prev = process.env.EVENTS_DIR;
+    delete process.env.EVENTS_DIR;
+    try {
+      const fallback = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+      expect(EVENTS_DIR()).toBe(fallback);
+      expect(LOG_PATH()).toBe(path.join(fallback, 'log.jsonl'));
+    } finally {
+      if (prev === undefined) delete process.env.EVENTS_DIR;
+      else process.env.EVENTS_DIR = prev;
     }
   });
 });

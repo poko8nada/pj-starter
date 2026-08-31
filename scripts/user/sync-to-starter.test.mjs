@@ -11,14 +11,19 @@ import { afterAll, describe, expect, it } from 'vitest';
 const SCRIPT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'sync-to-starter.mjs');
 const SYNC_FILES = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'sync/files.mjs');
 const SYNC_META = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'sync/meta.mjs');
-const LIB = path.resolve(
+// lib.mjs が lib/ ディレクトリへ分割されたため、エントリとモジュール群をまとめてコピーする
+const EVENTS_SCRIPTS = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  '../../events/scripts/lib.mjs',
+  '../../events/scripts',
 );
 const BUILD = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../../events/scripts/build.mjs',
 );
+
+const copyEventsScripts = (eventsDir) => {
+  fs.cpSync(EVENTS_SCRIPTS, path.join(eventsDir, 'scripts'), { recursive: true });
+};
 const scratches = [];
 
 // ダミー rclone。bisync の引数を RCLONE_ARGS_LOG へ記録し、初回（--resync なし）は"Must run --resync" で abort して再試行を促す。RCLONE_FAIL 時は安全 abort を模す
@@ -190,7 +195,7 @@ const makeProject = ({ logEvents = PROJECT_LOG } = {}) => {
   fs.copyFileSync(SCRIPT, path.join(root, 'scripts', 'user', 'sync-to-starter.mjs'));
   fs.copyFileSync(SYNC_FILES, path.join(root, 'scripts', 'user', 'sync', 'files.mjs'));
   fs.copyFileSync(SYNC_META, path.join(root, 'scripts', 'user', 'sync', 'meta.mjs'));
-  fs.copyFileSync(LIB, path.join(eventsDir, 'scripts', 'lib.mjs'));
+  copyEventsScripts(eventsDir);
   fs.copyFileSync(BUILD, path.join(eventsDir, 'scripts', 'build.mjs'));
   writeLog(eventsDir, logEvents);
   fs.writeFileSync(path.join(root, 'rclone-args.log'), '');
@@ -219,7 +224,7 @@ const makeStarter = ({ checkpoint = CHECKPOINT, logEvents = STARTER_LOG } = {}) 
     fs.writeFileSync(path.join(eventsDir, 'checkpoint.json'), JSON.stringify(checkpoint));
   }
   writeLog(eventsDir, logEvents);
-  fs.copyFileSync(LIB, path.join(eventsDir, 'scripts', 'lib.mjs'));
+  copyEventsScripts(eventsDir);
   fs.copyFileSync(BUILD, path.join(eventsDir, 'scripts', 'build.mjs'));
   return root;
 };

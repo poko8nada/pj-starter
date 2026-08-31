@@ -89,7 +89,7 @@ const main = () => {
   const findings = auditMetaIntegrity(trees);
   if (findings.length > 0) fail(findings.join('\n'));
 
-  fs.appendFileSync(LOG_PATH, `${events.map((event) => JSON.stringify(event)).join('\n')}\n`);
+  fs.appendFileSync(LOG_PATH(), `${events.map((event) => JSON.stringify(event)).join('\n')}\n`);
   console.log(`appended ${events.length} events`);
 };
 

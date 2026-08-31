@@ -2,9 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { spawnSync } from 'node:child_process';
+// lib.mjs は遅延解決（呼び出し時に EVENTS_DIR を読む）のため、同一モジュールのままで
+// env を差し替えるだけで双方のディレクトリを扱える。キャッシュ破棄の動的 import は不要
+import * as lib from '../../../events/scripts/lib.mjs';
 import { PROJECT_ROOT, fail } from './files.mjs';
-
-let libSeq = 0;
 
 const valueAt = (trees, key) => {
   const parts = key.split('.');
@@ -25,17 +26,9 @@ const makeLatestTs = (base, events, trees) => {
   return (key) => latest.get(key) ?? (valueAt(trees, key) !== undefined ? floor : '');
 };
 
-const loadLib = async (eventsDir) => {
-  const prevEventsDir = process.env.EVENTS_DIR;
-  process.env.EVENTS_DIR = eventsDir;
-  const libPath = path.join(PROJECT_ROOT, 'events', 'scripts', 'lib.mjs');
-  const lib = await import(`${libPath}?t=${++libSeq}`);
-  return { lib, prevEventsDir };
-};
-
-const readState = (lib) => {
+const readState = () => {
   const base = lib.loadBase();
-  const logPath = path.join(lib.EVENTS_DIR, 'log.jsonl');
+  const logPath = lib.LOG_PATH();
   const hasLog = fs.existsSync(logPath) && fs.statSync(logPath).size > 0;
   const { trees, events } = hasLog
     ? lib.foldAll()
@@ -43,7 +36,7 @@ const readState = (lib) => {
   return { base, trees, events };
 };
 
-const readCandidates = (lib, projectLogPath) => {
+const readCandidates = (projectLogPath) => {
   const candidates = [];
   const lines = fs
     .readFileSync(projectLogPath, 'utf8')
@@ -101,7 +94,7 @@ const mergedStages = (project, starter, candidates) => {
   return stages;
 };
 
-const decideInjection = (lib, starter, candidates, stages) => {
+const decideInjection = (starter, candidates, stages) => {
   const { base, events: starterEvents, trees } = starter;
   const latestTs = makeLatestTs(base, starterEvents, trees);
   const working = structuredClone(trees);
@@ -194,50 +187,57 @@ export const syncMeta = async (starterRoot, run) => {
     return;
   }
 
-  const { lib: projectLib, prevEventsDir } = await loadLib(projectEventsDir);
-  const candidates = readCandidates(projectLib, projectLogPath);
-  const project = readState(projectLib);
-  const { lib: starterLib } = await loadLib(starterEventsDir);
-  const starter = readState(starterLib);
-  if (prevEventsDir === undefined) delete process.env.EVENTS_DIR;
-  else process.env.EVENTS_DIR = prevEventsDir;
+  // 遅延解決のため呼び出し前に env を差し替える。終了時は元の値へ復元する
+  const prevEventsDir = process.env.EVENTS_DIR;
+  try {
+    process.env.EVENTS_DIR = projectEventsDir;
+    const candidates = readCandidates(projectLogPath);
+    const project = readState();
+    process.env.EVENTS_DIR = starterEventsDir;
+    const starter = readState();
 
-  const stages = mergedStages(project, starter, candidates);
-  const { pending, rows, working } = decideInjection(starterLib, starter, candidates, stages);
+    const stages = mergedStages(project, starter, candidates);
+    const { pending, rows, working } = decideInjection(starter, candidates, stages);
 
-  console.log(`[meta] meta.* イベント ${candidates.length} 件の勝敗判定`);
-  for (const [verdict, detail] of rows) console.log(`  ${verdict.padEnd(54)} ${detail}`);
-  console.log(
-    `[meta] ${pending.length} 件をスターターへ注入 / ${candidates.length - pending.length} 件スキップ`,
-  );
-
-  const inventory = committedInventory(working, stages);
-  const stripped = projectLib.stripHistory(inventory);
-  const removed = stripProjectLog(projectLogPath, stages, run);
-  const unitCount = Object.values(stripped).reduce(
-    (sum, section) => sum + Object.keys(section).length,
-    0,
-  );
-  console.log(
-    `[strip] プロジェクト側: checkpoint をコミット済み在庫（${unitCount} unit）で書き換え、ログからコミット済みイベント ${removed} 件を除去`,
-  );
-
-  if (!run) {
-    console.log('[dry-run] --run で実コピーと注入');
-    return;
-  }
-
-  if (pending.length > 0) {
-    fs.appendFileSync(
-      path.join(starterEventsDir, 'log.jsonl'),
-      `${pending.map((event) => JSON.stringify(event)).join('\n')}\n`,
+    console.log(`[meta] meta.* イベント ${candidates.length} 件の勝敗判定`);
+    for (const [verdict, detail] of rows) console.log(`  ${verdict.padEnd(54)} ${detail}`);
+    console.log(
+      `[meta] ${pending.length} 件をスターターへ注入 / ${candidates.length - pending.length} 件スキップ`,
     );
-    console.log(`[meta] ${pending.length} 件を ${starterEventsDir}/log.jsonl へ追記`);
+
+    const inventory = committedInventory(working, stages);
+    const stripped = lib.stripHistory(inventory);
+    const removed = stripProjectLog(projectLogPath, stages, run);
+    const unitCount = Object.values(stripped).reduce(
+      (sum, section) => sum + Object.keys(section).length,
+      0,
+    );
+    console.log(
+      `[strip] プロジェクト側: checkpoint をコミット済み在庫（${unitCount} unit）で書き換え、ログからコミット済みイベント ${removed} 件を除去`,
+    );
+
+    if (!run) {
+      console.log('[dry-run] --run で実コピーと注入');
+      return;
+    }
+
+    if (pending.length > 0) {
+      fs.appendFileSync(
+        path.join(starterEventsDir, 'log.jsonl'),
+        `${pending.map((event) => JSON.stringify(event)).join('\n')}\n`,
+      );
+      console.log(`[meta] ${pending.length} 件を ${starterEventsDir}/log.jsonl へ追記`);
+    }
+
+    // 書き込みは project 側の env に戻してから行う
+    process.env.EVENTS_DIR = projectEventsDir;
+    lib.writeCheckpoint({ product: project.trees.product, meta: stripped });
+    console.log('[strip] プロジェクト側の checkpoint を書き換えました');
+
+    build(PROJECT_ROOT, projectEventsDir);
+    build(starterRoot, starterEventsDir);
+  } finally {
+    if (prevEventsDir === undefined) delete process.env.EVENTS_DIR;
+    else process.env.EVENTS_DIR = prevEventsDir;
   }
-
-  projectLib.writeCheckpoint({ product: project.trees.product, meta: stripped });
-  console.log('[strip] プロジェクト側の checkpoint を書き換えました');
-
-  build(PROJECT_ROOT, projectEventsDir);
-  build(starterRoot, starterEventsDir);
 };

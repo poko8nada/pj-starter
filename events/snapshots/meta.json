@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-31T23:52:27.384+09:00",
-  "asOf": "2026-08-31T23:52:27.358+09:00",
+  "generatedAt": "2026-09-01T01:30:31.932+09:00",
+  "asOf": "2026-09-01T01:30:31.901+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -267,9 +267,9 @@
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
           "stage": "commit",
-          "text": "未確定抽出ロジックを追加"
+          "text": "lib.mjsをlib/へ分割しパスを遅延解決化"
         },
-        "updatedAt": "20260831"
+        "updatedAt": "20260901"
       },
       "user-reset": {
         "path": "scripts/user/reset.mjs",
