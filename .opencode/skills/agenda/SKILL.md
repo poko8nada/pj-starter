@@ -66,13 +66,13 @@ All deliberations happen in chat and are **never recorded**; their outcomes mate
 
 Checked against snapshots alone. Any hit aborts agenda here — the fix belongs to the feature skill (registration / revision / splitting).
 
-| Axis           | Hit condition                                 |
-| -------------- | --------------------------------------------- |
-| Existence      | no snapshot entry matches the request         |
-| Truth          | definition drifted from reality               |
-| Single purpose | explaining the purpose needs "and" / "etc."   |
-| Route size     | route exceeds 3 steps                         |
-| Session size   | ready → commit cannot fit one working session |
+| Axis           | Hit condition                                                        |
+| -------------- | -------------------------------------------------------------------- |
+| Existence      | no snapshot entry matches the request                                |
+| Truth          | definition drifted from reality                                      |
+| Single purpose | explaining the purpose needs "and" / "etc."                          |
+| Route size     | route exceeds 3 steps (see feature/SKILL.md)                         |
+| Session size   | ready → commit cannot fit one working session (see feature/SKILL.md) |
 
 ### Impact scope conditions (step 2)
 

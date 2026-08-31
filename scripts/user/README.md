@@ -41,7 +41,7 @@ pnpm starter:sync --run <スターターのパス>  # 実コピー
 - 状態は OS のキャッシュディレクトリに置かれ（rclone の既定動作）、リポジトリにはファイルを追加しない
 - 初回（状態なし）は `--resync --resync-mode newer` で自動再試行する
 - 追跡ファイル全件が変更されると安全 abort する（稀。変更内容を確認して手動解決）
-- 除外: `node_modules/**` / `.DS_Store` / lock ファイル。`events/log.jsonl` / `checkpoint.json` / `snapshots/` は状態なので対象外
+- 除外: `COMMON_EXCLUDES`（`sync-files.mjs` 参照）+ events 状態ファイル（`log.jsonl` / `checkpoint.json` / `snapshots/`）
 
 ### meta.* ログのフロー（コミット済みのみ双方向）
 

@@ -22,7 +22,7 @@ Pre-commit code review. The main agent handles scope and aggregation; the audito
 2. **Chunk** — group the changed files into reviewable chunks:
    - Map each changed file to its work unit (meta: via the component's `path` in the snapshot; product: by which feature the file implements)
    - One chunk = one work unit's full change set — code, tests, and docs together, so the auditor can cross-check the three viewpoints within the chunk
-   - Shared libraries form their own chunk; generated artifacts (log, snapshots) are excluded — covered by build validation
+   - Shared libraries form their own chunk (e.g. `events/scripts/lib.mjs` → events-scripts chunk); generated artifacts (`log.jsonl`, `snapshots/`) are excluded — covered by build validation
    - If a chunk is too large for one auditor pass, split by cohesion, keeping each sub-group's code, tests, and docs together
 3. **Spawn auditors in parallel** — one Task call per chunk with `auditor` as sub agent, passing the chunk: the changed file paths, the diff for those files, and the work-unit context (purpose / definition). The auditor reads the files itself; it does not run git.
 4. **Aggregate** — collect the fixed-format findings returned by each auditor.

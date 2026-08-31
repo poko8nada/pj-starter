@@ -28,7 +28,7 @@ Research only what the query asks for:
 - Version, license, maintenance status, and adoption signals when available
 - Adoption level: GitHub stars, download counts, release recency, notable adopters, and whether the candidate is a de facto standard
 
-Use websearch, webfetch, and context7. Do not research anything outside the query.
+Use websearch (discover candidates), webfetch (read official docs / GitHub repos), and context7 (look up current API docs / migration guides for known libraries). Do not research anything outside the query.
 
 ## Output format
 

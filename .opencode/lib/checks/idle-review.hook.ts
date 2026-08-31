@@ -1,7 +1,4 @@
-// ターン完了時の品質整備。編集があったターンに限り lint --fix と typecheck を実行し、残った問題をエージェント自身の修正ターンへ還流する。
-// 監査の結果そのものはログに残さず、この会話的なサイクルで処理する
-import type { Report } from '../utils/report';
-import type { PluginInput } from '../utils/plugin';
+import type { Report, PluginInput } from '../utils/shared';
 import { consumeDirty } from './edit-lint.hook';
 import { createRounds, MAX_AUTO_FIX_ROUNDS } from './rounds';
 import { clipLines, MAX_REPORT_LINES } from '../utils/text';
@@ -14,12 +11,22 @@ export interface ReviewCtx {
 
 const rounds = createRounds();
 
-export const reviewIdle = async (ctx: ReviewCtx, sessionId: string): Promise<Report> => {
-  if (!consumeDirty()) return { errors: [] };
+interface CheckResult {
+  exitCode: number;
+  stdout: { toString(): string };
+  stderr: { toString(): string };
+}
 
-  const fix = await ctx.$`pnpm exec oxlint --fix`.cwd(ctx.root).nothrow().quiet();
-  const tsc = await ctx.$`pnpm exec tsc --noEmit`.cwd(ctx.root).nothrow().quiet();
+const runChecks = async (
+  $: PluginInput['$'],
+  root: string,
+): Promise<{ fix: CheckResult; tsc: CheckResult }> => {
+  const fix = await $`pnpm exec oxlint --fix`.cwd(root).nothrow().quiet();
+  const tsc = await $`pnpm exec tsc --noEmit`.cwd(root).nothrow().quiet();
+  return { fix, tsc };
+};
 
+const formatErrors = (fix: CheckResult, tsc: CheckResult): string[] => {
   const errors: string[] = [];
   if (fix.exitCode !== 0) {
     const report = clipLines(
@@ -33,6 +40,14 @@ export const reviewIdle = async (ctx: ReviewCtx, sessionId: string): Promise<Rep
       `[typecheck] tsc found errors:\n${clipLines(tsc.stdout.toString(), MAX_REPORT_LINES)}`,
     );
   }
+  return errors;
+};
+
+export const reviewIdle = async (ctx: ReviewCtx, sessionId: string): Promise<Report> => {
+  if (!consumeDirty()) return { errors: [] };
+
+  const { fix, tsc } = await runChecks(ctx.$, ctx.root);
+  const errors = formatErrors(fix, tsc);
 
   if (errors.length === 0) {
     rounds.reset(sessionId);
@@ -55,6 +70,5 @@ export const reviewIdle = async (ctx: ReviewCtx, sessionId: string): Promise<Rep
   }
   rounds.advance(sessionId);
 
-  // プロンプト本文の組み立て（prefix 付与・連結）は plugin 直下（buildMessage）の責務。errors だけを返す
   return { errors };
 };

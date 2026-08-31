@@ -1,7 +1,7 @@
 // buildMessage のテスト。整形済みエラーメッセージを連結し、空なら null を返す
 import { describe, expect, it } from 'vitest';
 import { buildMessage } from './message';
-import type { Report } from './report';
+import type { Report } from './shared';
 
 describe('buildMessage', () => {
   it('returns null when nothing to report', () => {

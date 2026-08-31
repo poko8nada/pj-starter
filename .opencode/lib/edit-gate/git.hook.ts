@@ -1,5 +1,5 @@
 // git 境界ヘルパ。ゲートの有効性（リポジトリ内 + 初回コミット有無）とサイクル完了（ワークツリーがクリーンか）を判定する。$ はプラグインから注入される
-import type { PluginInput } from '../utils/plugin';
+import type { PluginInput } from '../utils/shared';
 
 export interface GitCtx {
   $: PluginInput['$'];

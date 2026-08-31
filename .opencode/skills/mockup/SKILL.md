@@ -16,7 +16,7 @@ Run a dialogue-driven workbench: serve minimal screens of the envisioned product
     reset.mjs           # Restore pristine state (dry-run default, --force executes)
     server.mjs          # Dev server lifecycle: serve / stop (pid-tracked, prints real URL)
   workbench/            # Fully self-contained Vite project (independent workspace)
-    package.json        # Boundary marker: own deps, own lockfile (with pnpm-workspace.yaml)
+    package.json        # Boundary marker: own deps, own lockfile (with pnpm-workspace.yaml). Deps: tailwindcss, vite (versions tracked here)
     vite.config.ts      # Tailwind v4 / singlefile build / annotations API / overlay injection
     theme.css           # @theme {} — THE deliverable core (Tailwind settings)
     <id>.html           # One mockup = one screen = one HTML (screens live here)

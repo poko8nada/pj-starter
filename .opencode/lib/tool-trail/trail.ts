@@ -1,5 +1,5 @@
-// ツールトレイルの純粋コア。ツール試行1件を log.try.<id> のイベントへ構築し、連続する同一ツールの試行を1行にマージする。
-// 検証と ts 付与は events 側の正規経路（buildEvent）に委ね、ここでは機械固有のロジック（対象抽出・root相対化・マージ判定）だけを持つ
+// ツールトレイルの純粋コア。対象抽出・root相対化・マージ判定のみを持つ。
+// 検証と ts 付与は buildEvent（events/scripts/validation.mjs）へ委ねる。全体の仕様は events/README.md#machine-injected trail 参照
 import { randomUUID } from 'node:crypto';
 import { buildEvent, isLogTool } from '../../../events/scripts/lib.mjs';
 import { toRootRelative } from '../utils/path';

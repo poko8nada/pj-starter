@@ -1,6 +1,6 @@
 // 編集ツール判定のテスト
 import { describe, expect, it } from 'vitest';
-import { isEditTool } from './tools';
+import { isEditTool } from './shared';
 
 describe('isEditTool', () => {
   it('returns true for edit and write', () => {

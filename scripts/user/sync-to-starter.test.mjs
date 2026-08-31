@@ -9,6 +9,8 @@ import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
 
 const SCRIPT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'sync-to-starter.mjs');
+const SYNC_FILES = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'sync/files.mjs');
+const SYNC_META = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'sync/meta.mjs');
 const LIB = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../../events/scripts/lib.mjs',
@@ -19,8 +21,7 @@ const BUILD = path.resolve(
 );
 const scratches = [];
 
-// ダミー rclone。bisync の引数を RCLONE_ARGS_LOG へ記録し、初回（--resync なし）は
-// "Must run --resync" で abort して再試行を促す。RCLONE_FAIL 時は安全 abort を模す
+// ダミー rclone。bisync の引数を RCLONE_ARGS_LOG へ記録し、初回（--resync なし）は"Must run --resync" で abort して再試行を促す。RCLONE_FAIL 時は安全 abort を模す
 const DUMMY_BIN = fs.mkdtempSync(path.join(os.tmpdir(), 'sync-test-bin-'));
 scratches.push(DUMMY_BIN);
 fs.writeFileSync(
@@ -174,7 +175,7 @@ const makeProject = ({ logEvents = PROJECT_LOG } = {}) => {
   scratches.push(root);
   const eventsDir = path.join(root, 'events');
   fs.mkdirSync(path.join(eventsDir, 'scripts'), { recursive: true });
-  fs.mkdirSync(path.join(root, 'scripts', 'user'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'scripts', 'user', 'sync'), { recursive: true });
   for (const dir of [
     '.opencode/lib',
     '.opencode/plugin',
@@ -187,6 +188,8 @@ const makeProject = ({ logEvents = PROJECT_LOG } = {}) => {
     fs.mkdirSync(path.join(root, dir), { recursive: true });
   }
   fs.copyFileSync(SCRIPT, path.join(root, 'scripts', 'user', 'sync-to-starter.mjs'));
+  fs.copyFileSync(SYNC_FILES, path.join(root, 'scripts', 'user', 'sync', 'files.mjs'));
+  fs.copyFileSync(SYNC_META, path.join(root, 'scripts', 'user', 'sync', 'meta.mjs'));
   fs.copyFileSync(LIB, path.join(eventsDir, 'scripts', 'lib.mjs'));
   fs.copyFileSync(BUILD, path.join(eventsDir, 'scripts', 'build.mjs'));
   writeLog(eventsDir, logEvents);

@@ -21,7 +21,7 @@ events/
     meta.json          # Folded meta.* state (written when folded meta state is non-empty)
 ```
 
-Snapshot freshness is maintained automatically: every append goes through `append-build.mjs`, which runs `build.mjs` after a successful append, and the harness's `session-idle` hook runs `compact.mjs` when the log crosses its line threshold (see `.opencode/lib/event-compact/threshold.ts`). Manual invocation remains available.
+Snapshot freshness is maintained automatically: every append goes through `append-build.mjs`, which runs `build.mjs` after a successful append, and the harness's `session-idle` hook runs `compact.mjs` when the log crosses the threshold in `.opencode/lib/event-compact/threshold.ts`.
 
 ## Reading current state
 
@@ -50,15 +50,10 @@ JSONL. One event per line. **One line carries one concern** — a value assertio
 {"ts":"2026-08-25T10:06:00.000+09:00","type":"del","key":"product.features.old_feature"}
 ```
 
-- `ts` — ISO 8601 in JST (`+09:00`). Assignment time
-- `type` — `set` or `del`
+- `ts` — ISO 8601 in JST (`+09:00`), assigned by `append.mjs`. All events from one invocation share one ts
+- `type` — `set` (overwrite, last-write-wins) or `del` (remove leaf, prune empty ancestors)
 - `key` — dotted path, always required
 - `value` — JSON string or object. **A full-state assertion at that exact path, never a diff**
-
-### Event types
-
-- `set` — overwrite the value at the exact path (last-write-wins). Scalar intermediates are replaced by objects when deeper paths are written
-- `del` — remove the leaf at the path; empty ancestors are pruned
 
 ## Recording contract
 

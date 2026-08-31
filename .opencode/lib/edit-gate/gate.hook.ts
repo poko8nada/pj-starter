@@ -2,8 +2,8 @@
 // サブエージェントセッション（exempt）とプロジェクトルート外のファイル編集は対象外。
 // createGate は純メモリ（Set ルックアップ + 文字列比較）で、fs I/O を伴わない。
 // ハンドラーは Report を返し、メッセージ組み立ては呼び出し側（buildMessage）が行う
-import type { Report } from '../utils/report';
-import { isEditTool } from '../utils/tools';
+import type { Report } from '../utils/shared';
+import { isEditTool } from '../utils/shared';
 import { isOutsideRoot } from '../utils/path';
 
 export interface GateInput {
@@ -19,8 +19,8 @@ export interface Gate {
   exempt: (sessionID: string) => void;
 }
 
-// ステータス記録の観測: bash で .status を含み、append 系スクリプト（append.mjs / append-build.mjs）を呼ぶコマンドのみ true。文字列比較のみで実行結果（成功/失敗）は見ない（内容検証はスクリプトの責務）
-const STATUS_APPEND_SCRIPTS = ['append.mjs', 'append-build.mjs'];
+const STATUS_SET_PATTERN = /--set\s+['"]?\S+\.status\b/;
+const APPEND_SCRIPT_PATTERN = /(append|append-build)\.mjs/;
 
 export const createGate = (options?: { enabled?: boolean; root?: string }): Gate => {
   const enabled = options?.enabled ?? true;
@@ -31,8 +31,8 @@ export const createGate = (options?: { enabled?: boolean; root?: string }): Gate
   const isStatusAppend = (tool: string, command: unknown): boolean =>
     tool === 'bash' &&
     typeof command === 'string' &&
-    command.includes('.status') &&
-    STATUS_APPEND_SCRIPTS.some((script) => command.includes(script));
+    APPEND_SCRIPT_PATTERN.test(command) &&
+    STATUS_SET_PATTERN.test(command);
 
   return {
     evaluate: (input) => {

@@ -1,7 +1,7 @@
 // フック結果（Report）をプロンプト本文へ連結する。エラーメッセージは各ハンドラーが整形済みで持ち、
 // ここでは prefix を付けて順序を保って連結し、空なら null を返すだけ。
 // prefix は省略可能（空なら body のみ。エラー内にタグを持つ Report 向け）
-import type { Report } from './report';
+import type { Report } from './shared';
 
 export function buildMessage(
   prefixOrReport?: string | Report,

@@ -1,17 +1,12 @@
-// 編集系ツールの直後に、編集ファイルへの report-only lint を実行して結果を返す。
-// --fix は使わない。エージェントの認識中の内容とディスクの乖離を避けるため。
-// 返り値は Report（整形済み英語メッセージ）。ツール出力への追記は plugin 直下の責務
-import type { Report } from '../utils/report';
-import type { PluginInput } from '../utils/plugin';
+import type { Report, PluginInput } from '../utils/shared';
 import { clipLines, MAX_REPORT_LINES } from '../utils/text';
-import { isEditTool } from '../utils/tools';
+import { isEditTool } from '../utils/shared';
 
 export interface EditLintCtx {
   $: PluginInput['$'];
   root: string;
 }
 
-// dirty の有効期限。これを過ぎた dirty は無視する（強制停止後のループ防止）
 export const DIRTY_TTL_MS = 5 * 60 * 1000;
 
 let dirtyAt: number | null = null;
@@ -25,6 +20,10 @@ export const consumeDirty = (): boolean => {
   const fresh = Date.now() - dirtyAt <= DIRTY_TTL_MS;
   dirtyAt = null;
   return fresh;
+};
+
+export const resetDirtyForTests = (): void => {
+  dirtyAt = null;
 };
 
 export const runEditLint = async (

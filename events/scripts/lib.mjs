@@ -1,11 +1,13 @@
 // events/ 駆動システムの共有ライブラリ。append / build / compact に加え、reset / sync-to-starter のベースライン生成（stripHistory / writeCheckpoint）でも使われる
 // 詳細な仕様は events/README.md を参照
+// WARNING: このファイルは node: 組み込みモジュールののみを import する設計になっている。
+// sync-to-starter.mjs が EVENTS_DIR を差し替えて動的 import（キャッシュ破棄）で再読み込みするため、外部モジュールに分割するとキャッシュが効いて EVENTS_DIR が切り替わらなくなる。
+// 分割が必要な場合は sync-to-starter.mjs の loadLib も合わせて修正すること。
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
-// events/ の位置。テスト時は EVENTS_DIR で差し替えできる
 export const EVENTS_DIR =
   process.env.EVENTS_DIR ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const LOG_PATH = path.join(EVENTS_DIR, 'log.jsonl');
@@ -27,14 +29,22 @@ export const PRODUCT_SECTIONS = new Set([
   'roadmap',
   'deploy',
 ]);
-// status を持てる事実セクション。features は作業単位の収集点なので対象外
 export const FACT_SECTIONS = new Set(['name', 'what', 'stack', 'look', 'roadmap', 'deploy']);
 export const META_SECTIONS = new Set(['harness', 'agents', 'skills', 'docs', 'scripts']);
 export const EVENT_TYPES = new Set(['set', 'del']);
-// 作業単位の段階。4段階を product / meta 共通で使う
 export const STAGES = new Set(['planned', 'ready', 'implement', 'commit']);
 
-// JST(+09:00) 固定の ISO 8601 タイムスタンプを生成する
+export const LOG_TOOLS = new Set([
+  'read',
+  'edit',
+  'write',
+  'skill',
+  'bash',
+  'websearch',
+  'webfetch',
+  'task',
+]);
+
 export const jstNow = () =>
   new Date(Date.now() + 9 * 3600 * 1000).toISOString().replace('Z', '+09:00');
 
@@ -43,7 +53,6 @@ export const fail = (message) => {
   process.exit(1);
 };
 
-// --flag value 形式の引数を連想配列へ展開する
 export const parseArgs = (argv) => {
   const args = {};
   for (let i = 0; i < argv.length; i += 2) {
@@ -53,7 +62,6 @@ export const parseArgs = (argv) => {
   return args;
 };
 
-// 値は JSON として解釈できればその結果、不可なら生の文字列を扱う
 export const parseValue = (raw) => {
   try {
     return JSON.parse(raw);
@@ -62,7 +70,6 @@ export const parseValue = (raw) => {
   }
 };
 
-// 規約違反。CLI 層で fail() へ変換される
 export class EventError extends Error {}
 
 // .status の書ける位置は「事実セクションのルート」か「作業単位（第3セグメント）」のみ。
@@ -102,7 +109,6 @@ export const validateKey = (key) => {
   if (key.endsWith('.status')) assertStatusLocation(key);
 };
 
-// status 値の形状。作業単位は {stage, text}、事実セクションは {text} のみを許す
 const assertStatusValue = (key, value) => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new EventError(`status must be an object: ${key}`);
@@ -123,21 +129,6 @@ const assertStatusValue = (key, value) => {
   }
 };
 
-// log 名前空間の値形状。ツール試行1件 = {tool, gap, targets}。
-// tool は収集対象のみ。gap は思考時間（ms）。targets はツールごとの対象
-// （パス/コマンド/クエリ/URL/サブエージェント名/スキル名/MCPツール名）の配列
-export const LOG_TOOLS = new Set([
-  'read',
-  'edit',
-  'write',
-  'skill',
-  'bash',
-  'websearch',
-  'webfetch',
-  'task',
-]);
-
-// 収集対象かどうか。MCP ツール（mcp_* プレフィックス）は動的に増えるためプレフィックスで判定する
 export const isLogTool = (tool) =>
   LOG_TOOLS.has(tool) || (typeof tool === 'string' && tool.startsWith('mcp_'));
 
@@ -165,8 +156,6 @@ const assertLogValue = (key, value) => {
   }
 };
 
-// 下書き（ts を除くイベント）を検証して完成させる。
-// ts は既定でここで JST として付与するが、呼び出し側から同一tsを渡すこともできる
 export const buildEvent = (draft, ts = jstNow()) => {
   if (!EVENT_TYPES.has(draft.type)) {
     throw new EventError(`type must be one of ${[...EVENT_TYPES].join('/')}`);
@@ -220,7 +209,6 @@ export const auditMetaIntegrity = (trees) => {
   return findings;
 };
 
-// チェックポイント本文を畳み込み起点へ変換する。空・不正 JSON・形状欠損は不在扱い
 export const parseCheckpoint = (text) => {
   let checkpoint;
   try {
@@ -241,8 +229,6 @@ export const parseCheckpoint = (text) => {
   return { trees: checkpoint.trees, compactedAt: checkpoint.compactedAt ?? null };
 };
 
-// status / updatedAt を再帰除去する。checkpoint で運ぶのは定義のみ。
-// reset と sync-to-starter のベースライン生成で共有する
 export const stripHistory = (value) => {
   if (Array.isArray(value)) return value.map(stripHistory);
   if (value && typeof value === 'object') {
@@ -255,8 +241,6 @@ export const stripHistory = (value) => {
   return value;
 };
 
-// ベースライン checkpoint を書き込む。compactedAt は既定で現在時刻。
-// asOf は null（ベースラインはイベント履歴を持たない）
 export const writeCheckpoint = (trees, compactedAt = jstNow()) => {
   fs.writeFileSync(
     CHECKPOINT_PATH,
@@ -278,7 +262,6 @@ export const loadBase = () => {
   );
 };
 
-// ドットパスの位置に値を上書きする。途中のノードがスカラーならオブジェクトへ置き換わる
 export function setPath(tree, key, value) {
   const parts = key.split('.');
   let node = tree;
@@ -291,7 +274,6 @@ export function setPath(tree, key, value) {
   node[parts.at(-1)] = value;
 }
 
-// 空になった祖先ノードを枝刈りする。depth > 1 により名前空間の第1セグメントは保持される
 const pruneEmpty = (tree, parts) => {
   for (let depth = parts.length; depth > 1; depth--) {
     const chain = parts.slice(0, depth);
@@ -322,8 +304,6 @@ const workUnits = (container, marker) =>
     (node) => node && typeof node === 'object' && !Array.isArray(node) && marker in node,
   );
 
-// product features のガード。status 未主張なら planned を補完する保険で、正規ルートは明示アペンド。
-// meta は対象外。初期状態のベースは status なしで正しい
 export const normalizeTrees = (trees) => {
   for (const node of workUnits(trees.product?.features, 'trigger')) {
     if (!node.status || typeof node.status !== 'object' || Array.isArray(node.status)) {
@@ -335,9 +315,6 @@ export const normalizeTrees = (trees) => {
   }
 };
 
-// status を持つノードへ最終更新日（YYYYMMDD）を注入する。
-// ノード自身またはその配下への set イベントのうち最新の ts を使う。
-// 該当イベントがないノードは既存値（checkpoint 由来）を保持する
 export const injectUpdatedAt = (trees, events) => {
   const stamp = (node, prefix) => {
     let latest = '';
@@ -364,7 +341,6 @@ export const injectUpdatedAt = (trees, events) => {
   }
 };
 
-// fold 参加名前空間のイベントだけを木へ適用する。log など非参加のものは読み飛ばす
 export const applyFoldable = (trees, events) => {
   for (const event of events) {
     const [ns, ...rest] = event.key.split('.');
@@ -378,8 +354,6 @@ export const applyFoldable = (trees, events) => {
 export const lastFoldedTs = (events) =>
   events.findLast((event) => NAMESPACES[event.key.split('.')[0]]?.fold)?.ts ?? '';
 
-// チェックポイント起点 + アクティブログ全体を畳み込む。
-// asOf は「この状態がどの時点のイベントまで反映済みか」を表す
 export const foldAll = () => {
   const base = loadBase();
   const events = readEvents();
@@ -392,7 +366,6 @@ export const foldAll = () => {
   return { trees: base.trees, asOf, events };
 };
 
-// キー順を正規化した文字列化。生成物の同一性判定に使う
 const sortValue = (value) => {
   if (Array.isArray(value)) return value.map(sortValue);
   if (value && typeof value === 'object') {
@@ -404,4 +377,5 @@ const sortValue = (value) => {
   }
   return value;
 };
+
 export const stableStringify = (value) => JSON.stringify(sortValue(value));

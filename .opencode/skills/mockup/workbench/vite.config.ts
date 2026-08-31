@@ -10,7 +10,7 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 
-// workbench 直下の各 *.html を1モックアップとして扱う（1モックアップ = 1画面 = 1HTML）
+// workbench 直下の各 *.html を1画面として扱う（規約は mockup/SKILL.md 参照）
 const screenInputs = (): Record<string, string> =>
   Object.fromEntries(
     readdirSync(here)
