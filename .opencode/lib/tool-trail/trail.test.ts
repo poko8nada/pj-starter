@@ -1,7 +1,13 @@
-// buildTrailEvent と mergeTrailEvents のテスト。対象抽出・root相対化・マージ判定を検証する
+// buildTrailEvent, mergeTrailEvents, isCommitCommand のテスト。対象抽出・root相対化・マージ判定・commit検知を検証する
 import { homedir } from 'node:os';
 import { describe, expect, it } from 'vitest';
-import { buildTrailEvent, mergeTrailEvents, type TrailEvent, type TrailInput } from './trail';
+import {
+  buildTrailEvent,
+  isCommitCommand,
+  mergeTrailEvents,
+  type TrailEvent,
+  type TrailInput,
+} from './trail';
 
 const root = '/home/x/pj';
 
@@ -196,5 +202,37 @@ describe('mergeTrailEvents', () => {
       makeEvent('read', 500, ['b.ts'], '2026-08-30T10:00:05.000+09:00'),
     );
     expect(merged.ts).toBe('2026-08-30T10:00:05.000+09:00');
+  });
+});
+
+describe('isCommitCommand', () => {
+  it('detects git commit with message flag', () => {
+    expect(isCommitCommand('git commit -m "feat: x"')).toBe(true);
+  });
+
+  it('detects git commit without arguments', () => {
+    expect(isCommitCommand('git commit')).toBe(true);
+  });
+
+  it('detects git commit with leading whitespace', () => {
+    expect(isCommitCommand('  git commit  ')).toBe(true);
+  });
+
+  it('rejects git status', () => {
+    expect(isCommitCommand('git status')).toBe(false);
+  });
+
+  it('rejects git commit--amend (no whitespace separator)', () => {
+    expect(isCommitCommand('git commit--amend')).toBe(false);
+  });
+
+  it('rejects non-string input', () => {
+    expect(isCommitCommand(undefined)).toBe(false);
+    expect(isCommitCommand(null)).toBe(false);
+    expect(isCommitCommand(123)).toBe(false);
+  });
+
+  it('rejects empty string', () => {
+    expect(isCommitCommand('')).toBe(false);
   });
 });

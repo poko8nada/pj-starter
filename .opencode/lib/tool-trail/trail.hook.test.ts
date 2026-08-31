@@ -1,4 +1,4 @@
-// createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・マージ動作を検証する
+// createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・マージ動作・commit抑止を検証する
 import {
   appendFileSync,
   existsSync,
@@ -293,5 +293,56 @@ describe('createTrail boundaries', () => {
     expect(() => {
       trail.before({ tool: 'read', sessionID: 's9', args: { filePath: join(root, 'a.ts') } });
     }).not.toThrow();
+  });
+});
+
+describe('createTrail commit suppression', () => {
+  const roots: string[] = [];
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    for (const root of roots) rmSync(root, { recursive: true, force: true });
+    roots.length = 0;
+  });
+
+  it('suppresses trail after git commit until session.idle', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({ tool: 'bash', sessionID: 's1', args: { command: 'git commit -m "feat: x"' } });
+    trail.before({ tool: 'bash', sessionID: 's1', args: { command: 'git status' } });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(0);
+    trail.event({ type: 'session.idle', properties: { sessionID: 's1' } });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'b.ts') } });
+    expect(readLog(root)).toHaveLength(1);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['b.ts'] });
+  });
+
+  it('resets suppression on session.error', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({ tool: 'bash', sessionID: 's2', args: { command: 'git commit -m "fix: y"' } });
+    trail.event({ type: 'session.error', properties: { sessionID: 's2' } });
+    trail.before({ tool: 'read', sessionID: 's2', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(1);
+  });
+
+  it('does not suppress on non-commit git commands', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({ tool: 'bash', sessionID: 's3', args: { command: 'git status' } });
+    trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(2);
+  });
+
+  it('does not false-positive on git commit--amend', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({ tool: 'bash', sessionID: 's4', args: { command: 'git commit--amend' } });
+    expect(readLog(root)).toHaveLength(1);
   });
 });

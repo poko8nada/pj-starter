@@ -2,10 +2,11 @@
 // ファイル末尾が状態イベントの場合はマージせず新規行（状態イベント保護）。
 // 状態は createTrail のクロージャ内に閉じ込め、プラグイン間の共有を不要にする。
 // gap は直前 trail 行の ts から算出、ターン終了（idle/error）で lastTrailLine をリセット。busy ではリセットしない（ターン内マージを許可）。
+// git commit 検知後は session.idle/error まで trail 追記を抑止する（commit 後のアイドル動作でログが汚れるのを防ぐ）。
 // どの失敗も痕跡1行の欠落に留め、ツール実行の流れ自体は止めない
 import fs from 'node:fs';
 import path from 'node:path';
-import { buildTrailEvent, mergeTrailEvents, type TrailEvent } from './trail';
+import { buildTrailEvent, isCommitCommand, mergeTrailEvents, type TrailEvent } from './trail';
 
 export interface TrailBeforeInput {
   tool: string;
@@ -84,10 +85,16 @@ export const createTrail = (root: string): TrailHook => {
   const logPath = path.join(root, 'events', 'log.jsonl');
   let lastTrailLine: TrailEvent | null = null;
   const subSessions = new Set<string>();
+  let suppressTrail = false;
 
   return {
     before(input) {
       if (subSessions.has(input.sessionID)) return;
+      if (suppressTrail) return;
+      if (input.tool === 'bash' && isCommitCommand(input.args.command)) {
+        suppressTrail = true;
+        return;
+      }
       const gap =
         lastTrailLine === null ? 0 : Math.max(0, Date.now() - new Date(lastTrailLine.ts).getTime());
       try {
@@ -122,6 +129,7 @@ export const createTrail = (root: string): TrailHook => {
         !subSessions.has(sessionID);
       if (isBoundary && sessionID) {
         lastTrailLine = null;
+        suppressTrail = false;
         subSessions.delete(sessionID);
       }
     },

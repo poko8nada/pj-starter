@@ -1,7 +1,5 @@
-// ツールトレイルの純粋コア。ツール試行1件を log.try.<id> のイベントへ構築し、
-// 連続する同一ツールの試行を1行にマージする。
-// 検証と ts 付与は events 側の正規経路（buildEvent）に委ね、ここでは機械固有の
-// ロジック（対象抽出・root相対化・マージ判定）だけを持つ
+// ツールトレイルの純粋コア。ツール試行1件を log.try.<id> のイベントへ構築し、連続する同一ツールの試行を1行にマージする。
+// 検証と ts 付与は events 側の正規経路（buildEvent）に委ね、ここでは機械固有のロジック（対象抽出・root相対化・マージ判定）だけを持つ
 import { randomUUID } from 'node:crypto';
 import { buildEvent, isLogTool } from '../../../events/scripts/lib.mjs';
 import { toRootRelative } from '../utils/path';
@@ -84,6 +82,14 @@ export const buildTrailEvent = (input: TrailInput): TrailEvent | null => {
     // 検証エラーはベストエフォート。この試行だけ記録されない
     return null;
   }
+};
+
+// bash コマンドが git commit かどうかを判定する。
+// commit 後のアイドル動作で trail が追記されるのを抑止するために使用する。
+// "git commit" の後に空白または行末が続く場合のみ true（"git commit--amend" 等の誤検知を避ける）
+export const isCommitCommand = (command: unknown): boolean => {
+  if (typeof command !== 'string') return false;
+  return /^git\s+commit(\s|$)/.test(command.trim());
 };
 
 // 連続する同一ツールの試行を1行にマージする。異なるツールは null。
