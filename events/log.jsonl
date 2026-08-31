@@ -51,18 +51,12 @@
 {"ts":"2026-08-31T20:34:45.134+09:00","type":"set","key":"log.try.2be50db0","value":{"tool":"read","gap":18467,"targets":["events/snapshots/meta.json","events/README.md"]}}
 {"ts":"2026-08-31T20:35:01.402+09:00","type":"set","key":"log.try.5c9279ae","value":{"tool":"task","gap":16268,"targets":["explore"]}}
 {"ts":"2026-08-31T20:40:11.772+09:00","type":"set","key":"log.try.5b9de447","value":{"tool":"bash","gap":0,"targets":["node","node","node"]}}
-{"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.harness.event-lib.status","value":{"stage":"ready","text":"lib.mjs 5責務分割 + stage語彙単一責務化"}}
-{"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.scripts.event-lib.status","value":{"stage":"ready","text":"lib.mjs を constants/validation/tree/checkpoint/fold に分割"}}
 {"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.scripts.user-sync-to-starter.status","value":{"stage":"ready","text":"lib共有 + file/meta に分割"}}
 {"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.harness.tool-trail.status","value":{"stage":"ready","text":"trail.hook.ts を IO層とマージ層に分離"}}
 {"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.harness.edit-gate.status","value":{"stage":"ready","text":"isStatusAppend を正確パースに置換"}}
 {"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.harness.edit-lint.status","value":{"stage":"ready","text":"dirtyAt カプセル化 + clipLines 共通化"}}
 {"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.harness.idle-review.status","value":{"stage":"ready","text":"reviewIdle を実行層と判定層に分離"}}
 {"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.harness.events-sync.status","value":{"stage":"ready","text":"wc -l を fs行数カウントに置換"}}
-{"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.agents.auditor.status","value":{"stage":"ready","text":"frontmatter preset を共通抽出"}}
-{"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.agents.web-researcher.status","value":{"stage":"ready","text":"frontmatter preset を共通抽出"}}
-{"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.agents.spike-verifier.status","value":{"stage":"ready","text":"frontmatter preset を共通抽出"}}
-{"ts":"2026-08-31T20:40:11.832+09:00","type":"set","key":"meta.agents.agenda-reviewer.status","value":{"stage":"ready","text":"frontmatter preset を共通抽出"}}
 {"ts":"2026-08-31T20:40:17.919+09:00","type":"set","key":"log.try.e075575c","value":{"tool":"read","gap":6147,"targets":["events/scripts/lib.mjs"]}}
 {"ts":"2026-08-31T20:42:28.736+09:00","type":"set","key":"log.try.ce216b9c","value":{"tool":"write","gap":54377,"targets":["events/scripts/constants.mjs","events/scripts/validation.mjs","events/scripts/tree.mjs","events/scripts/checkpoint.mjs","events/scripts/fold.mjs"]}}
 {"ts":"2026-08-31T20:42:34.797+09:00","type":"set","key":"log.try.7ba87e97","value":{"tool":"edit","gap":6061,"targets":["events/scripts/fold.mjs"]}}
@@ -229,3 +223,23 @@
 {"ts":"2026-08-31T22:01:13.264+09:00","type":"set","key":"meta.harness.edit-gate.status","value":{"stage":"commit","text":"isStatusAppend を正規表現に置換し誤開放を防止"}}
 {"ts":"2026-08-31T22:01:13.264+09:00","type":"set","key":"meta.scripts.event-lib.status","value":{"stage":"commit","text":"外部依存制約を警告コメントとして明記"}}
 {"ts":"2026-08-31T22:01:34.620+09:00","type":"set","key":"log.try.5c9d509b","value":{"tool":"bash","gap":8055,"targets":["git","git","git"]}}
+{"ts":"2026-08-31T22:07:54.387+09:00","type":"set","key":"log.try.f511d8c3","value":{"tool":"read","gap":0,"targets":["events/README.md",".opencode/skills/refactor/SKILL.md"]}}
+{"ts":"2026-08-31T22:07:54.391+09:00","type":"set","key":"log.try.edd00969","value":{"tool":"skill","gap":4,"targets":["customize-opencode"]}}
+{"ts":"2026-08-31T22:07:58.845+09:00","type":"set","key":"log.try.411df64c","value":{"tool":"bash","gap":4454,"targets":["node"]}}
+{"ts":"2026-08-31T22:14:09.725+09:00","type":"set","key":"log.try.638c80b0","value":{"tool":"read","gap":0,"targets":["tsconfig.json","package.json"]}}
+{"ts":"2026-08-31T22:16:45.180+09:00","type":"set","key":"log.try.17aca20e","value":{"tool":"read","gap":0,"targets":["scripts/user/sync/meta.mjs","events/scripts/lib.test.mjs"]}}
+{"ts":"2026-08-31T22:19:47.825+09:00","type":"set","key":"log.try.7ab2f8b0","value":{"tool":"read","gap":0,"targets":[".opencode/tsconfig.json","scripts/user/sync/files.mjs","events/snapshots/meta.json"]}}
+{"ts":"2026-08-31T22:20:00.750+09:00","type":"set","key":"log.try.32a32d2c","value":{"tool":"edit","gap":12924,"targets":[".opencode/skills/refactor/SKILL.md"]}}
+{"ts":"2026-08-31T22:20:07.198+09:00","type":"set","key":"log.try.a16a0711","value":{"tool":"bash","gap":6448,"targets":["node"]}}
+{"ts":"2026-08-31T22:20:07.262+09:00","type":"set","key":"meta.skills.refactor.status","value":{"stage":"ready","text":"探索のexplore委譲・理由ある重複ラベル・モジュール解決レンズを追加するプランが承認済み"}}
+{"ts":"2026-08-31T22:20:15.001+09:00","type":"set","key":"log.try.fa8d97f2","value":{"tool":"edit","gap":7803,"targets":[".opencode/skills/refactor/SKILL.md"]}}
+{"ts":"2026-08-31T22:20:17.965+09:00","type":"set","key":"log.try.bbaaee38","value":{"tool":"read","gap":2964,"targets":[".opencode/skills/refactor/SKILL.md"]}}
+{"ts":"2026-08-31T22:20:43.922+09:00","type":"set","key":"log.try.89cc0fc8","value":{"tool":"edit","gap":8192,"targets":[".opencode/skills/refactor/SKILL.md",".opencode/skills/refactor/SKILL.md",".opencode/skills/refactor/SKILL.md",".opencode/skills/refactor/SKILL.md"]}}
+{"ts":"2026-08-31T22:20:47.394+09:00","type":"set","key":"log.try.1fb37cd8","value":{"tool":"read","gap":3472,"targets":[".opencode/skills/refactor/SKILL.md"]}}
+{"ts":"2026-08-31T22:20:55.377+09:00","type":"set","key":"log.try.77a689f3","value":{"tool":"bash","gap":3141,"targets":["pnpm","node"]}}
+{"ts":"2026-08-31T22:20:55.436+09:00","type":"set","key":"meta.skills.refactor.status","value":{"stage":"implement","text":"探索をexplore委譲、理由ある重複ラベル、モジュール解決レンズをSKILL.mdに反映"}}
+{"ts":"2026-08-31T22:23:35.955+09:00","type":"set","key":"log.try.d78f0e56","value":{"tool":"skill","gap":0,"targets":["commit"]}}
+{"ts":"2026-08-31T22:23:39.969+09:00","type":"set","key":"log.try.759f8f1c","value":{"tool":"bash","gap":4014,"targets":["node"]}}
+{"ts":"2026-08-31T22:23:40.030+09:00","type":"set","key":"meta.skills.refactor.status","value":{"stage":"commit","text":"探索をexplore委譲、理由ある重複ラベル、モジュール解決レンズをSKILL.mdに反映"}}
+{"ts":"2026-08-31T22:23:56.244+09:00","type":"set","key":"log.try.25c1d541","value":{"tool":"bash","gap":3306,"targets":["git","git","git","git","git","node"]}}
+{"ts":"2026-08-31T22:24:23.653+09:00","type":"set","key":"log.try.b9e46f00","value":{"tool":"bash","gap":0,"targets":["git"]}}

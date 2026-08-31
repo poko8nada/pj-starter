@@ -5,7 +5,7 @@
 ## Operational System
 
 - `./events/snapshots/` dir represents the state and context of this project.
-- State the recording contract in a message before working.
+- State the recording contract w/script before working.
 - Check this at the start. **Read [events/README.md](./events/README.md) for an overview.**
 
 ## Basic Rules
