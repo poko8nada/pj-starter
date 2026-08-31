@@ -46,7 +46,7 @@ const makeScratch = ({
   const log = Array.from(
     { length: logLines },
     (_, i) =>
-      `${JSON.stringify({ ts: '2026-08-02T00:00:00.000+09:00', type: 'set', key: `log.try.${i}`, value: { tool: 'read', gap: 0, path: 'a.ts' } })}\n`,
+      `${JSON.stringify({ ts: '2026-08-02T00:00:00.000+09:00', type: 'set', key: `log.try.${i}`, value: { tool: 'read', gap: 0, targets: ['a.ts'] } })}\n`,
   ).join('');
   fs.writeFileSync(
     path.join(eventsDir, 'log.jsonl'),

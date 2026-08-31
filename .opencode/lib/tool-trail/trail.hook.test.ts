@@ -1,10 +1,11 @@
 // createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・
-// サブエージェント除外・ベストエフォートを、スクラッチの events ディレクトリへ実際に書き込んで検証する
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+// サブエージェント除外・incremental マージ・ベストエフォートを、
+// スクラッチの events ディレクトリへ実際に書き込んで検証する
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createTrail, lastActivity, subSessions } from './trail.hook';
+import { createTrail, lastActivity, mergeBlocked, subSessions } from './trail.hook';
 
 // スクラッチの events ディレクトリを作る（書き込み先の実在を保証する）
 const makeRoot = (): string => {
@@ -30,6 +31,7 @@ describe('createTrail', () => {
     vi.restoreAllMocks();
     lastActivity.clear();
     subSessions.clear();
+    mergeBlocked.clear();
     for (const root of roots) rmSync(root, { recursive: true, force: true });
     roots.length = 0;
   });
@@ -41,7 +43,7 @@ describe('createTrail', () => {
     vi.spyOn(Date, 'now').mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
     expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, path: 'a.ts' });
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 
   it('measures the thinking gap from the previous tool completion', () => {
@@ -50,13 +52,116 @@ describe('createTrail', () => {
     const trail = createTrail(root);
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
-    trail.before({ tool: 'bash', sessionID: 's2', args: { command: 'x' } });
+    trail.before({ tool: 'grep', sessionID: 's2', args: { pattern: 'x' } });
     now.mockReturnValue(5000);
     trail.after({ sessionID: 's2' });
     now.mockReturnValue(20000);
     trail.before({ tool: 'read', sessionID: 's2', args: { filePath: join(root, 'a.ts') } });
     expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 15000, path: 'a.ts' });
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 15000, targets: ['a.ts'] });
+  });
+
+  it('merges consecutive same-tool tries into one line', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    const now = vi.spyOn(Date, 'now');
+    now.mockReturnValue(1000);
+    trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'a.ts') } });
+    now.mockReturnValue(2000);
+    trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'b.ts') } });
+    now.mockReturnValue(3000);
+    trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'c.ts') } });
+    expect(readLog(root)).toHaveLength(1);
+    // マージ行の gap は最初の試行のもの（この場合はセッション最初のツールなので 0）
+    expect(valueOf(root, 0)).toEqual({
+      tool: 'read',
+      gap: 0,
+      targets: ['a.ts', 'b.ts', 'c.ts'],
+    });
+  });
+
+  it('writes a new line when the tool changes', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    const now = vi.spyOn(Date, 'now');
+    now.mockReturnValue(1000);
+    trail.before({ tool: 'read', sessionID: 's4', args: { filePath: join(root, 'a.ts') } });
+    now.mockReturnValue(1500);
+    trail.after({ sessionID: 's4' });
+    now.mockReturnValue(2000);
+    trail.before({ tool: 'edit', sessionID: 's4', args: { filePath: join(root, 'b.ts') } });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 500, targets: ['b.ts'] });
+  });
+
+  it('never truncates a state event that precedes a try', () => {
+    const root = makeRoot();
+    roots.push(root);
+    appendFileSync(
+      join(root, 'events', 'log.jsonl'),
+      `${JSON.stringify({
+        ts: '2026-08-30T10:00:00.000+09:00',
+        type: 'set',
+        key: 'meta.harness.x.status',
+        value: { stage: 'commit', text: 'x' },
+      })}\n`,
+    );
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's5', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+
+  it('does not merge with a malformed last line', () => {
+    const root = makeRoot();
+    roots.push(root);
+    appendFileSync(join(root, 'events', 'log.jsonl'), 'not-json\n');
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's5b', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+
+  it('does not merge with a line whose value shape is invalid', () => {
+    const root = makeRoot();
+    roots.push(root);
+    appendFileSync(
+      join(root, 'events', 'log.jsonl'),
+      `${JSON.stringify({
+        ts: '2026-08-30T10:00:00.000+09:00',
+        type: 'set',
+        key: 'log.try.abc',
+        value: { tool: 'read', gap: 1.5, targets: ['a'] },
+      })}\n`,
+    );
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's5c', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+
+  it('does not merge across a turn boundary (busy reset)', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    const now = vi.spyOn(Date, 'now');
+    now.mockReturnValue(1000);
+    trail.before({ tool: 'read', sessionID: 's5d', args: { filePath: join(root, 'a.ts') } });
+    now.mockReturnValue(2000);
+    trail.after({ sessionID: 's5d' });
+    // ターン境界（busy でリセット）。同一ツールでもマージせず、リセット後の gap を保持する
+    now.mockReturnValue(60000);
+    trail.event({
+      type: 'session.status',
+      properties: { sessionID: 's5d', status: { type: 'busy' } },
+    });
+    now.mockReturnValue(61000);
+    trail.before({ tool: 'read', sessionID: 's5d', args: { filePath: join(root, 'b.ts') } });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 1000, targets: ['b.ts'] });
   });
 
   it('resets the baseline at session.status busy so user time is excluded', () => {
@@ -65,18 +170,18 @@ describe('createTrail', () => {
     const trail = createTrail(root);
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
-    trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'a.ts') } });
+    trail.before({ tool: 'read', sessionID: 's6', args: { filePath: join(root, 'a.ts') } });
     now.mockReturnValue(2000);
-    trail.after({ sessionID: 's3' });
+    trail.after({ sessionID: 's6' });
     // ユーザーターン（busy でリセット）。1分経過しても次のギャップは小さく保たれる
     now.mockReturnValue(60000);
     trail.event({
       type: 'session.status',
-      properties: { sessionID: 's3', status: { type: 'busy' } },
+      properties: { sessionID: 's6', status: { type: 'busy' } },
     });
     now.mockReturnValue(61000);
-    trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'b.ts') } });
-    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 1000, path: 'b.ts' });
+    trail.before({ tool: 'edit', sessionID: 's6', args: { filePath: join(root, 'b.ts') } });
+    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 1000, targets: ['b.ts'] });
   });
 
   it('does not reset the baseline for subagent sessions at busy', () => {
@@ -100,13 +205,13 @@ describe('createTrail', () => {
     const trail = createTrail(root);
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
-    trail.before({ tool: 'read', sessionID: 's4', args: { filePath: join(root, 'a.ts') } });
+    trail.before({ tool: 'read', sessionID: 's7', args: { filePath: join(root, 'a.ts') } });
     now.mockReturnValue(2000);
-    trail.after({ sessionID: 's4' });
-    trail.event({ type: 'session.idle', properties: { sessionID: 's4' } });
+    trail.after({ sessionID: 's7' });
+    trail.event({ type: 'session.idle', properties: { sessionID: 's7' } });
     now.mockReturnValue(60000);
-    trail.before({ tool: 'read', sessionID: 's4', args: { filePath: join(root, 'b.ts') } });
-    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, path: 'b.ts' });
+    trail.before({ tool: 'edit', sessionID: 's7', args: { filePath: join(root, 'b.ts') } });
+    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
   });
 
   it('deletes the baseline at session.error like session.idle', () => {
@@ -115,13 +220,13 @@ describe('createTrail', () => {
     const trail = createTrail(root);
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
-    trail.before({ tool: 'read', sessionID: 's5', args: { filePath: join(root, 'a.ts') } });
+    trail.before({ tool: 'read', sessionID: 's8', args: { filePath: join(root, 'a.ts') } });
     now.mockReturnValue(2000);
-    trail.after({ sessionID: 's5' });
-    trail.event({ type: 'session.error', properties: { sessionID: 's5' } });
+    trail.after({ sessionID: 's8' });
+    trail.event({ type: 'session.error', properties: { sessionID: 's8' } });
     now.mockReturnValue(60000);
-    trail.before({ tool: 'read', sessionID: 's5', args: { filePath: join(root, 'b.ts') } });
-    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, path: 'b.ts' });
+    trail.before({ tool: 'edit', sessionID: 's8', args: { filePath: join(root, 'b.ts') } });
+    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
   });
 
   it('excludes subagent sessions from recording and baseline updates', () => {
@@ -142,7 +247,7 @@ describe('createTrail', () => {
     roots.push(root);
     const trail = createTrail(root);
     expect(() => {
-      trail.before({ tool: 'read', sessionID: 's6', args: { filePath: join(root, 'a.ts') } });
+      trail.before({ tool: 'read', sessionID: 's9', args: { filePath: join(root, 'a.ts') } });
     }).not.toThrow();
   });
 });

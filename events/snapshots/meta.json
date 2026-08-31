@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-30T14:42:48.457+09:00",
-  "asOf": "2026-08-30T14:42:48.430+09:00",
+  "generatedAt": "2026-08-31T11:33:01.664+09:00",
+  "asOf": "2026-08-31T11:33:01.634+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -25,10 +25,10 @@
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
         "status": {
           "stage": "commit",
-          "text": "ツール試行の思考ギャップ記録（log.try）を実装し、turn-summary を置換"
+          "text": "targets配列への統一・監視対象拡張・incrementalマージを実装"
         },
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
-        "updatedAt": "20260830"
+        "updatedAt": "20260831"
       },
       "edit-gate": {
         "purpose": "ステータス記録を要求し、記録まで edit/write をブロックするゲート",
@@ -69,30 +69,30 @@
       "event-lib": {
         "status": {
           "stage": "commit",
-          "text": "log 名前空間を log.try.<id> と {tool, gap, path|name} に更新"
+          "text": "log 検証を {tool, gap, targets} に更新し LOG_TOOLS/isLogTool を export"
         },
-        "updatedAt": "20260830"
+        "updatedAt": "20260831"
       },
       "events-readme": {
         "status": {
           "stage": "commit",
-          "text": "機械注入トレイル節と ts 契約を log.try に更新"
+          "text": "トレイル節を targets とマージ意味論に更新"
         },
-        "updatedAt": "20260830"
+        "updatedAt": "20260831"
       },
       "user-reset": {
         "status": {
           "stage": "commit",
-          "text": "テストフィクスチャを log.try に更新"
+          "text": "テストフィクスチャを targets 形状に更新"
         },
-        "updatedAt": "20260830"
+        "updatedAt": "20260831"
       },
       "user-sync-to-starter": {
         "status": {
           "stage": "commit",
-          "text": "テストフィクスチャを log.try に更新"
+          "text": "テストフィクスチャを targets 形状に更新"
         },
-        "updatedAt": "20260830"
+        "updatedAt": "20260831"
       }
     },
     "skills": {

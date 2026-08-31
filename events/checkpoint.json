@@ -1,6 +1,6 @@
 {
-  "compactedAt": "2026-08-30T14:14:40.743+09:00",
-  "asOf": "2026-08-30T14:07:27.153+09:00",
+  "compactedAt": "2026-08-31T11:32:40.909+09:00",
+  "asOf": "2026-08-31T10:48:51.214+09:00",
   "trees": {
     "product": {
       "name": {
@@ -63,18 +63,18 @@
         "tool-trail": {
           "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
           "status": {
-            "stage": "commit",
-            "text": "ツール試行の思考ギャップ記録（log.try）を実装し、turn-summary を置換"
+            "stage": "ready",
+            "text": "targets配列への統一・監視対象拡張・incrementalマージの実装計画が確定"
           },
           "path": ".opencode/lib/tool-trail/trail.hook.ts",
-          "updatedAt": "20260830"
+          "updatedAt": "20260831"
         },
         "edit-gate": {
           "purpose": "ステータス記録を要求し、記録まで edit/write をブロックするゲート",
           "path": ".opencode/lib/edit-gate/gate.hook.ts",
           "status": {
             "stage": "commit",
-            "text": "配線にトライル記録（trail.before）を追加"
+            "text": "gate.open 除去・テストモック共通化・PluginInput 集約"
           },
           "updatedAt": "20260830"
         },
@@ -83,7 +83,7 @@
           "path": ".opencode/lib/checks/edit-lint.hook.ts",
           "status": {
             "stage": "commit",
-            "text": "配線にギャップ基準更新（trail.after）を追加"
+            "text": "DIRTY_TTL_MS の export 化・PluginInput 集約"
           },
           "updatedAt": "20260830"
         },
@@ -92,7 +92,7 @@
           "path": ".opencode/lib/checks/idle-review.hook.ts",
           "status": {
             "stage": "commit",
-            "text": "配線にトライルセッション管理（trail.event）を追加"
+            "text": "stale コメント修正・PluginInput 集約"
           },
           "updatedAt": "20260830"
         },
@@ -101,7 +101,7 @@
           "path": ".opencode/lib/events-sync/sync.hook.ts",
           "status": {
             "stage": "commit",
-            "text": "audit.ts のコメント整形"
+            "text": "テストモック共通化・PluginInput 集約"
           },
           "updatedAt": "20260830"
         },

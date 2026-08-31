@@ -114,29 +114,41 @@ const assertStatusValue = (key, value) => {
     throw new EventError(`status.text must be a non-empty string: ${key}`);
 };
 
-// log 名前空間の値形状。ツール試行1件 = {tool, gap, path|name}。
-// tool は収集対象のみ（read/edit/write/skill）。gap は思考時間（ms）で、試行の開始時点を記録する
-const LOG_TOOLS = new Set(['read', 'edit', 'write', 'skill']);
+// log 名前空間の値形状。ツール試行1件 = {tool, gap, targets}。
+// tool は収集対象のみ。gap は思考時間（ms）。targets はツールごとの対象
+// （パス/コマンド/クエリ/URL/サブエージェント名/スキル名/MCPツール名）の配列
+export const LOG_TOOLS = new Set([
+  'read',
+  'edit',
+  'write',
+  'skill',
+  'bash',
+  'websearch',
+  'webfetch',
+  'task',
+]);
+
+// 収集対象かどうか。MCP ツール（mcp_* プレフィックス）は動的に増えるためプレフィックスで判定する
+export const isLogTool = (tool) =>
+  LOG_TOOLS.has(tool) || (typeof tool === 'string' && tool.startsWith('mcp_'));
 
 const assertLogValue = (key, value) => {
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw new EventError(`log value must be an object: ${key}`);
-  if (typeof value.tool !== 'string' || !LOG_TOOLS.has(value.tool))
-    throw new EventError(`log tool must be one of read/edit/write/skill: ${key}`);
+  if (typeof value.tool !== 'string' || !isLogTool(value.tool))
+    throw new EventError(
+      `log tool must be one of read/edit/write/skill/bash/websearch/webfetch/task or mcp_*: ${key}`,
+    );
   if (!Number.isInteger(value.gap) || value.gap < 0)
     throw new EventError(`log gap must be a non-negative integer: ${key}`);
-  // status 主張と同じく、値の形も種別ごとに丸ごと厳密一致させる
-  if (value.tool === 'skill') {
-    if (Object.keys(value).toSorted().join(',') !== 'gap,name,tool')
-      throw new EventError(`log skill value requires exactly {tool, gap, name}: ${key}`);
-    if (typeof value.name !== 'string' || value.name === '')
-      throw new EventError(`log skill value requires a non-empty name: ${key}`);
-  } else {
-    if (Object.keys(value).toSorted().join(',') !== 'gap,path,tool')
-      throw new EventError(`log file value requires exactly {tool, gap, path}: ${key}`);
-    if (typeof value.path !== 'string' || value.path === '')
-      throw new EventError(`log file value requires a non-empty path: ${key}`);
-  }
+  if (Object.keys(value).toSorted().join(',') !== 'gap,targets,tool')
+    throw new EventError(`log value requires exactly {tool, gap, targets}: ${key}`);
+  if (
+    !Array.isArray(value.targets) ||
+    value.targets.length === 0 ||
+    value.targets.some((target) => typeof target !== 'string' || target === '')
+  )
+    throw new EventError(`log targets must be a non-empty string array: ${key}`);
 };
 
 // 下書き（ts を除くイベント）を検証して完成させる。

@@ -152,7 +152,12 @@ const PROJECT_LOG = [
   },
   { ts: T.project, type: 'del', key: 'meta.skills.old' },
   { ts: T.project, type: 'set', key: 'product.name.value', value: 'x' },
-  { ts: T.project, type: 'set', key: 'log.try.1', value: { tool: 'read', gap: 0, path: 'a.ts' } },
+  {
+    ts: T.project,
+    type: 'set',
+    key: 'log.try.1',
+    value: { tool: 'read', gap: 0, targets: ['a.ts'] },
+  },
 ];
 
 const writeLog = (eventsDir, events) => {
