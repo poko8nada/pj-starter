@@ -1,11 +1,20 @@
-#!/usr/bin/env node
-// イベントを追記する。1回の呼び出しで複数操作（--set / --del の繰り返し）と
-// バッチ（--file）に対応する。全操作を検証してから一括追記し、
-// 1行でも不正なら何も書かない。同一呼び出し内のイベントは同一tsを持つ。
+// イベントを追記する。1回の呼び出しで複数操作（--set / --del の繰り返し）とバッチ（--file）に対応する。全操作を検証してから一括追記し、1行でも不正なら何も書かない。同一呼び出し内のイベントは同一tsを持つ。
+// 追記前に仮畳み込み（checkpoint + 既存ログ + 新イベント）で meta 整合性を検証し、違反があれば何も書かずに失敗する（原子性の確保）。
 // 順序はファイル並び順そのものであり、付番処理は存在しない
 import fs from 'node:fs';
 import process from 'node:process';
-import { buildEvent, EventError, fail, jstNow, LOG_PATH, parseValue } from './lib.mjs';
+import {
+  applyFoldable,
+  auditMetaIntegrity,
+  buildEvent,
+  EventError,
+  fail,
+  jstNow,
+  loadBase,
+  LOG_PATH,
+  parseValue,
+  readEvents,
+} from './lib.mjs';
 
 // --set key value と --del key の繰り返し、または --file path を解釈する
 const parseOps = (argv) => {
@@ -69,6 +78,15 @@ const main = () => {
     console.log('no events');
     return;
   }
+
+  // 仮畳み込み（checkpoint + 既存ログ + 新イベント）で meta 整合性を事前検証する。
+  // 違反があれば何も書かずに失敗する（原子性の確保）
+  const trees = loadBase().trees;
+  applyFoldable(trees, readEvents());
+  applyFoldable(trees, events);
+  const findings = auditMetaIntegrity(trees);
+  if (findings.length > 0) fail(findings.join('\n'));
+
   fs.appendFileSync(LOG_PATH, `${events.map((event) => JSON.stringify(event)).join('\n')}\n`);
   console.log(`appended ${events.length} events`);
 };

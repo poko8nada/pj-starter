@@ -9,9 +9,8 @@ events/
   README.md            # This document (driving system spec)
   spec/
     schema.md          # Snapshot content schemas (product/meta sections, feature methodology)
-  scripts/
-    lib.mjs            # Shared fold/validation logic
-    append.mjs         # Append events — the only script skills/agents call
+    append.mjs         # Append events — the raw append script (used by the append-build wrapper)
+    append-build.mjs   # Append + build wrapper — the canonical path agents and skills call
     build.mjs          # Regenerate snapshots from checkpoint + log
     compact.mjs        # Fold state into checkpoint.json and empty the log
     read.mjs           # Read a snapshot's content
@@ -22,9 +21,7 @@ events/
     meta.json          # Folded meta.* state (written when folded meta state is non-empty)
 ```
 
-`events/scripts/` holds scripts invoked by skills (product-side). Harness-operations scripts live in the root `scripts/`, and human-operated maintenance tools (project initialization, starter sync) in `scripts/user/`.
-
-Snapshot freshness is maintained automatically: the harness's `session-idle` hook runs `build.mjs` after every turn and `compact.mjs` when the log crosses its line threshold (see `.opencode/lib/events-sync/threshold.ts`). Manual invocation remains available.
+Snapshot freshness is maintained automatically: every append goes through `append-build.mjs`, which runs `build.mjs` after a successful append, and the harness's `session-idle` hook runs `compact.mjs` when the log crosses its line threshold (see `.opencode/lib/event-compact/threshold.ts`). Manual invocation remains available.
 
 ## Reading current state
 
@@ -105,9 +102,7 @@ Recording follows one of three paths, depending on what was agreed:
 
 1. **Plain value changes** — `product.what`, stack entries, notes on fact sections. Append directly; no skill needed.
 2. **Structural registrations** — new features, new meta components, splits, definition revisions. The `feature` skill records them with complete definitions; new entries enter as `planned`.
-3. **Implementation decisions** — the `agenda` skill selects targets from existing state. On consensus, each selected target's status is asserted in one event: `{"stage": "ready", "text": "<progress>"}`, and implementation begins.
-
-In every path, stack / roadmap changes surfaced by the discussion are appended together with their related events. After the turn ends, the idle hook keeps quality checks and snapshots fresh automatically.
+   In every path, stack / roadmap changes surfaced by the discussion are appended together with their related events. Appends go through `append-build.mjs` (the wrapper), which runs the build after a successful append so the log's integrity is verified at every write. After the turn ends, the idle hook runs the compaction when the log crosses its line threshold.
 
 ## Fresh-copy state and the starter boundary
 
@@ -142,9 +137,7 @@ The `log` namespace records what the agent tried per tool call — a coarse acti
 - Fold participation: **none**. `build.mjs` skips these lines and excludes them from `asOf`, so snapshots are untouched by trail volume
 - Compaction: dropped. The checkpoint stores folded trees only, so trail lines vanish from the active log at compaction — history survives in git alone
 
-### Compaction
-
-The active log has a line threshold (**1000**, defined in `.opencode/lib/events-sync/threshold.ts`). When the idle hook observes the threshold crossed, it runs `compact.mjs`:
+The active log has a line threshold (**1000**, defined in `.opencode/lib/event-compact/threshold.ts`). When the idle hook observes the threshold crossed, it runs `compact.mjs`:
 
 1. Fold checkpoint + active log into current trees
 2. Write `checkpoint.json` (`{ compactedAt, asOf, trees }`)
@@ -164,25 +157,36 @@ Pre-compaction history lives in git — no archive mechanism exists. Because com
 
 ### CLI reference
 
-```bash
-# One invocation carries one or more operations; all are validated first,
-# any invalid operation aborts the whole batch. One shared ts per invocation
-node events/scripts/append.mjs --set product.name.value 'Pj Docs'
-node events/scripts/append.mjs \
-  --set product.features.auth.status '{"stage":"implement","text":"認証APIを実装中"}' \
-  --set product.roadmap.mvp '["auth"]'
-node events/scripts/append.mjs --del product.features.old_feature
+# any invalid operation aborts the whole batch. One shared ts per invocation.
+
+# append-build.mjs は append 成功後に build を実行し、両方の結果を出力する（正規の追記経路）
+
+node events/scripts/append-build.mjs --set product.name.value 'Pj Docs'
+node events/scripts/append-build.mjs \
+--set product.features.auth.status '{"stage":"implement","text":"認証APIを実装中"}' \
+--set product.roadmap.mvp '["auth"]'
+node events/scripts/append-build.mjs --del product.features.old_feature
 
 # Batch: one JSONL line per draft event (no ts — assigned by the script).
+
 # All lines are validated first; any invalid line aborts the whole batch
-node events/scripts/append.mjs --file draft.jsonl
+
+node events/scripts/append-build.mjs --file draft.jsonl
+
+# append のみ（検証なしで追記したい場合。通常は append-build を使う）
+
+node events/scripts/append.mjs --set product.name.value 'Pj Docs'
 
 # Regenerate snapshots / force a checkpoint
+
 node events/scripts/build.mjs
 node events/scripts/compact.mjs
 
 # Read a snapshot's content
+
 node events/scripts/read.mjs --name product
+
 ```
 
 Values are parsed as JSON; unparseable strings are kept raw. For testing, point `EVENTS_DIR` at a scratch copy of this directory.
+```

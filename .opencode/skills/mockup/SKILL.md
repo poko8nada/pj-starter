@@ -43,12 +43,11 @@ The workbench is excluded from every root quality gate by design. No tests, no l
 3. **Iterate** — read unresolved entries, edit the screen source and/or `theme.css`, then rewrite their records with `resolved: true` (e.g. a small node one-liner over `annotations.jsonl`). HMR reflects changes instantly; confirm visually if asked.
 4. **Freeze** — when the look settles: run `pnpm build` inside `workbench/` to produce `dist/<id>.html` (CSS inlined, opens correctly via `file://` while online).
 5. **Record** — append the standard contract event:
-
-   ```bash
-   node events/scripts/append.mjs --set product.look.mockups.<id> \
-     '{"path":".opencode/skills/mockup/workbench/dist/<id>.html","description":"<one-liner>"}'
+   node events/scripts/append-build.mjs --set product.look.mockups.<id> \
+   '{"path":".opencode/skills/mockup/workbench/dist/<id>.html","description":"<one-liner>"}'
    ```
 
+   ```
 6. **Stop** — `node scripts/server.mjs stop` kills the tracked server (process group included). **Mandatory at every session end** — leaked servers keep ports occupied and outlive the conversation
 
 ## Setup & reset

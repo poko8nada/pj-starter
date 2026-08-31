@@ -22,15 +22,19 @@ const stringArg = (input: Record<string, unknown>, key: string): string | null =
   const value = input[key];
   return typeof value === 'string' && value !== '' ? value : null;
 };
-
-// ツールごとの対象抽出テーブル。ファイル系はパス、それ以外は代表的な引数。
+// bash はコマンド全体ではなく最初のコマンド名だけを対象にする（引用符や特殊文字を JSON に入れないため）。
 // テーブルにないツール（MCP の mcp_*）はツール名自体を対象にする
 const TARGET_EXTRACTORS: Record<string, (input: Record<string, unknown>) => string | null> = {
   read: pathFromInput,
   edit: pathFromInput,
   write: pathFromInput,
   skill: (input) => stringArg(input, 'name'),
-  bash: (input) => stringArg(input, 'command'),
+  bash: (input) => {
+    const command = stringArg(input, 'command');
+    if (command === null) return null;
+    const first = command.trim().split(/\s+/)[0];
+    return first === '' ? null : first;
+  },
   websearch: (input) => stringArg(input, 'query'),
   webfetch: (input) => stringArg(input, 'url'),
   task: (input) => stringArg(input, 'subagent_type'),

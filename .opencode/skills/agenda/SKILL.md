@@ -113,7 +113,5 @@ Present the plan in the format defined in [references/product.md](./references/p
 
 ## Status semantics
 
-- `planned` — recorded intention. Everything captured starts here, even when the user consented at capture time
-- `ready` — passed agenda consensus; awaiting implementation
-- On consensus: one status assertion per target — `node events/scripts/append.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`. Multiple targets can share one invocation (one shared ts)
+- On consensus: one status assertion per target — `node events/scripts/append-build.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`. Multiple targets can share one invocation (one shared ts)
 - No manual build: the idle hook syncs snapshots after the turn ends

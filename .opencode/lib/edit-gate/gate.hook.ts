@@ -1,5 +1,4 @@
-// セッションごとにステータス記録を要求するゲート判定。
-// 記録（append.mjs + .status を含む bash）を観測するまで edit/write をブロックする。
+// 記録（append.mjs / append-build.mjs + .status を含む bash）を観測するまで edit/write をブロックする。
 // サブエージェントセッション（exempt）とプロジェクトルート外のファイル編集は対象外。
 // createGate は純メモリ（Set ルックアップ + 文字列比較）で、fs I/O を伴わない。
 // ハンドラーは Report を返し、メッセージ組み立ては呼び出し側（buildMessage）が行う
@@ -20,7 +19,8 @@ export interface Gate {
   exempt: (sessionID: string) => void;
 }
 
-const STATUS_APPEND_MARKERS = ['append.mjs', '.status'];
+// ステータス記録の観測: bash で .status を含み、append 系スクリプト（append.mjs / append-build.mjs）を呼ぶコマンドのみ true。文字列比較のみで実行結果（成功/失敗）は見ない（内容検証はスクリプトの責務）
+const STATUS_APPEND_SCRIPTS = ['append.mjs', 'append-build.mjs'];
 
 export const createGate = (options?: { enabled?: boolean; root?: string }): Gate => {
   const enabled = options?.enabled ?? true;
@@ -28,12 +28,11 @@ export const createGate = (options?: { enabled?: boolean; root?: string }): Gate
   const openSessions = new Set<string>();
   const exemptSessions = new Set<string>();
 
-  // ステータス記録の観測: bash で append.mjs と .status を含むコマンドのみ true。
-  // 文字列比較のみで実行結果（成功/失敗）は見ない（内容検証は append スクリプトの責務）
   const isStatusAppend = (tool: string, command: unknown): boolean =>
     tool === 'bash' &&
     typeof command === 'string' &&
-    STATUS_APPEND_MARKERS.every((marker) => command.includes(marker));
+    command.includes('.status') &&
+    STATUS_APPEND_SCRIPTS.some((script) => command.includes(script));
 
   return {
     evaluate: (input) => {

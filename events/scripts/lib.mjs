@@ -167,8 +167,9 @@ export const buildEvent = (draft, ts = jstNow()) => {
   return event;
 };
 
-export const readEvents = () =>
-  fs
+export const readEvents = () => {
+  if (!fs.existsSync(LOG_PATH)) return [];
+  return fs
     .readFileSync(LOG_PATH, 'utf8')
     .split('\n')
     .filter((line) => line.trim() !== '')
@@ -178,6 +179,29 @@ export const readEvents = () =>
         fail(`invalid event at line ${index + 1}`);
       return event;
     });
+};
+
+// 畳み込み状態に対する meta 整合性チェック。実装が進んでいる (ready/implement/commit) のにpath を持たないコンポーネントを検出する（旧 auditMeta の検証を events 側に統合したもの）
+const PATH_STAGES = new Set(['ready', 'implement', 'commit']);
+
+export const auditMetaIntegrity = (trees) => {
+  if (!trees || typeof trees !== 'object') return [];
+  const findings = [];
+  const walk = (container, prefix) => {
+    for (const [key, node] of Object.entries(container ?? {})) {
+      if (!node || typeof node !== 'object' || Array.isArray(node)) continue;
+      const keyPath = `${prefix}.${key}`;
+      if ('purpose' in node) {
+        const stage = node.status?.stage;
+        if (PATH_STAGES.has(stage) && (typeof node.path !== 'string' || node.path === ''))
+          findings.push(`meta component ${keyPath} is "${stage}" but has no path`);
+      }
+      walk(node, keyPath);
+    }
+  };
+  walk(trees.meta, 'meta');
+  return findings;
+};
 
 // チェックポイント本文を畳み込み起点へ変換する。空・不正 JSON・形状欠損は不在扱い
 export const parseCheckpoint = (text) => {

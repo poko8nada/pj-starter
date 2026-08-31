@@ -19,9 +19,7 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 
 ## Procedure
 
-1. **Verify work is done** — tests pass (`pnpm test:run`), format/typecheck clean.
-2. **Identify the components the change touches** — match changed files against component `path`s in `events/snapshots/meta.json` (and `product.json` for product slices).
-3. **Append status assertions mechanically** — for every touched component, assert `{"stage":"commit","text":"<今回の変更内容>"}`. No stage-transition judgment: always write `commit`, even when the component was already `commit` (the text is updated). `text` states only what changed this time — no reasons, no progress explanations. Multiple targets share one invocation: `node events/scripts/append.mjs --set <key>.status '{"stage":"commit","text":"…"}' --set …`, then `node events/scripts/build.mjs` to refresh snapshots. The log and snapshots are committed alongside the code.
+3. **Append status assertions mechanically** — for every touched component, assert `{"stage":"commit","text":"<今回の変更内容>"}`. No stage-transition judgment: always write `commit`, even when the component was already `commit` (the text is updated). `text` states only what changed this time — no reasons, no progress explanations. Multiple targets share one invocation: `node events/scripts/append-build.mjs --set <key>.status '{"stage":"commit","text":"…"}' --set …` (the wrapper runs the build to refresh snapshots). The log and snapshots are committed alongside the code.
 4. **Pre-commit inspection**:
    - `git status` — intended files only
    - `git diff` — no secrets, no unintended changes

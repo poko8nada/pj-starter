@@ -44,7 +44,15 @@ describe('buildTrailEvent', () => {
     expect(build({ tool: 'bash', args: { command: 'pnpm test' }, gap: 0, root }).value).toEqual({
       tool: 'bash',
       gap: 0,
-      targets: ['pnpm test'],
+      targets: ['pnpm'],
+    });
+    expect(
+      build({ tool: 'bash', args: { command: 'git add -A && git commit -m "x"' }, gap: 0, root })
+        .value,
+    ).toEqual({
+      tool: 'bash',
+      gap: 0,
+      targets: ['git'],
     });
     expect(build({ tool: 'websearch', args: { query: 'opencode' }, gap: 0, root }).value).toEqual({
       tool: 'websearch',
@@ -122,9 +130,24 @@ describe('buildTrailEvent', () => {
 
   it('returns null when the target is missing or empty', () => {
     expect(buildTrailEvent({ tool: 'edit', args: {}, gap: 0, root })).toBeNull();
-    expect(buildTrailEvent({ tool: 'edit', args: { filePath: '' }, gap: 0, root })).toBeNull();
-    expect(buildTrailEvent({ tool: 'bash', args: {}, gap: 0, root })).toBeNull();
+    expect(buildTrailEvent({ tool: 'bash', args: { command: '   ' }, gap: 0, root })).toBeNull();
+    expect(buildTrailEvent({ tool: 'bash', args: { command: '' }, gap: 0, root })).toBeNull();
     expect(buildTrailEvent({ tool: 'skill', args: { name: '' }, gap: 0, root })).toBeNull();
+  });
+
+  it('extracts the first command token with surrounding whitespace', () => {
+    expect(
+      build({ tool: 'bash', args: { command: '  node  --version  ' }, gap: 0, root }).value,
+    ).toEqual({
+      tool: 'bash',
+      gap: 0,
+      targets: ['node'],
+    });
+    expect(build({ tool: 'bash', args: { command: '"quoted" arg' }, gap: 0, root }).value).toEqual({
+      tool: 'bash',
+      gap: 0,
+      targets: ['"quoted"'],
+    });
   });
 
   it('returns null for paths outside the root', () => {

@@ -5,6 +5,7 @@ import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import {
   applyFoldable,
+  auditMetaIntegrity,
   buildEvent,
   deletePath,
   EventError,
@@ -388,6 +389,75 @@ describe('log namespace', () => {
     expect(() =>
       buildEvent({ type: 'set', key: 'log.try.x', value: { tool: 'edit', gap: 0, targets: 'a' } }),
     ).toThrow(/non-empty string array/);
+  });
+});
+
+describe('auditMetaIntegrity', () => {
+  it('flags components in progress without a path', () => {
+    const trees = {
+      meta: {
+        harness: {
+          x: { purpose: 'p', status: { stage: 'ready', text: 't' } },
+          y: { purpose: 'p', path: '.opencode/lib/y.ts', status: { stage: 'commit', text: 't' } },
+        },
+      },
+    };
+    const findings = auditMetaIntegrity(trees);
+    expect(findings).toEqual(['meta component meta.harness.x is "ready" but has no path']);
+  });
+
+  it('flags implement and commit stages and empty paths', () => {
+    const trees = {
+      meta: {
+        harness: {
+          a: { purpose: 'p', status: { stage: 'implement', text: 't' } },
+          b: { purpose: 'p', path: '', status: { stage: 'commit', text: 't' } },
+        },
+      },
+    };
+    const findings = auditMetaIntegrity(trees);
+    expect(findings).toEqual([
+      'meta component meta.harness.a is "implement" but has no path',
+      'meta component meta.harness.b is "commit" but has no path',
+    ]);
+  });
+
+  it('ignores components without status or with a path', () => {
+    const trees = {
+      meta: {
+        harness: {
+          raw: { purpose: 'p' },
+          planned: { purpose: 'p', status: { stage: 'planned', text: 't' } },
+          ok: {
+            purpose: 'p',
+            path: '.opencode/lib/ok.ts',
+            status: { stage: 'implement', text: 't' },
+          },
+        },
+      },
+    };
+    expect(auditMetaIntegrity(trees)).toEqual([]);
+  });
+
+  it('walks nested containers and ignores non-meta namespaces', () => {
+    const trees = {
+      product: { features: { f: { trigger: 't', status: { stage: 'ready', text: 't' } } } },
+      meta: {
+        skills: {
+          group: {
+            deep: { purpose: 'p', status: { stage: 'commit', text: 't' } },
+          },
+        },
+      },
+    };
+    const findings = auditMetaIntegrity(trees);
+    expect(findings).toEqual(['meta component meta.skills.group.deep is "commit" but has no path']);
+  });
+
+  it('returns an empty list for null or non-object trees', () => {
+    expect(auditMetaIntegrity(null)).toEqual([]);
+    expect(auditMetaIntegrity(undefined)).toEqual([]);
+    expect(auditMetaIntegrity('x')).toEqual([]);
   });
 });
 

@@ -1,7 +1,13 @@
 // createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・
-// サブエージェント除外・incremental マージ・ベストエフォートを、
-// スクラッチの events ディレクトリへ実際に書き込んで検証する
-import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -121,8 +127,9 @@ describe('createTrail', () => {
     appendFileSync(join(root, 'events', 'log.jsonl'), 'not-json\n');
     const trail = createTrail(root);
     trail.before({ tool: 'read', sessionID: 's5b', args: { filePath: join(root, 'a.ts') } });
-    expect(readLog(root)).toHaveLength(2);
-    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+    // 破損行は repairLog が除去し、read の行だけが残る
+    expect(readLog(root)).toHaveLength(1);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 
   it('does not merge with a line whose value shape is invalid', () => {
@@ -141,6 +148,68 @@ describe('createTrail', () => {
     trail.before({ tool: 'read', sessionID: 's5c', args: { filePath: join(root, 'a.ts') } });
     expect(readLog(root)).toHaveLength(2);
     expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+});
+
+describe('createTrail repair', () => {
+  const roots: string[] = [];
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    lastActivity.clear();
+    subSessions.clear();
+    mergeBlocked.clear();
+    for (const root of roots) rmSync(root, { recursive: true, force: true });
+    roots.length = 0;
+  });
+
+  it('repairs a corrupted log by dropping broken lines', () => {
+    const root = makeRoot();
+    roots.push(root);
+    appendFileSync(join(root, 'events', 'log.jsonl'), '{"broken":\n');
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's5e', args: { filePath: join(root, 'a.ts') } });
+    const log = readLog(root);
+    expect(log).toHaveLength(1);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+
+  it('drops multiple corrupted lines and empty lines in one repair', () => {
+    const root = makeRoot();
+    roots.push(root);
+    appendFileSync(join(root, 'events', 'log.jsonl'), '{"broken":\n\n{"also":\n\n');
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's5f', args: { filePath: join(root, 'a.ts') } });
+    const log = readLog(root);
+    expect(log).toHaveLength(1);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+
+  it('merges correctly when the file has no trailing newline', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's5g', args: { filePath: join(root, 'a.ts') } });
+    // 末尾改行を除去してから次の同一ツールを書く（マージ経路の replaceLastLine を検証）
+    const logPath = join(root, 'events', 'log.jsonl');
+    const text = readFileSync(logPath, 'utf8');
+    writeFileSync(logPath, text.trimEnd());
+    trail.before({ tool: 'read', sessionID: 's5g', args: { filePath: join(root, 'b.ts') } });
+    expect(readLog(root)).toHaveLength(1);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
+  });
+});
+
+describe('createTrail boundaries', () => {
+  const roots: string[] = [];
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    lastActivity.clear();
+    subSessions.clear();
+    mergeBlocked.clear();
+    for (const root of roots) rmSync(root, { recursive: true, force: true });
+    roots.length = 0;
   });
 
   it('does not merge across a turn boundary (busy reset)', () => {

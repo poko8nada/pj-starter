@@ -1,8 +1,8 @@
 // ゲート判定ロジックのテスト
 import { describe, expect, it } from 'vitest';
 import { createGate } from './gate.hook';
-
 const STATUS_APPEND = `node events/scripts/append.mjs --set meta.harness.x.status '{"stage":"ready","text":"t"}'`;
+const STATUS_APPEND_BUILD = `node events/scripts/append-build.mjs --set meta.harness.x.status '{"stage":"ready","text":"t"}'`;
 
 describe('createGate', () => {
   it('blocks edit until a status transition is recorded', () => {
@@ -18,6 +18,13 @@ describe('createGate', () => {
   it('opens the gate when a status append is executed', () => {
     const gate = createGate();
     const report = gate.evaluate({ sessionID: 's1', tool: 'bash', command: STATUS_APPEND });
+    expect(report.errors).toEqual([]);
+    expect(gate.evaluate({ sessionID: 's1', tool: 'edit' }).errors).toEqual([]);
+  });
+
+  it('opens the gate when a status append via the append-build wrapper is executed', () => {
+    const gate = createGate();
+    const report = gate.evaluate({ sessionID: 's1', tool: 'bash', command: STATUS_APPEND_BUILD });
     expect(report.errors).toEqual([]);
     expect(gate.evaluate({ sessionID: 's1', tool: 'edit' }).errors).toEqual([]);
   });

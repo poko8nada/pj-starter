@@ -261,7 +261,7 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 | `path`    | Where the component lives. Omit while only planned; set once implemented |
 | `purpose` | One-sentence intent. Required — its presence defines a component leaf    |
 
-`status` / `updatedAt` follow the shared node model ([Recording contract](../README.md#recording-contract)). Unlike product features there is **no rebuild injection**: a component without `status` is raw — the shipped baseline — and becomes managed the first time this project asserts its `status`. Fresh copies start from `reset.mjs`, which seeds every definition with the history fields removed; until a component is touched here, the absence of `status` reads as "exists, untouched in this project", not "not yet built".
+The append path enforces the integrity rule: a component whose `status.stage` is `ready` / `implement` / `commit` must carry a `path` — `append-build.mjs` fails the append when the folded state violates this.
 
 ### Granularity policy
 

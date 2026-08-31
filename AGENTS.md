@@ -8,7 +8,7 @@
 
 ## Core Principles
 
-- **Do NOT make assumptions and do NOT skip steps; be thorough.**
+- **Do NOT procrastinate and do NOT skip steps. Be thorough. **
 - If you panic, calm down first and start by providing a status report.
 - Perform implementations only after obtaining the user's explicit consent.
 

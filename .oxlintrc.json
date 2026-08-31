@@ -10,7 +10,7 @@
     "typeAware": true
   },
   "rules": {
-    "curly": ["error", "multi"],
+    "curly": ["error", "multi-line"],
     "eqeqeq": "error",
     "import/no-cycle": "error",
     "max-lines-per-function": [
@@ -52,6 +52,7 @@
     "no-misused-promises": "error",
     "no-non-null-assertion": "error",
     "no-unnecessary-type-assertion": "error",
+    "no-unexpected-multiline": "error",
     "only-throw-error": "error",
     "switch-exhaustiveness-check": "warn",
     "typescript/consistent-type-imports": [

@@ -1,18 +1,11 @@
-// ツールトレイルのフック配線。tool.execute.before で思考ギャップを測り、
-// 対象ツールの試行を log.try.<id> として直接追記する。
-// 書き込みは incremental マージ：直前の行が同一ツールの log.try 行なら
-// その行を書き換えて targets を伸ばす。マージ対象は log.try 行のみで、
-// 状態イベントには絶対に触れない。
-// after で lastActivity を更新し、ターン境界（busy でリセット / idle・error で削除）で整える。
-// どの失敗も痕跡1行の欠落に留め、ツール実行の流れ自体は止めない
+// ツールトレイルのフック配線。tool.execute.before で思考ギャップを測り、対象ツールの試行を log.try.<id> として直接追記する。
+// 書き込みは incremental マージ：直前の行が同一ツールの log.try 行ならその行を書き換えて targets を伸ばす。マージ対象は log.try 行のみで、状態イベントには絶対に触れない。
 import fs from 'node:fs';
 import path from 'node:path';
 import { buildTrailEvent, mergeTrailEvents, type TrailEvent } from './trail';
 
 // セッション単位の状態はモジュールレベルで共有する。
-// before / after / event は別々のプラグインから呼ばれるため、インスタンスを跨いで同じ Map を見る。
-// エントリはセッション終了（idle / error）で削除され、無制限には増えない。
-// テストからリセットするために export する（sync.hook.ts の syncFailureStates と同じ流儀）
+// テストからリセットするために export する（compact.hook.ts の compactFailureStates と同じ流儀）
 export const lastActivity = new Map<string, number>();
 export const subSessions = new Set<string>();
 // ターン境界（busy / idle / error）で立てる「次はマージしない」フラグ。
@@ -85,24 +78,41 @@ const readLastTrailLine = (logPath: string): TrailEvent | null => {
   }
 };
 
-// 最後の行を除去する（マージのための書き換え）。
-// readLastTrailLine と同じく空行を無視し、最後の非空行だけを除去する。
-// 行末に改行が無い場合や末尾に空行がある場合でも正しく切り詰められる
-const truncateLastLine = (logPath: string): void => {
+// 最後の非空行をマージ行で置き換える。
+// readLastTrailLine と同じく空行を無視し、行末に改行が無い場合や末尾に空行がある場合でも正しく扱う
+const replaceLastLine = (logPath: string, merged: TrailEvent): void => {
   const text = fs.readFileSync(logPath, 'utf8');
   const lines = text.split('\n');
-  // 末尾の空要素（最終改行によるもの）を除去
-  if (lines.length > 0 && lines[lines.length - 1] === '') lines.pop();
+  // 末尾の空要素（最終改行や連続空行によるもの）をすべて除去
+  while (lines.length > 0 && lines[lines.length - 1] === '') lines.pop();
   // 最後の非空行を探す（readLastTrailLine と同様に trim で判定）
   let lastNonEmpty = lines.length - 1;
   while (lastNonEmpty >= 0 && lines[lastNonEmpty].trim() === '') lastNonEmpty--;
   if (lastNonEmpty < 0) {
-    fs.writeFileSync(logPath, '');
+    fs.writeFileSync(logPath, `${JSON.stringify(merged)}\n`);
     return;
   }
-  lines.splice(lastNonEmpty, 1);
-  const next = lines.length === 0 ? '' : `${lines.join('\n')}\n`;
-  fs.writeFileSync(logPath, next);
+  lines.splice(lastNonEmpty, 1, JSON.stringify(merged));
+  fs.writeFileSync(logPath, `${lines.join('\n')}\n`);
+};
+
+// ログ全体を検証し、破損行と空行を除去して修復する。問題がなければ何もしない。
+// 書き込み経路のバグ（行の途中切断など）による破損を次の書き込みで検知・修復する保険
+const repairLog = (logPath: string): void => {
+  if (!fs.existsSync(logPath)) return;
+  const text = fs.readFileSync(logPath, 'utf8');
+  const rawLines = text.split('\n');
+  const kept = rawLines.filter((line) => {
+    if (line.trim() === '') return false;
+    try {
+      JSON.parse(line);
+      return true;
+    } catch {
+      return false;
+    }
+  });
+  if (kept.length === rawLines.length) return;
+  fs.writeFileSync(logPath, kept.length === 0 ? '' : `${kept.join('\n')}\n`);
 };
 
 export const createTrail = (root: string): TrailHook => {
@@ -120,12 +130,13 @@ export const createTrail = (root: string): TrailHook => {
       if (!blocked && last !== null) {
         const merged = mergeTrailEvents(last, event);
         if (merged !== null) {
-          truncateLastLine(logPath);
-          fs.appendFileSync(logPath, `${JSON.stringify(merged)}\n`);
+          replaceLastLine(logPath, merged);
+          repairLog(logPath);
           return;
         }
       }
       fs.appendFileSync(logPath, `${JSON.stringify(event)}\n`);
+      repairLog(logPath);
     } catch {
       // 書き込み失敗はベストエフォート。次の試行でまた試される
     }

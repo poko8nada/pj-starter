@@ -96,9 +96,7 @@ This keeps the "diff shrank" claim honest — it only applies to the subset wher
 
 ## Status semantics
 
-Refactoring is re-entry work on existing components — a committed unit re-enters at `ready` when new work is agreed.
-
-- On label approval (step 3): assert `ready` for every touched managed component. One status assertion per target, all in one invocation — `node events/scripts/append.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`
+- On label approval (step 3): assert `ready` for every touched managed component. One status assertion per target, all in one invocation — `node events/scripts/append-build.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`
 - On completion (step 5): assert `implement` — the refactor is applied, awaiting commit
 - At commit: the commit skill asserts `commit` — never assert it from here
 - No manual build: the idle hook syncs snapshots after the turn ends
