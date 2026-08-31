@@ -1,12 +1,12 @@
-// フックランタイム： 編集ツールのゲート、トライル記録、未確定フォローアップ（tool.execute.before）。
-// ステータス記録（append.mjs + .status を含む bash）を観測するまで edit/write をブロックし、記録後に編集を許可する。session.idle で git がクリーンならゲートを復活させる
-// サブエージェントセッション（session.created で parentID を持つもの）は exempt し、プロジェクトルート外のファイル編集はゲート対象外
-// git が使われていない（リポジトリなし・コミット前）プロジェクトではゲートを無効化してスルーする。enabled は起動時に1回だけ決定し、プロセス中は再評価しない
+// フックランタイム： プロセス順守チェック、トライル記録、未確定フォローアップ（tool.execute.before）。
+// ステータス記録（append.mjs + .status を含む bash）を観測するまで edit/write をブロックし、記録後に編集を許可する。session.idle で git がクリーンならチェックを復活させる
+// サブエージェントセッション（session.created で parentID を持つもの）は exempt し、プロジェクトルート外のファイル編集はチェック対象外
+// git が使われていない（リポジトリなし・コミット前）プロジェクトではチェックを無効化してスルーする。enabled は起動時に1回だけ決定し、プロセス中は再評価しない
 // 未確定フォローアップは git commit 時に未確定コンポーネントを検知し1回だけ促す。コミット成功で復活する（unresolved.hook.ts）
 // root は起動時に1回だけ resolveProjectRoot で解決し、per-call の fs I/O を避ける
 import type { Plugin } from '@opencode-ai/plugin';
-import { createGate } from '../lib/edit-gate/gate.hook';
-import { isGitClean, isGitRepo } from '../lib/edit-gate/git.hook';
+import { createCompliance } from '../lib/process-compliance/compliance.hook';
+import { isGitClean, isGitRepo } from '../lib/process-compliance/git.hook';
 import { resolveProjectRoot } from '../lib/harness/resolve-root';
 import { createTrail } from '../lib/tool-trail/trail.hook';
 import { runUnresolvedFollowup, settleFollowup } from '../lib/unresolved-followup/unresolved.hook';
@@ -15,14 +15,14 @@ import { buildMessage } from '../lib/utils/message';
 export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }) => {
   const root = resolveProjectRoot({ worktree, directory });
   const enabled = await isGitRepo({ $, root });
-  const gate = createGate({ enabled, root });
+  const compliance = createCompliance({ enabled, root });
   const trail = createTrail(root);
 
   return {
     'tool.execute.before': async (input, output) => {
-      // 試行の記録はゲートより先に書く。ブロックされた編集も「試行」として残る
+      // 試行の記録はチェックより先に書く。ブロックされた編集も「試行」として残る
       trail.before({ tool: input.tool, sessionID: input.sessionID, args: output.args });
-      const gateReport = gate.evaluate({
+      const complianceReport = compliance.evaluate({
         sessionID: input.sessionID,
         tool: input.tool,
         command: output.args?.command,
@@ -32,10 +32,10 @@ export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }
         { $, root },
         { tool: input.tool, command: output.args?.command },
       );
-      // gate と unresolved は prefix を分けて汚染しない
+      // compliance と unresolved は prefix を分けて汚染しない
       const message = buildMessage(
-        '[gate] Load the skill required for the project, Record a status before editing.',
-        gateReport,
+        '[process-compliance] You are bypassing the project process. Load the skill for the work unit, record the status transition first, then edit.',
+        complianceReport,
       );
       const followupMessage = buildMessage(followupReport);
       if (message !== null && followupMessage !== null) {
@@ -48,12 +48,12 @@ export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }
       trail.event(event);
       if (event.type === 'session.created') {
         if (event.properties.info?.parentID && event.properties.info?.id) {
-          gate.exempt(event.properties.info.id);
+          compliance.exempt(event.properties.info.id);
         }
         return;
       }
       if (event.type !== 'session.idle') return;
-      if (await isGitClean({ $, root })) gate.close(event.properties.sessionID);
+      if (await isGitClean({ $, root })) compliance.close(event.properties.sessionID);
       await settleFollowup({ $, root });
     },
   };

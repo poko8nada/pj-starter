@@ -1,20 +1,21 @@
-// 記録（append.mjs / append-build.mjs + .status を含む bash）を観測するまで edit/write をブロックする。
+// ステータス記録（append.mjs / append-build.mjs + .status を含む bash）を観測するまで edit/write をブロックする。
+// 役割は「ゲートを開閉する」ことではなく、プロセスを無視して編集しようとするエージェントを検出し、手順（スキルロード→ステータス記録→編集）へ誘導すること。
 // サブエージェントセッション（exempt）とプロジェクトルート外のファイル編集は対象外。
-// createGate は純メモリ（Set ルックアップ + 文字列比較）で、fs I/O を伴わない。
+// createCompliance は純メモリ（Set ルックアップ + 文字列比較）で、fs I/O を伴わない。
 // ハンドラーは Report を返し、メッセージ組み立ては呼び出し側（buildMessage）が行う
 import type { Report } from '../utils/shared';
 import { isEditTool } from '../utils/shared';
 import { isOutsideRoot } from '../utils/path';
 
-export interface GateInput {
+export interface ComplianceInput {
   sessionID: string;
   tool: string;
   command?: unknown;
   filePath?: unknown;
 }
 
-export interface Gate {
-  evaluate: (input: GateInput) => Report;
+export interface Compliance {
+  evaluate: (input: ComplianceInput) => Report;
   close: (sessionID: string) => void;
   exempt: (sessionID: string) => void;
 }
@@ -22,7 +23,7 @@ export interface Gate {
 const STATUS_SET_PATTERN = /--set\s+['"]?\S+\.status\b/;
 const APPEND_SCRIPT_PATTERN = /(append|append-build)\.mjs/;
 
-export const createGate = (options?: { enabled?: boolean; root?: string }): Gate => {
+export const createCompliance = (options?: { enabled?: boolean; root?: string }): Compliance => {
   const enabled = options?.enabled ?? true;
   const root = options?.root;
   const openSessions = new Set<string>();
@@ -47,7 +48,7 @@ export const createGate = (options?: { enabled?: boolean; root?: string }): Gate
         !openSessions.has(input.sessionID) &&
         !isOutsideRoot(root, input.filePath)
       ) {
-        return { errors: ['no status transition recorded in this session'] };
+        return { errors: ['no status transition recorded; the project process is being bypassed'] };
       }
       return { errors: [] };
     },

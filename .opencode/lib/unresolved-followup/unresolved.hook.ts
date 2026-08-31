@@ -4,7 +4,7 @@
 // 直接の git commit は isCommitCommand で bash から検知する。audit / commit スキルは各自の手順で同じ read.mjs 出力を確認する（本フックの状態とは独立）
 import type { Report, PluginInput } from '../utils/shared';
 import { isCommitCommand } from '../tool-trail/trail';
-import { isGitClean } from '../edit-gate/git.hook';
+import { isGitClean } from '../process-compliance/git.hook';
 import { buildFollowupMessage, createFollowup, resetFollowup, tryFire } from './unresolved';
 
 export interface UnresolvedCtx {

@@ -1,5 +1,5 @@
 // パス判定の共有ユーティリティ。
-// isOutsideRoot はプロジェクトルート外のファイル編集を判定する汎用ヘルパで、ゲート（edit-gate）以外のコンポーネントからも利用できる
+// isOutsideRoot はプロジェクトルート外のファイル編集を判定する汎用ヘルパで、プロセス順守チェック（process-compliance）以外のコンポーネントからも利用できる
 import { homedir } from 'node:os';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
