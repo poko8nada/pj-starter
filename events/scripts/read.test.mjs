@@ -40,14 +40,18 @@ describe('read.mjs --unresolved', () => {
     writeSnapshot('meta', {
       skills: {
         refactor: { purpose: 'p', path: 'x', status: { stage: 'ready', text: '実装待ち' } },
+        nopath: { purpose: 'p', status: { stage: 'implement', text: '実装中' } },
         planned: { purpose: 'p', status: { stage: 'planned', text: '未着手' } },
       },
     });
     const { stdout, status } = runRead(['--name', 'meta', '--unresolved']);
     expect(status).toBe(0);
-    expect(stdout).toContain('未確定のコンポーネントがあります');
+    expect(stdout).toContain('There are unresolved components:');
     expect(stdout).toContain('meta.skills.refactor');
+    expect(stdout).toContain('meta.skills.nopath');
+    expect(stdout).toContain('no path');
     expect(stdout).toContain('[ready]');
+    expect(stdout).toContain('[implement]');
     expect(stdout).not.toContain('meta.skills.planned');
   });
 
@@ -56,12 +60,12 @@ describe('read.mjs --unresolved', () => {
       skills: { x: { purpose: 'p', status: { stage: 'commit', text: '完了' } } },
     });
     const { stdout } = runRead(['--name', 'meta', '--unresolved']);
-    expect(stdout).toBe('未確定のコンポーネントはありません');
+    expect(stdout).toBe('There are no unresolved components');
   });
 
   it('reports none when snapshot is missing', () => {
     const { stdout } = runRead(['--name', 'meta', '--unresolved']);
-    expect(stdout).toBe('未確定のコンポーネントはありません');
+    expect(stdout).toBe('There are no unresolved components');
   });
 });
 

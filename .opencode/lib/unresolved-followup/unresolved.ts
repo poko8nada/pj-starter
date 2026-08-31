@@ -1,6 +1,6 @@
 // 未確定コンポーネントのフォローアップ状態管理（純粋ロジック）。
 // 発火は「1回だけ」で、コミット成功で復活する。edit-lint の dirtyAt と同じ作法で、状態はモジュール内のメモリ変数に持ち、fs I/O は行わない。
-// メッセージ整形は read.mjs の出力文字列を受け取る（抽出ロジックは events 側の責務）
+// 抽出は events/scripts/lib.mjs の findUnresolved が返す items 配列を受け取る（文字列出力に依存しない）
 
 export interface FollowupState {
   fired: boolean;
@@ -21,9 +21,19 @@ export const resetFollowup = (state: FollowupState): void => {
   state.fired = false;
 };
 
-// read.mjs --unresolved の出力をフォローアップメッセージとして整形する。
-export const buildFollowupMessage = (readOutput: string): string | null => {
-  const trimmed = readOutput.trim();
-  if (trimmed === '' || trimmed === 'There are no unresolved components') return null;
-  return `[unresolved] Check unresolved components before committing. If you have completed implementation, commit it, and if you have not done it, record it as a withdrawal (del). You can leave it as is if you want to carry it over to the next turn.\n\n${trimmed}`;
+export interface UnresolvedItem {
+  name: string;
+  stage: string;
+  text: string;
+  path?: string;
+}
+
+// findUnresolved の結果（items 配列）をフォローアップメッセージとして整形する。
+// 0件なら null（発火しない）
+export const buildFollowupMessage = (items: UnresolvedItem[]): string | null => {
+  if (items.length === 0) return null;
+  const lines = items.map(
+    (item) => `- ${item.name}  (${item.path || 'no path'})  [${item.stage}]  ${item.text}`,
+  );
+  return `[unresolved] Check unresolved components before committing. If you have completed implementation, commit it, and if you have not done it, record it as a withdrawal (del). You can leave it as is if you want to carry it over to the next turn.\n\n未確定のコンポーネントがあります:\n${lines.join('\n')}`;
 };

@@ -466,3 +466,38 @@
 {"ts":"2026-09-01T02:27:57.672+09:00","type":"set","key":"log.try.7d3050f5","value":{"tool":"bash","gap":3889,"targets":["node"]}}
 {"ts":"2026-09-01T02:27:57.734+09:00","type":"set","key":"meta.harness.process-compliance.status","value":{"stage":"commit","text":"edit-gate を process-compliance へ改名し、ブロック文言をプロセス無視の指摘へ変更"}}
 {"ts":"2026-09-01T02:28:08.154+09:00","type":"set","key":"log.try.0622df41","value":{"tool":"bash","gap":3212,"targets":["node","git","git","git","git"]}}
+{"ts":"2026-09-01T02:32:37.984+09:00","type":"set","key":"log.try.c67a8902","value":{"tool":"bash","gap":0,"targets":["node"]}}
+{"ts":"2026-09-01T02:32:58.379+09:00","type":"set","key":"log.try.85985b5b","value":{"tool":"read","gap":7889,"targets":["events/scripts/read.mjs",".opencode/lib/unresolved-followup/unresolved.ts","events/scripts/read.test.mjs"]}}
+{"ts":"2026-09-01T02:35:51.398+09:00","type":"set","key":"log.try.191ab554","value":{"tool":"read","gap":0,"targets":["events/scripts/lib.mjs","events/scripts/lib/derive.mjs",".opencode/lib/tool-trail/trail.ts"]}}
+{"ts":"2026-09-01T02:36:31.253+09:00","type":"set","key":"log.try.a21d2475","value":{"tool":"read","gap":0,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:37:07.917+09:00","type":"set","key":"log.try.22844a3f","value":{"tool":"bash","gap":0,"targets":["node"]}}
+{"ts":"2026-09-01T02:37:07.981+09:00","type":"set","key":"meta.harness.unresolved-followup.status","value":{"stage":"ready","text":"read.mjs の文字列一致をやめ、findUnresolved を直接 import して構造的に0件判定する"}}
+{"ts":"2026-09-01T02:37:07.981+09:00","type":"set","key":"meta.scripts.event-read.status","value":{"stage":"ready","text":"read.mjs --unresolved の出力を英語に変更する"}}
+{"ts":"2026-09-01T02:37:22.690+09:00","type":"set","key":"log.try.74bf7538","value":{"tool":"read","gap":5010,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.ts",".opencode/tsconfig.json",".opencode/lib/tool-trail/trail.hook.test.ts"]}}
+{"ts":"2026-09-01T02:37:39.852+09:00","type":"set","key":"log.try.35fc392d","value":{"tool":"write","gap":9602,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.ts",".opencode/lib/unresolved-followup/unresolved.ts"]}}
+{"ts":"2026-09-01T02:37:56.231+09:00","type":"set","key":"log.try.c5d98715","value":{"tool":"edit","gap":5488,"targets":["events/scripts/read.mjs","events/scripts/read.mjs","events/scripts/read.test.mjs"]}}
+{"ts":"2026-09-01T02:38:06.114+09:00","type":"set","key":"log.try.685608d5","value":{"tool":"write","gap":9883,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:38:14.587+09:00","type":"set","key":"log.try.a36f2188","value":{"tool":"edit","gap":8473,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:38:19.890+09:00","type":"set","key":"log.try.c94aa32e","value":{"tool":"read","gap":5303,"targets":[".opencode/lib/unresolved-followup/unresolved.test.ts"]}}
+{"ts":"2026-09-01T02:38:25.195+09:00","type":"set","key":"log.try.b493fc41","value":{"tool":"write","gap":5305,"targets":[".opencode/lib/unresolved-followup/unresolved.test.ts"]}}
+{"ts":"2026-09-01T02:38:29.441+09:00","type":"set","key":"log.try.66709128","value":{"tool":"bash","gap":4246,"targets":["pnpm"]}}
+{"ts":"2026-09-01T02:38:39.746+09:00","type":"set","key":"log.try.e12d7bcd","value":{"tool":"read","gap":10305,"targets":[".opencode/lib/utils/shell-mock.ts"]}}
+{"ts":"2026-09-01T02:38:47.553+09:00","type":"set","key":"log.try.32dfb97f","value":{"tool":"edit","gap":7806,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:38:57.173+09:00","type":"set","key":"log.try.9a9da615","value":{"tool":"read","gap":5110,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts",".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:39:09.193+09:00","type":"set","key":"log.try.ade0bec8","value":{"tool":"edit","gap":6600,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts",".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:39:29.475+09:00","type":"set","key":"log.try.8a00c7fb","value":{"tool":"bash","gap":4722,"targets":["pnpm","pnpm","pnpm","node"]}}
+{"ts":"2026-09-01T02:39:45.470+09:00","type":"set","key":"log.try.42a21808","value":{"tool":"skill","gap":0,"targets":["audit"]}}
+{"ts":"2026-09-01T02:39:54.370+09:00","type":"set","key":"log.try.a0a4e097","value":{"tool":"bash","gap":4185,"targets":["git","node","git","git"]}}
+{"ts":"2026-09-01T02:40:08.326+09:00","type":"set","key":"log.try.75cd1426","value":{"tool":"task","gap":13946,"targets":["auditor","auditor"]}}
+{"ts":"2026-09-01T02:41:42.211+09:00","type":"set","key":"log.try.ee806736","value":{"tool":"read","gap":0,"targets":["events/scripts/lib/consts.mjs"]}}
+{"ts":"2026-09-01T02:42:16.533+09:00","type":"set","key":"log.try.bf981638","value":{"tool":"edit","gap":5497,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.ts",".opencode/lib/unresolved-followup/unresolved.hook.ts",".opencode/lib/unresolved-followup/unresolved.hook.ts",".opencode/lib/unresolved-followup/unresolved.hook.ts",".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:42:21.294+09:00","type":"set","key":"log.try.e1aeb274","value":{"tool":"read","gap":4761,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:42:28.016+09:00","type":"set","key":"log.try.42ff699e","value":{"tool":"bash","gap":6722,"targets":["cd"]}}
+{"ts":"2026-09-01T02:42:39.772+09:00","type":"set","key":"log.try.31ba354f","value":{"tool":"edit","gap":4689,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts",".opencode/lib/unresolved-followup/unresolved.hook.test.ts"]}}
+{"ts":"2026-09-01T02:42:49.184+09:00","type":"set","key":"log.try.457c0c53","value":{"tool":"read","gap":4729,"targets":[".opencode/lib/unresolved-followup/unresolved.hook.test.ts","events/scripts/read.test.mjs"]}}
+{"ts":"2026-09-01T02:42:54.842+09:00","type":"set","key":"log.try.87a84f8a","value":{"tool":"edit","gap":5658,"targets":["events/scripts/read.test.mjs"]}}
+{"ts":"2026-09-01T02:43:09.449+09:00","type":"set","key":"log.try.f8285d59","value":{"tool":"bash","gap":4457,"targets":["pnpm","pnpm"]}}
+{"ts":"2026-09-01T02:43:31.766+09:00","type":"set","key":"log.try.8790394d","value":{"tool":"bash","gap":0,"targets":["node"]}}
+{"ts":"2026-09-01T02:43:31.830+09:00","type":"set","key":"meta.harness.unresolved-followup.status","value":{"stage":"commit","text":"CLI文字列出力依存をやめ、findUnresolved を直接 import して構造的に0件判定するよう修正"}}
+{"ts":"2026-09-01T02:43:31.830+09:00","type":"set","key":"meta.scripts.event-read.status","value":{"stage":"commit","text":"--unresolved 出力を英語化し、テストを完全文言・no path 検証に強化"}}
+{"ts":"2026-09-01T02:43:44.065+09:00","type":"set","key":"log.try.caf9d93e","value":{"tool":"bash","gap":4416,"targets":["node","git","git","git","git"]}}

@@ -15,11 +15,11 @@ const loadContent = (name) => {
 };
 
 const formatUnresolved = (items) => {
-  if (items.length === 0) return '未確定のコンポーネントはありません';
+  if (items.length === 0) return 'There are no unresolved components';
   const lines = items.map(
-    (item) => `- ${item.name}  (${item.path || 'pathなし'})  [${item.stage}]  ${item.text}`,
+    (item) => `- ${item.name}  (${item.path || 'no path'})  [${item.stage}]  ${item.text}`,
   );
-  return `未確定のコンポーネントがあります:\n${lines.join('\n')}`;
+  return `There are unresolved components:\n${lines.join('\n')}`;
 };
 
 const main = () => {
@@ -33,7 +33,7 @@ const main = () => {
   if (unresolved) {
     const content = loadContent(name);
     if (content === null) {
-      console.log('未確定のコンポーネントはありません');
+      console.log('There are no unresolved components');
       return;
     }
     const items = findUnresolved({ [name]: content });

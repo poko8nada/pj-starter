@@ -1,13 +1,15 @@
 # AGENTS.md
 
-Do NOT procrastinate and do NOT skip steps. Be thorough.  
-Your understand is bound to be incorrect, so **discuss the matter with the user before everything.**  
-What user really want is for you to respond to the requests while **ALWAYS adhering to the following:**
+```markdown
+Your understand is bound to be incorrect, so **discuss the matter with the user before EVERYTHING.**
+Must **NOT judge** regarding the agreement other than acknowledging that the user has agreed to it.
+**Your actions must invariably be part of the project workflow; there are NO exceptions.**
+```
 
 ## Operational System
 
-- `./events/snapshots/` dir represents the state and context of this project.
-- Check this at the start. **Read [events/README.md](./events/README.md) for an overview.**
+- `./events` dir represents the state and context of this project.
+- Check this at the start. Read [events/README.md](./events/README.md) for an overview.
 
 ## Language
 
@@ -17,12 +19,12 @@ What user really want is for you to respond to the requests while **ALWAYS adher
 
 ## Solutions
 
-- **In addition to solutions, make structural changes to repay existing debts.**
+- **NEVER use ask or question tool, too noisy.**
 - Keep universal and general-purpose approaches in mind.
 - Propose multiple options and explain the reasons for your recommendations.
 
 ## Implementation
 
+- **Maintain a self-explanatory and modern code structure.**
 - Assume the use of `pnpm`.
 - Write code in English, but actively add supplementary Japanese comments.
-- **Maintain a self-explanatory and modern code structure.**

@@ -18,10 +18,10 @@ describe('tryFire / resetFollowup', () => {
 });
 
 describe('buildFollowupMessage', () => {
-  it('builds a message from unresolved output', () => {
-    const msg = buildFollowupMessage(
-      '未確定のコンポーネントがあります:\n- meta.skills.x [ready] text',
-    );
+  it('builds a message from unresolved items', () => {
+    const msg = buildFollowupMessage([
+      { name: 'meta.skills.x', stage: 'ready', text: 'text', path: 'x' },
+    ]);
     expect(msg).toContain('[unresolved]');
     expect(msg).toContain('meta.skills.x');
     expect(msg).toContain('commit');
@@ -29,7 +29,6 @@ describe('buildFollowupMessage', () => {
   });
 
   it('returns null when there is nothing unresolved', () => {
-    expect(buildFollowupMessage('There are no unresolved components')).toBeNull();
-    expect(buildFollowupMessage('')).toBeNull();
+    expect(buildFollowupMessage([])).toBeNull();
   });
 });
