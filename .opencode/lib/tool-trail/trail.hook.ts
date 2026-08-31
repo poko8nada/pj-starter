@@ -1,5 +1,7 @@
-// ツールトレイルのフック配線。tool.execute.before で思考ギャップを測り、対象ツールの試行を log.try.<id> として直接追記する。
-// 書き込みは incremental マージ：直前の行が同一ツールの log.try 行ならその行を書き換えて targets を伸ばす。マージ対象は log.try 行のみで、状態イベントには絶対に触れない。
+// 書き込みは incremental マージ：直前の行が同一ツールの log.try 行ならその行を書き換えて targets を伸ばす。マージ対象は log.try 行のみで、
+// 状態イベントには絶対に触れない。
+// ターン境界の表現は lastActivity の有無のみ：アイドル後の最初の試行はベースライン未設定なので新規行で独立した gap を主張し、その後の連続試行はツールが一致すればマージする（busy/idle といった外部シグナルに依存しない）。
+// どの失敗も痕跡1行の欠落に留め、ツール実行の流れ自体は止めない
 import fs from 'node:fs';
 import path from 'node:path';
 import { buildTrailEvent, mergeTrailEvents, type TrailEvent } from './trail';
@@ -8,9 +10,6 @@ import { buildTrailEvent, mergeTrailEvents, type TrailEvent } from './trail';
 // テストからリセットするために export する（compact.hook.ts の compactFailureStates と同じ流儀）
 export const lastActivity = new Map<string, number>();
 export const subSessions = new Set<string>();
-// ターン境界（busy / idle / error）で立てる「次はマージしない」フラグ。
-// ターンを跨いだ同一ツールの連続を誤ってマージし、リセット後の gap を古い値で上書きしないためのもの
-export const mergeBlocked = new Set<string>();
 
 export interface TrailBeforeInput {
   tool: string;
@@ -53,8 +52,9 @@ const readLastTrailLine = (logPath: string): TrailEvent | null => {
       typeof record.key !== 'string' ||
       !record.key.startsWith('log.try.') ||
       typeof record.ts !== 'string'
-    )
+    ) {
       return null;
+    }
     const value = record.value;
     if (typeof value !== 'object' || value === null) return null;
     const valueRecord = value as { tool?: unknown; gap?: unknown; targets?: unknown };
@@ -65,8 +65,9 @@ const readLastTrailLine = (logPath: string): TrailEvent | null => {
       valueRecord.gap < 0 ||
       !Array.isArray(valueRecord.targets) ||
       valueRecord.targets.some((target) => typeof target !== 'string')
-    )
+    ) {
       return null;
+    }
     return {
       ts: record.ts,
       type: 'set',
@@ -123,11 +124,11 @@ export const createTrail = (root: string): TrailHook => {
     try {
       const event = buildTrailEvent({ tool: input.tool, args: input.args, gap, root });
       if (event === null) return;
-      // ターン境界直後の書き込みはマージせず新規行にする（リセット後の gap を保持する）
-      const blocked = mergeBlocked.has(input.sessionID);
-      mergeBlocked.delete(input.sessionID);
+      // ベースライン未設定（ターン最初の試行）なら新規行。あれば同ツールでマージ。
+      // busy/idle/error はすべて lastActivity を削除するため、この判定だけでターン境界を表現できる
+      const hasBaseline = lastActivity.has(input.sessionID);
       const last = readLastTrailLine(logPath);
-      if (!blocked && last !== null) {
+      if (hasBaseline && last !== null) {
         const merged = mergeTrailEvents(last, event);
         if (merged !== null) {
           replaceLastLine(logPath, merged);
@@ -159,25 +160,19 @@ export const createTrail = (root: string): TrailHook => {
         if (info?.parentID && info?.id) subSessions.add(info.id);
         return;
       }
-      if (input.type === 'session.status') {
-        const status = input.properties.status;
-        if (
-          status?.type === 'busy' &&
-          input.properties.sessionID &&
-          !subSessions.has(input.properties.sessionID)
-        ) {
-          lastActivity.set(input.properties.sessionID, Date.now());
-          mergeBlocked.add(input.properties.sessionID);
-        }
-        return;
-      }
-      if (
-        (input.type === 'session.idle' || input.type === 'session.error') &&
-        input.properties.sessionID
-      ) {
-        lastActivity.delete(input.properties.sessionID);
-        subSessions.delete(input.properties.sessionID);
-        mergeBlocked.add(input.properties.sessionID);
+      // busy も idle/error も「次の試行をターン最初として扱う」で同じ。
+      // lastActivity を消すだけで write の hasBaseline 判定が false になり、新規行になる
+      const sessionID = input.properties.sessionID;
+      const isBoundary =
+        (input.type === 'session.status' &&
+          input.properties.status?.type === 'busy' &&
+          !!sessionID &&
+          !subSessions.has(sessionID)) ||
+        input.type === 'session.idle' ||
+        input.type === 'session.error';
+      if (isBoundary && sessionID) {
+        lastActivity.delete(sessionID);
+        subSessions.delete(sessionID);
       }
     },
   };

@@ -65,8 +65,9 @@ describe('createGate', () => {
 
   it('never blocks read-only tools', () => {
     const gate = createGate();
-    for (const tool of ['read', 'glob', 'grep', 'websearch', 'bash', 'skill', 'task'])
+    for (const tool of ['read', 'glob', 'grep', 'websearch', 'bash', 'skill', 'task']) {
       expect(gate.evaluate({ sessionID: 's1', tool, command: 'x' }).errors).toEqual([]);
+    }
   });
 
   it('keeps gates independent per session', () => {

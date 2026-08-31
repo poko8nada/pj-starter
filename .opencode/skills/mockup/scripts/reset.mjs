@@ -15,8 +15,9 @@ const workbench = join(skillRoot, 'workbench');
 // 削除対象を収集する。lockfile はバージョン固定の再現性のため常に保持する
 const collectTargets = () => {
   const targets = [];
-  for (const file of readdirSync(workbench))
+  for (const file of readdirSync(workbench)) {
     if (file.endsWith('.html')) targets.push(join(workbench, file));
+  }
   const candidates = [
     join(workbench, 'dist'),
     join(workbench, 'annotations.jsonl'),

@@ -24,8 +24,9 @@ export const createRounds = (): Rounds => {
   const get = (sessionId: string): RoundState => {
     const state = states.get(sessionId);
     if (!state) return { count: 0, lastFailureAt: 0 };
-    if (Date.now() - state.lastFailureAt > ROUND_RESET_MS)
+    if (Date.now() - state.lastFailureAt > ROUND_RESET_MS) {
       return { count: 0, lastFailureAt: state.lastFailureAt };
+    }
     return state;
   };
 

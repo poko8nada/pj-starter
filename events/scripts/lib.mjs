@@ -74,8 +74,9 @@ const assertStatusLocation = (key) => {
     ((parts[0] === 'product' && parts[1] === 'features') ||
       (parts[0] === 'meta' && META_SECTIONS.has(parts[1])));
   const isFactSection = parts.length === 3 && parts[0] === 'product' && FACT_SECTIONS.has(parts[1]);
-  if (!isWorkUnit && !isFactSection)
+  if (!isWorkUnit && !isFactSection) {
     throw new EventError(`status is only allowed on fact sections or work units: ${key}`);
+  }
 };
 
 // キーは「名前空間.区画. ...」のドットパス。status の部分書き込み（.status.stage 等）は常に拒否し、status は丸ごと主張させる
@@ -84,34 +85,42 @@ export const validateKey = (key) => {
   if (key.includes('.status.')) throw new EventError(`status must be asserted whole: ${key}`);
   const [ns, section] = key.split('.');
   if (!Object.hasOwn(NAMESPACES, ns)) throw new EventError(`unknown namespace: ${ns}`);
-  if (ns === 'product' && !PRODUCT_SECTIONS.has(section))
+  if (ns === 'product' && !PRODUCT_SECTIONS.has(section)) {
     throw new EventError(
       `product section must be one of ${[...PRODUCT_SECTIONS].join('/')}: ${key}`,
     );
-  if (ns === 'meta' && !META_SECTIONS.has(section))
+  }
+  if (ns === 'meta' && !META_SECTIONS.has(section)) {
     throw new EventError(`meta section must be one of ${[...META_SECTIONS].join('/')}: ${key}`);
+  }
   if (ns === 'log') {
     const parts = key.split('.');
-    if (parts.length !== 3 || parts[1] !== 'try' || parts[2] === '')
+    if (parts.length !== 3 || parts[1] !== 'try' || parts[2] === '') {
       throw new EventError(`log key must be log.try.<id>: ${key}`);
+    }
   }
   if (key.endsWith('.status')) assertStatusLocation(key);
 };
 
 // status 値の形状。作業単位は {stage, text}、事実セクションは {text} のみを許す
 const assertStatusValue = (key, value) => {
-  if (!value || typeof value !== 'object' || Array.isArray(value))
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new EventError(`status must be an object: ${key}`);
+  }
   const keys = Object.keys(value).toSorted().join(',');
   if (key.split('.').length === 4) {
-    if (keys !== 'stage,text')
+    if (keys !== 'stage,text') {
       throw new EventError(`work-unit status requires exactly {stage, text}: ${key}`);
-    if (!STAGES.has(value.stage))
+    }
+    if (!STAGES.has(value.stage)) {
       throw new EventError(`stage must be one of ${[...STAGES].join('/')}: ${value.stage}`);
-  } else if (keys !== 'text')
+    }
+  } else if (keys !== 'text') {
     throw new EventError(`section status requires exactly {text} without stage: ${key}`);
-  if (typeof value.text !== 'string' || value.text === '')
+  }
+  if (typeof value.text !== 'string' || value.text === '') {
     throw new EventError(`status.text must be a non-empty string: ${key}`);
+  }
 };
 
 // log 名前空間の値形状。ツール試行1件 = {tool, gap, targets}。
@@ -133,29 +142,35 @@ export const isLogTool = (tool) =>
   LOG_TOOLS.has(tool) || (typeof tool === 'string' && tool.startsWith('mcp_'));
 
 const assertLogValue = (key, value) => {
-  if (!value || typeof value !== 'object' || Array.isArray(value))
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new EventError(`log value must be an object: ${key}`);
-  if (typeof value.tool !== 'string' || !isLogTool(value.tool))
+  }
+  if (typeof value.tool !== 'string' || !isLogTool(value.tool)) {
     throw new EventError(
       `log tool must be one of read/edit/write/skill/bash/websearch/webfetch/task or mcp_*: ${key}`,
     );
-  if (!Number.isInteger(value.gap) || value.gap < 0)
+  }
+  if (!Number.isInteger(value.gap) || value.gap < 0) {
     throw new EventError(`log gap must be a non-negative integer: ${key}`);
-  if (Object.keys(value).toSorted().join(',') !== 'gap,targets,tool')
+  }
+  if (Object.keys(value).toSorted().join(',') !== 'gap,targets,tool') {
     throw new EventError(`log value requires exactly {tool, gap, targets}: ${key}`);
+  }
   if (
     !Array.isArray(value.targets) ||
     value.targets.length === 0 ||
     value.targets.some((target) => typeof target !== 'string' || target === '')
-  )
+  ) {
     throw new EventError(`log targets must be a non-empty string array: ${key}`);
+  }
 };
 
 // 下書き（ts を除くイベント）を検証して完成させる。
 // ts は既定でここで JST として付与するが、呼び出し側から同一tsを渡すこともできる
 export const buildEvent = (draft, ts = jstNow()) => {
-  if (!EVENT_TYPES.has(draft.type))
+  if (!EVENT_TYPES.has(draft.type)) {
     throw new EventError(`type must be one of ${[...EVENT_TYPES].join('/')}`);
+  }
   validateKey(draft.key);
   const event = { ts, type: draft.type, key: draft.key };
   if (draft.type === 'set') {
@@ -175,8 +190,9 @@ export const readEvents = () => {
     .filter((line) => line.trim() !== '')
     .map((line, index) => {
       const event = JSON.parse(line);
-      if (typeof event.ts !== 'string' || event.type === undefined || event.key === undefined)
+      if (typeof event.ts !== 'string' || event.type === undefined || event.key === undefined) {
         fail(`invalid event at line ${index + 1}`);
+      }
       return event;
     });
 };
@@ -193,8 +209,9 @@ export const auditMetaIntegrity = (trees) => {
       const keyPath = `${prefix}.${key}`;
       if ('purpose' in node) {
         const stage = node.status?.stage;
-        if (PATH_STAGES.has(stage) && (typeof node.path !== 'string' || node.path === ''))
+        if (PATH_STAGES.has(stage) && (typeof node.path !== 'string' || node.path === '')) {
           findings.push(`meta component ${keyPath} is "${stage}" but has no path`);
+        }
       }
       walk(node, keyPath);
     }
@@ -218,8 +235,9 @@ export const parseCheckpoint = (text) => {
     !checkpoint.trees ||
     typeof checkpoint.trees !== 'object' ||
     Array.isArray(checkpoint.trees)
-  )
+  ) {
     return null;
+  }
   return { trees: checkpoint.trees, compactedAt: checkpoint.compactedAt ?? null };
 };
 
@@ -227,12 +245,13 @@ export const parseCheckpoint = (text) => {
 // reset と sync-to-starter のベースライン生成で共有する
 export const stripHistory = (value) => {
   if (Array.isArray(value)) return value.map(stripHistory);
-  if (value && typeof value === 'object')
+  if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value)
         .filter(([key]) => key !== 'status' && key !== 'updatedAt')
         .map(([key, child]) => [key, stripHistory(child)]),
     );
+  }
   return value;
 };
 
@@ -248,8 +267,9 @@ export const writeCheckpoint = (trees, compactedAt = jstNow()) => {
 // チェックポイントを読み込み、畳み込みの起点とする。
 // 空ファイルや不正な JSON も「チェックポイントなし」と同じ起点にする
 export const loadBase = () => {
-  if (!fs.existsSync(CHECKPOINT_PATH))
+  if (!fs.existsSync(CHECKPOINT_PATH)) {
     return { trees: { product: {}, meta: {} }, compactedAt: null };
+  }
   return (
     parseCheckpoint(fs.readFileSync(CHECKPOINT_PATH, 'utf8')) ?? {
       trees: { product: {}, meta: {} },
@@ -263,8 +283,9 @@ export function setPath(tree, key, value) {
   const parts = key.split('.');
   let node = tree;
   for (const part of parts.slice(0, -1)) {
-    if (node[part] === null || typeof node[part] !== 'object' || Array.isArray(node[part]))
+    if (node[part] === null || typeof node[part] !== 'object' || Array.isArray(node[part])) {
       node[part] = {};
+    }
     node = node[part];
   }
   node[parts.at(-1)] = value;
@@ -277,9 +298,9 @@ const pruneEmpty = (tree, parts) => {
     let node = tree;
     for (const part of chain.slice(0, -1)) node = node[part];
     const last = chain.at(-1);
-    if (node && typeof node[last] === 'object' && Object.keys(node[last]).length === 0)
+    if (node && typeof node[last] === 'object' && Object.keys(node[last]).length === 0) {
       delete node[last];
-    else return;
+    } else return;
   }
 };
 
@@ -305,8 +326,9 @@ const workUnits = (container, marker) =>
 // meta は対象外。初期状態のベースは status なしで正しい
 export const normalizeTrees = (trees) => {
   for (const node of workUnits(trees.product?.features, 'trigger')) {
-    if (!node.status || typeof node.status !== 'object' || Array.isArray(node.status))
+    if (!node.status || typeof node.status !== 'object' || Array.isArray(node.status)) {
       node.status = {};
+    }
     node.status.stage ??= 'planned';
     node.status.text ??= '未着手';
     if (!STAGES.has(node.status.stage)) throw new EventError(`invalid stage: ${node.status.stage}`);
@@ -321,8 +343,9 @@ export const injectUpdatedAt = (trees, events) => {
     let latest = '';
     for (const event of events) {
       if (event.type !== 'set') continue;
-      if ((event.key === prefix || event.key.startsWith(`${prefix}.`)) && event.ts > latest)
+      if ((event.key === prefix || event.key.startsWith(`${prefix}.`)) && event.ts > latest) {
         latest = event.ts;
+      }
     }
     if (latest) node.updatedAt = latest.slice(0, 10).replaceAll('-', '');
   };
@@ -372,12 +395,13 @@ export const foldAll = () => {
 // キー順を正規化した文字列化。生成物の同一性判定に使う
 const sortValue = (value) => {
   if (Array.isArray(value)) return value.map(sortValue);
-  if (value && typeof value === 'object')
+  if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.keys(value)
         .toSorted((a, b) => (a < b ? -1 : a > b ? 1 : 0))
         .map((k) => [k, sortValue(value[k])]),
     );
+  }
   return value;
 };
 export const stableStringify = (value) => JSON.stringify(sortValue(value));

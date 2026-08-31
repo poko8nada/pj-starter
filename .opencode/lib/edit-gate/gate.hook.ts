@@ -46,8 +46,9 @@ export const createGate = (options?: { enabled?: boolean; root?: string }): Gate
         isEditTool(input.tool) &&
         !openSessions.has(input.sessionID) &&
         !isOutsideRoot(root, input.filePath)
-      )
+      ) {
         return { errors: ['no status transition recorded in this session'] };
+      }
       return { errors: [] };
     },
     close: (sessionID) => {

@@ -24,8 +24,9 @@ const parseOps = (argv) => {
     if (!flag?.startsWith('--')) fail(`unexpected argument: ${flag}`);
     const name = flag.slice(2);
     if (name === 'set') {
-      if (argv[i + 1] === undefined || argv[i + 2] === undefined)
+      if (argv[i + 1] === undefined || argv[i + 2] === undefined) {
         fail('--set requires <key> <value>');
+      }
       ops.push({ op: 'set', key: argv[i + 1], raw: argv[i + 2] });
       i += 3;
     } else if (name === 'del') {
@@ -58,8 +59,9 @@ const main = () => {
   const ops = parseOps(process.argv.slice(2));
   const fileOp = ops.find((op) => op.op === 'file');
   if (fileOp && ops.length > 1) fail('--file cannot be combined with --set/--del');
-  if (ops.length === 0)
+  if (ops.length === 0) {
     fail('no operations: use --set <key> <value>, --del <key> or --file <path>');
+  }
 
   // 同一呼び出しは同一時刻。検証を全件通してから追記する
   const ts = jstNow();

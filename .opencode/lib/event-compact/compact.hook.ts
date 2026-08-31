@@ -19,8 +19,9 @@ export const compactFailureStates = new Map<string, number>();
 
 export const compactEvents = async (ctx: CompactCtx): Promise<Report> => {
   const lastFailureAt = compactFailureStates.get(ctx.root);
-  if (lastFailureAt !== undefined && Date.now() - lastFailureAt <= COMPACT_FAILURE_TTL_MS)
+  if (lastFailureAt !== undefined && Date.now() - lastFailureAt <= COMPACT_FAILURE_TTL_MS) {
     return { errors: [] };
+  }
 
   const wc = await ctx.$`wc -l events/log.jsonl`.cwd(ctx.root).nothrow().quiet();
   if (wc.exitCode !== 0) {

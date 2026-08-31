@@ -28,10 +28,11 @@ export const reviewIdle = async (ctx: ReviewCtx, sessionId: string): Promise<Rep
     );
     errors.push(`[lint] issues that --fix could not resolve:\n${report}`);
   }
-  if (tsc.exitCode !== 0)
+  if (tsc.exitCode !== 0) {
     errors.push(
       `[typecheck] tsc found errors:\n${clipLines(tsc.stdout.toString(), MAX_REPORT_LINES)}`,
     );
+  }
 
   if (errors.length === 0) {
     rounds.reset(sessionId);

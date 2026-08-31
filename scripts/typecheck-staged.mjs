@@ -72,7 +72,8 @@ const runTypecheckGroup = (tsconfig, groupFiles) => {
 };
 
 let failed = false;
-for (const [tsconfig, groupFiles] of groups)
+for (const [tsconfig, groupFiles] of groups) {
   if (runTypecheckGroup(tsconfig, groupFiles)) failed = true;
+}
 
 process.exit(failed ? 1 : 0);

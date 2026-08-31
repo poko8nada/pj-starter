@@ -27,7 +27,7 @@ export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }
         filePath: output.args?.filePath,
       });
       const message = buildMessage(
-        '[gate] Record a status transition before editing. Read events/README.md (the recording contract), load the matching skill (feature → agenda for new features, agenda for updates), then append via events/scripts/append.mjs.',
+        '[gate] Load the skill required for the project, Record a status before editing.',
         report,
       );
       if (message !== null) throw new Error(message);
@@ -35,8 +35,9 @@ export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }
     event: async ({ event }) => {
       if (event.type === 'session.created') {
         // サブエージェントセッション（parentID を持つ）はゲート対象外
-        if (event.properties.info?.parentID && event.properties.info?.id)
+        if (event.properties.info?.parentID && event.properties.info?.id) {
           gate.exempt(event.properties.info.id);
+        }
         return;
       }
       if (event.type !== 'session.idle') return;

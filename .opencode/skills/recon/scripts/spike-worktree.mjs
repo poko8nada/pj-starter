@@ -27,8 +27,9 @@ function git(args, cwd) {
 }
 
 function validateLibName(libName) {
-  if (!/^[a-z0-9][a-z0-9-]*$/.test(libName))
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(libName)) {
     throw new Error(`invalid lib-name: ${libName} (use lowercase letters, digits, hyphens)`);
+  }
 }
 
 function create(libName) {
@@ -52,12 +53,14 @@ function cleanup(libName) {
   git(['worktree', 'remove', '--force', worktreeRel], root);
   git(['branch', '-D', `spike/${libName}`], root);
   const list = git(['worktree', 'list'], root);
-  if (list.includes(`spike-${libName}`))
+  if (list.includes(`spike-${libName}`)) {
     throw new Error(`spike worktree still exists: ${worktreeRel}`);
+  }
 
   const statusAfter = git(['status', '--porcelain'], root);
-  if (statusAfter !== statusBefore)
+  if (statusAfter !== statusBefore) {
     throw new Error(`main project changed during spike: ${statusAfter}`);
+  }
 
   console.log('cleanup complete');
 }

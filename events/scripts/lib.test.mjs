@@ -201,8 +201,9 @@ describe('parseCheckpoint', () => {
       '{"trees":null}',
       '{"trees":"x"}',
       '{"trees":[]}',
-    ])
+    ]) {
       expect(parseCheckpoint(text)).toBeNull();
+    }
   });
 
   it('normalizes a missing compactedAt to null', () => {

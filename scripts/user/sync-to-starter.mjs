@@ -159,8 +159,9 @@ const readCandidates = (lib, projectLogPath) => {
 // meta ツリーからコンポーネントキー（meta.<section>.<id>）を列挙する
 const componentKeys = (meta) => {
   const keys = [];
-  for (const [section, components] of Object.entries(meta ?? {}))
+  for (const [section, components] of Object.entries(meta ?? {})) {
     for (const id of Object.keys(components ?? {})) keys.push(`meta.${section}.${id}`);
+  }
   return keys;
 };
 
@@ -169,8 +170,9 @@ const componentKeys = (meta) => {
 // イベントが無ければ checkpoint 由来の status を使う（削除済みコンポーネントも最後の主張を引き継ぐ）
 const latestStage = (events, trees, comp) => {
   let stage;
-  for (const event of events)
+  for (const event of events) {
     if (event.type === 'set' && event.key === `${comp}.status`) stage = event.value?.stage;
+  }
   return stage ?? valueAt(trees, `${comp}.status`)?.stage;
 };
 
@@ -363,7 +365,7 @@ const main = async () => {
   checkRclone();
 
   let failed = false;
-  for (const unit of SYNC_UNITS)
+  for (const unit of SYNC_UNITS) {
     for (const unitPath of unit.paths) {
       const src = path.join(PROJECT_ROOT, unitPath);
       const dst = path.join(starterRoot, unitPath);
@@ -375,6 +377,7 @@ const main = async () => {
       process.stdout.write(result.output);
       if (!result.ok) failed = true;
     }
+  }
   if (failed) fail('bisync が一部の対象で失敗しました（安全 abort は手動解決が必要）');
 
   await syncMeta(starterRoot, run);

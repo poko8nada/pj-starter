@@ -57,8 +57,9 @@ const parseArgs = (argv) => {
     argv.slice(0, runIndex).length > 0 ||
     after.length > 1 ||
     after.some((a) => a.startsWith('--'))
-  )
+  ) {
     fail('unexpected arguments (usage: reset.mjs [--run [name]])');
+  }
   return { run: true, name: after[0] === '' ? undefined : after[0] };
 };
 

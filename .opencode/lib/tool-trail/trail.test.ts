@@ -99,8 +99,9 @@ describe('buildTrailEvent', () => {
   });
 
   it('returns null for tools outside the whitelist', () => {
-    for (const tool of ['grep', 'glob', 'question', 'todowrite'])
+    for (const tool of ['grep', 'glob', 'question', 'todowrite']) {
       expect(buildTrailEvent({ tool, args: {}, gap: 0, root })).toBeNull();
+    }
   });
 
   it('returns null for a negative or non-integer gap', () => {

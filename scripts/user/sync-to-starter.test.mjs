@@ -183,8 +183,9 @@ const makeProject = ({ logEvents = PROJECT_LOG } = {}) => {
     '.opencode',
     'scripts',
     'events',
-  ])
+  ]) {
     fs.mkdirSync(path.join(root, dir), { recursive: true });
+  }
   fs.copyFileSync(SCRIPT, path.join(root, 'scripts', 'user', 'sync-to-starter.mjs'));
   fs.copyFileSync(LIB, path.join(eventsDir, 'scripts', 'lib.mjs'));
   fs.copyFileSync(BUILD, path.join(eventsDir, 'scripts', 'build.mjs'));
@@ -208,10 +209,12 @@ const makeStarter = ({ checkpoint = CHECKPOINT, logEvents = STARTER_LOG } = {}) 
     '.opencode',
     'scripts',
     'events',
-  ])
+  ]) {
     fs.mkdirSync(path.join(root, dir), { recursive: true });
-  if (checkpoint !== null)
+  }
+  if (checkpoint !== null) {
     fs.writeFileSync(path.join(eventsDir, 'checkpoint.json'), JSON.stringify(checkpoint));
+  }
   writeLog(eventsDir, logEvents);
   fs.copyFileSync(LIB, path.join(eventsDir, 'scripts', 'lib.mjs'));
   fs.copyFileSync(BUILD, path.join(eventsDir, 'scripts', 'build.mjs'));
@@ -252,10 +255,11 @@ const readArgsLog = (projectRoot) =>
 // 履歴フィールドの混入を深く検査する
 const hasHistoryFields = (value) => {
   if (Array.isArray(value)) return value.some(hasHistoryFields);
-  if (value && typeof value === 'object')
+  if (value && typeof value === 'object') {
     return Object.entries(value).some(
       ([key, child]) => key === 'status' || key === 'updatedAt' || hasHistoryFields(child),
     );
+  }
   return false;
 };
 
@@ -393,15 +397,17 @@ describe('sync-to-starter.mjs の双方向シンク', () => {
       '.opencode/skills',
       'scripts',
       'events',
-    ])
+    ]) {
       expect(allArgs.some((arg) => arg.endsWith(unitPath))).toBe(true);
+    }
     for (const pattern of [
       'node_modules/**',
       '**/.DS_Store',
       '**/package-lock.json',
       '**/pnpm-lock.yaml',
-    ])
+    ]) {
       expect(allArgs).toContain(pattern);
+    }
     for (const pattern of [
       '+ tsconfig.json',
       '+ package.json',
@@ -409,10 +415,12 @@ describe('sync-to-starter.mjs の双方向シンク', () => {
       '+ AGENTS.md',
       '+ lefthook.yaml',
       '- *',
-    ])
+    ]) {
       expect(allArgs).toContain(pattern);
-    for (const pattern of ['log.jsonl', 'checkpoint.json', 'snapshots/**'])
+    }
+    for (const pattern of ['log.jsonl', 'checkpoint.json', 'snapshots/**']) {
       expect(allArgs).toContain(pattern);
+    }
   });
 
   it('bisync の失敗（安全 abort など）は全体を失敗させ、meta フローは実行されない', () => {

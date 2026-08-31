@@ -20,13 +20,14 @@ fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
 // 生成物を書き出す。既存内容と同一なら何もしない
 const writeSnapshot = (name, content) => {
   const file = path.join(SNAPSHOTS_DIR, `${name}.json`);
-  if (fs.existsSync(file))
+  if (fs.existsSync(file)) {
     try {
       const current = JSON.parse(fs.readFileSync(file, 'utf8'));
       if (stableStringify(current.content) === stableStringify(content)) return false;
     } catch (error) {
       if (!(error instanceof SyntaxError)) throw error;
     }
+  }
   fs.writeFileSync(file, `${JSON.stringify({ generatedAt: jstNow(), asOf, content }, null, 2)}\n`);
   return true;
 };

@@ -9,7 +9,8 @@ describe('isEditTool', () => {
   });
 
   it('returns false for other tools', () => {
-    for (const tool of ['read', 'bash', 'glob', 'grep', 'websearch', 'skill', 'task'])
+    for (const tool of ['read', 'bash', 'glob', 'grep', 'websearch', 'skill', 'task']) {
       expect(isEditTool(tool)).toBe(false);
+    }
   });
 });

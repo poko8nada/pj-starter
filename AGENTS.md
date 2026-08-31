@@ -1,18 +1,19 @@
 # AGENTS.md
 
+**ANYWAY Do NOT procrastinate and do NOT skip steps. Be thorough.**
+
 ## Operational System
 
-- `events/` directory represents the state of this project.
-- Read log using the reading tool and state the recording contract in a message before working.
+- `./events/snapshots/` dir represents the state and context of this project.
+- State the recording contract in a message before working.
 - Check this at the start. **Read [events/README.md](./events/README.md) for an overview.**
 
-## Core Principles
+## Basic Rules
 
-- **Do NOT procrastinate and do NOT skip steps. Be thorough. **
-- If you panic, calm down first and start by providing a status report.
-- Perform implementations only after obtaining the user's explicit consent.
+- **Always discuss with users before implementation.** There are NO exceptions.
+- If you panic, calm down first, provide a status report and STOP.
 
-### Context
+### Language
 
 - **Think in English, but output in Japanese.**
 - Do NOT coin new terms in your output.
@@ -20,7 +21,6 @@
 
 ### Solutions
 
-- Your ideas tend to become “JUST additions” and become future liabilities
 - **In addition to solutions, make structural changes to repay existing debts.**
 - Keep universal and general-purpose approaches in mind.
 - Propose multiple options and explain the reasons for your recommendations.

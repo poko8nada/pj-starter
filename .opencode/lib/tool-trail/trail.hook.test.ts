@@ -11,7 +11,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createTrail, lastActivity, mergeBlocked, subSessions } from './trail.hook';
+import { createTrail, lastActivity, subSessions } from './trail.hook';
 
 // スクラッチの events ディレクトリを作る（書き込み先の実在を保証する）
 const makeRoot = (): string => {
@@ -37,7 +37,6 @@ describe('createTrail', () => {
     vi.restoreAllMocks();
     lastActivity.clear();
     subSessions.clear();
-    mergeBlocked.clear();
     for (const root of roots) rmSync(root, { recursive: true, force: true });
     roots.length = 0;
   });
@@ -74,8 +73,12 @@ describe('createTrail', () => {
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'a.ts') } });
+    now.mockReturnValue(1500);
+    trail.after({ sessionID: 's3' });
     now.mockReturnValue(2000);
     trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'b.ts') } });
+    now.mockReturnValue(2500);
+    trail.after({ sessionID: 's3' });
     now.mockReturnValue(3000);
     trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'c.ts') } });
     expect(readLog(root)).toHaveLength(1);
@@ -158,7 +161,6 @@ describe('createTrail repair', () => {
     vi.restoreAllMocks();
     lastActivity.clear();
     subSessions.clear();
-    mergeBlocked.clear();
     for (const root of roots) rmSync(root, { recursive: true, force: true });
     roots.length = 0;
   });
@@ -190,6 +192,7 @@ describe('createTrail repair', () => {
     roots.push(root);
     const trail = createTrail(root);
     trail.before({ tool: 'read', sessionID: 's5g', args: { filePath: join(root, 'a.ts') } });
+    trail.after({ sessionID: 's5g' });
     // 末尾改行を除去してから次の同一ツールを書く（マージ経路の replaceLastLine を検証）
     const logPath = join(root, 'events', 'log.jsonl');
     const text = readFileSync(logPath, 'utf8');
@@ -207,7 +210,6 @@ describe('createTrail boundaries', () => {
     vi.restoreAllMocks();
     lastActivity.clear();
     subSessions.clear();
-    mergeBlocked.clear();
     for (const root of roots) rmSync(root, { recursive: true, force: true });
     roots.length = 0;
   });
@@ -221,7 +223,8 @@ describe('createTrail boundaries', () => {
     trail.before({ tool: 'read', sessionID: 's5d', args: { filePath: join(root, 'a.ts') } });
     now.mockReturnValue(2000);
     trail.after({ sessionID: 's5d' });
-    // ターン境界（busy でリセット）。同一ツールでもマージせず、リセット後の gap を保持する
+    // ターン境界（busy）。lastActivity を削除し、次の試行をターン最初として扱う。
+    // 同一ツールでもマーズせず、gap は 0（ベースライン未設定）になる
     now.mockReturnValue(60000);
     trail.event({
       type: 'session.status',
@@ -230,10 +233,10 @@ describe('createTrail boundaries', () => {
     now.mockReturnValue(61000);
     trail.before({ tool: 'read', sessionID: 's5d', args: { filePath: join(root, 'b.ts') } });
     expect(readLog(root)).toHaveLength(2);
-    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 1000, targets: ['b.ts'] });
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['b.ts'] });
   });
 
-  it('resets the baseline at session.status busy so user time is excluded', () => {
+  it('resets the baseline at session.status busy so the next try starts fresh', () => {
     const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
@@ -242,7 +245,7 @@ describe('createTrail boundaries', () => {
     trail.before({ tool: 'read', sessionID: 's6', args: { filePath: join(root, 'a.ts') } });
     now.mockReturnValue(2000);
     trail.after({ sessionID: 's6' });
-    // ユーザーターン（busy でリセット）。1分経過しても次のギャップは小さく保たれる
+    // ユーザーターン（busy）。lastActivity を削除し、次の試行の gap は 0 になる（ベースライン未設定）
     now.mockReturnValue(60000);
     trail.event({
       type: 'session.status',
@@ -250,7 +253,7 @@ describe('createTrail boundaries', () => {
     });
     now.mockReturnValue(61000);
     trail.before({ tool: 'edit', sessionID: 's6', args: { filePath: join(root, 'b.ts') } });
-    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 1000, targets: ['b.ts'] });
+    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
   });
 
   it('does not reset the baseline for subagent sessions at busy', () => {

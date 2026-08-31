@@ -53,8 +53,9 @@ const makeScratch = ({
     `${log}${extraEvents.map((event) => `${event}\n`).join('')}`,
   );
   if (checkpoint !== null) fs.writeFileSync(path.join(eventsDir, 'checkpoint.json'), checkpoint);
-  for (const name of ['README.md', 'README.ja.md'])
+  for (const name of ['README.md', 'README.ja.md']) {
     fs.writeFileSync(path.join(root, name), `# ${name}`);
+  }
   return root;
 };
 
@@ -69,10 +70,11 @@ const readJson = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 // 履歴フィールドの混入を深く検査する。
 const hasHistoryFields = (value) => {
   if (Array.isArray(value)) return value.some(hasHistoryFields);
-  if (value && typeof value === 'object')
+  if (value && typeof value === 'object') {
     return Object.entries(value).some(
       ([key, child]) => key === 'status' || key === 'updatedAt' || hasHistoryFields(child),
     );
+  }
   return false;
 };
 
