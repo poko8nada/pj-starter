@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-31T15:42:56.077+09:00",
-  "asOf": "2026-08-31T15:42:56.052+09:00",
+  "generatedAt": "2026-08-31T17:46:55.909+09:00",
+  "asOf": "2026-08-31T17:46:55.883+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -25,7 +25,7 @@
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
         "status": {
           "stage": "commit",
-          "text": "incrementalマージのターン境界判定をmergeBlockedからlastActivityの有無に置き換え"
+          "text": "プラグイン間共有の問題を修正: lastActivity/subSessionsをクロージャ局所化、busyリセット削除、状態イベント保護を追加"
         },
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
         "updatedAt": "20260831"

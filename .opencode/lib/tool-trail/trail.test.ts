@@ -19,8 +19,8 @@ const merge = (last: TrailEvent, next: TrailEvent): TrailEvent => {
 };
 
 // mergeTrailEvents のテスト用イベント
-const makeEvent = (tool: string, gap: number, targets: string[]): TrailEvent => ({
-  ts: '2026-08-30T10:00:00.000+09:00',
+const makeEvent = (tool: string, gap: number, targets: string[], ts?: string): TrailEvent => ({
+  ts: ts ?? '2026-08-30T10:00:00.000+09:00',
   type: 'set',
   key: 'log.try.abc12345',
   value: { tool, gap, targets },
@@ -188,5 +188,13 @@ describe('mergeTrailEvents', () => {
     expect(
       mergeTrailEvents(makeEvent('read', 0, ['a.ts']), makeEvent('edit', 0, ['b.ts'])),
     ).toBeNull();
+  });
+
+  it('uses the next event timestamp for the merged line', () => {
+    const merged = merge(
+      makeEvent('read', 2000, ['a.ts'], '2026-08-30T10:00:00.000+09:00'),
+      makeEvent('read', 500, ['b.ts'], '2026-08-30T10:00:05.000+09:00'),
+    );
+    expect(merged.ts).toBe('2026-08-30T10:00:05.000+09:00');
   });
 });

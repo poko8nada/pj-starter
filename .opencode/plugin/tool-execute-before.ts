@@ -33,8 +33,8 @@ export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }
       if (message !== null) throw new Error(message);
     },
     event: async ({ event }) => {
+      trail.event(event);
       if (event.type === 'session.created') {
-        // サブエージェントセッション（parentID を持つ）はゲート対象外
         if (event.properties.info?.parentID && event.properties.info?.id) {
           gate.exempt(event.properties.info.id);
         }

@@ -87,11 +87,11 @@ export const buildTrailEvent = (input: TrailInput): TrailEvent | null => {
 };
 
 // 連続する同一ツールの試行を1行にマージする。異なるツールは null。
-// 最初の試行の ts / key / gap を保持し、targets を伸ばす
+// key / gap は最初の試行のものを保持し、ts は最終試行の時刻、targets を伸ばす
 export const mergeTrailEvents = (last: TrailEvent, next: TrailEvent): TrailEvent | null => {
   if (last.value.tool !== next.value.tool) return null;
   return {
-    ts: last.ts,
+    ts: next.ts,
     type: 'set',
     key: last.key,
     value: {

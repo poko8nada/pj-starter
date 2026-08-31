@@ -1,0 +1,5 @@
+{"ts":"2026-08-31T17:52:29.029+09:00","type":"set","key":"log.try.210154f1","value":{"tool":"bash","gap":9473,"targets":["cat"]}}
+{"ts":"2026-08-31T17:53:15.394+09:00","type":"set","key":"log.try.31dcef6b","value":{"tool":"bash","gap":0,"targets":["echo","echo","cat"]}}
+{"ts":"2026-08-31T17:53:46.776+09:00","type":"set","key":"log.try.5c1ce3a7","value":{"tool":"read","gap":0,"targets":["AGENTS.md","events/README.md"]}}
+{"ts":"2026-08-31T17:53:56.119+09:00","type":"set","key":"log.try.9fd040f6","value":{"tool":"bash","gap":9343,"targets":["cat"]}}
+{"ts":"2026-08-31T17:56:05.058+09:00","type":"set","key":"log.try.9e91680b","value":{"tool":"bash","gap":0,"targets":["git"]}}

@@ -1,4 +1,4 @@
-// createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・
+// createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・マージ動作を検証する
 import {
   appendFileSync,
   existsSync,
@@ -11,7 +11,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createTrail, lastActivity, subSessions } from './trail.hook';
+import { createTrail } from './trail.hook';
 
 // スクラッチの events ディレクトリを作る（書き込み先の実在を保証する）
 const makeRoot = (): string => {
@@ -35,8 +35,6 @@ describe('createTrail', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    lastActivity.clear();
-    subSessions.clear();
     for (const root of roots) rmSync(root, { recursive: true, force: true });
     roots.length = 0;
   });
@@ -51,19 +49,17 @@ describe('createTrail', () => {
     expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 
-  it('measures the thinking gap from the previous tool completion', () => {
+  it('measures the thinking gap from the previous trail line', () => {
     const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
-    trail.before({ tool: 'grep', sessionID: 's2', args: { pattern: 'x' } });
-    now.mockReturnValue(5000);
-    trail.after({ sessionID: 's2' });
+    trail.before({ tool: 'bash', sessionID: 's2', args: { command: 'ls' } });
     now.mockReturnValue(20000);
     trail.before({ tool: 'read', sessionID: 's2', args: { filePath: join(root, 'a.ts') } });
-    expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 15000, targets: ['a.ts'] });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 19000, targets: ['a.ts'] });
   });
 
   it('merges consecutive same-tool tries into one line', () => {
@@ -73,16 +69,11 @@ describe('createTrail', () => {
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'a.ts') } });
-    now.mockReturnValue(1500);
-    trail.after({ sessionID: 's3' });
     now.mockReturnValue(2000);
     trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'b.ts') } });
-    now.mockReturnValue(2500);
-    trail.after({ sessionID: 's3' });
     now.mockReturnValue(3000);
     trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'c.ts') } });
     expect(readLog(root)).toHaveLength(1);
-    // マージ行の gap は最初の試行のもの（この場合はセッション最初のツールなので 0）
     expect(valueOf(root, 0)).toEqual({
       tool: 'read',
       gap: 0,
@@ -97,13 +88,11 @@ describe('createTrail', () => {
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's4', args: { filePath: join(root, 'a.ts') } });
-    now.mockReturnValue(1500);
-    trail.after({ sessionID: 's4' });
     now.mockReturnValue(2000);
     trail.before({ tool: 'edit', sessionID: 's4', args: { filePath: join(root, 'b.ts') } });
     expect(readLog(root)).toHaveLength(2);
     expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
-    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 500, targets: ['b.ts'] });
+    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 1000, targets: ['b.ts'] });
   });
 
   it('never truncates a state event that precedes a try', () => {
@@ -124,33 +113,25 @@ describe('createTrail', () => {
     expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 
-  it('does not merge with a malformed last line', () => {
+  it('does not merge when a state event is written between same-tool tries', () => {
     const root = makeRoot();
     roots.push(root);
-    appendFileSync(join(root, 'events', 'log.jsonl'), 'not-json\n');
     const trail = createTrail(root);
+    vi.spyOn(Date, 'now').mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's5b', args: { filePath: join(root, 'a.ts') } });
-    // 破損行は repairLog が除去し、read の行だけが残る
-    expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
-  });
-
-  it('does not merge with a line whose value shape is invalid', () => {
-    const root = makeRoot();
-    roots.push(root);
     appendFileSync(
       join(root, 'events', 'log.jsonl'),
       `${JSON.stringify({
-        ts: '2026-08-30T10:00:00.000+09:00',
+        ts: '2026-08-30T10:00:01.000+09:00',
         type: 'set',
-        key: 'log.try.abc',
-        value: { tool: 'read', gap: 1.5, targets: ['a'] },
+        key: 'meta.harness.x.status',
+        value: { stage: 'commit', text: 'x' },
       })}\n`,
     );
-    const trail = createTrail(root);
-    trail.before({ tool: 'read', sessionID: 's5c', args: { filePath: join(root, 'a.ts') } });
-    expect(readLog(root)).toHaveLength(2);
-    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+    vi.spyOn(Date, 'now').mockReturnValue(2000);
+    trail.before({ tool: 'read', sessionID: 's5b', args: { filePath: join(root, 'b.ts') } });
+    expect(readLog(root)).toHaveLength(3);
+    expect(valueOf(root, 2)).toEqual({ tool: 'read', gap: 1000, targets: ['b.ts'] });
   });
 });
 
@@ -159,8 +140,6 @@ describe('createTrail repair', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    lastActivity.clear();
-    subSessions.clear();
     for (const root of roots) rmSync(root, { recursive: true, force: true });
     roots.length = 0;
   });
@@ -191,12 +170,12 @@ describe('createTrail repair', () => {
     const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
+    vi.spyOn(Date, 'now').mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's5g', args: { filePath: join(root, 'a.ts') } });
-    trail.after({ sessionID: 's5g' });
-    // 末尾改行を除去してから次の同一ツールを書く（マージ経路の replaceLastLine を検証）
     const logPath = join(root, 'events', 'log.jsonl');
     const text = readFileSync(logPath, 'utf8');
     writeFileSync(logPath, text.trimEnd());
+    vi.spyOn(Date, 'now').mockReturnValue(2000);
     trail.before({ tool: 'read', sessionID: 's5g', args: { filePath: join(root, 'b.ts') } });
     expect(readLog(root)).toHaveLength(1);
     expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
@@ -208,23 +187,17 @@ describe('createTrail boundaries', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    lastActivity.clear();
-    subSessions.clear();
     for (const root of roots) rmSync(root, { recursive: true, force: true });
     roots.length = 0;
   });
 
-  it('does not merge across a turn boundary (busy reset)', () => {
+  it('does not reset on busy — merges consecutive same-tool within a turn', () => {
     const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's5d', args: { filePath: join(root, 'a.ts') } });
-    now.mockReturnValue(2000);
-    trail.after({ sessionID: 's5d' });
-    // ターン境界（busy）。lastActivity を削除し、次の試行をターン最初として扱う。
-    // 同一ツールでもマーズせず、gap は 0（ベースライン未設定）になる
     now.mockReturnValue(60000);
     trail.event({
       type: 'session.status',
@@ -232,20 +205,17 @@ describe('createTrail boundaries', () => {
     });
     now.mockReturnValue(61000);
     trail.before({ tool: 'read', sessionID: 's5d', args: { filePath: join(root, 'b.ts') } });
-    expect(readLog(root)).toHaveLength(2);
-    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['b.ts'] });
+    expect(readLog(root)).toHaveLength(1);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
   });
 
-  it('resets the baseline at session.status busy so the next try starts fresh', () => {
+  it('does not reset on busy — different tools write separate lines', () => {
     const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's6', args: { filePath: join(root, 'a.ts') } });
-    now.mockReturnValue(2000);
-    trail.after({ sessionID: 's6' });
-    // ユーザーターン（busy）。lastActivity を削除し、次の試行の gap は 0 になる（ベースライン未設定）
     now.mockReturnValue(60000);
     trail.event({
       type: 'session.status',
@@ -253,22 +223,8 @@ describe('createTrail boundaries', () => {
     });
     now.mockReturnValue(61000);
     trail.before({ tool: 'edit', sessionID: 's6', args: { filePath: join(root, 'b.ts') } });
-    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
-  });
-
-  it('does not reset the baseline for subagent sessions at busy', () => {
-    const root = makeRoot();
-    roots.push(root);
-    const trail = createTrail(root);
-    trail.event({
-      type: 'session.created',
-      properties: { info: { id: 'sub1', parentID: 'main' } },
-    });
-    trail.event({
-      type: 'session.status',
-      properties: { sessionID: 'sub1', status: { type: 'busy' } },
-    });
-    expect(lastActivity.has('sub1')).toBe(false);
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 60000, targets: ['b.ts'] });
   });
 
   it('deletes the baseline at session.idle so the next turn starts from 0', () => {
@@ -278,10 +234,9 @@ describe('createTrail boundaries', () => {
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's7', args: { filePath: join(root, 'a.ts') } });
-    now.mockReturnValue(2000);
-    trail.after({ sessionID: 's7' });
-    trail.event({ type: 'session.idle', properties: { sessionID: 's7' } });
     now.mockReturnValue(60000);
+    trail.event({ type: 'session.idle', properties: { sessionID: 's7' } });
+    now.mockReturnValue(61000);
     trail.before({ tool: 'edit', sessionID: 's7', args: { filePath: join(root, 'b.ts') } });
     expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
   });
@@ -293,15 +248,14 @@ describe('createTrail boundaries', () => {
     const now = vi.spyOn(Date, 'now');
     now.mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's8', args: { filePath: join(root, 'a.ts') } });
-    now.mockReturnValue(2000);
-    trail.after({ sessionID: 's8' });
-    trail.event({ type: 'session.error', properties: { sessionID: 's8' } });
     now.mockReturnValue(60000);
+    trail.event({ type: 'session.error', properties: { sessionID: 's8' } });
+    now.mockReturnValue(61000);
     trail.before({ tool: 'edit', sessionID: 's8', args: { filePath: join(root, 'b.ts') } });
     expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
   });
 
-  it('excludes subagent sessions from recording and baseline updates', () => {
+  it('excludes subagent sessions from recording', () => {
     const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
@@ -310,8 +264,26 @@ describe('createTrail boundaries', () => {
       properties: { info: { id: 'sub2', parentID: 'main' } },
     });
     trail.before({ tool: 'read', sessionID: 'sub2', args: { filePath: join(root, 'a.ts') } });
-    trail.after({ sessionID: 'sub2' });
     expect(readLog(root)).toHaveLength(0);
+  });
+
+  it('does not reset baseline on subagent idle', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    const now = vi.spyOn(Date, 'now');
+    trail.event({
+      type: 'session.created',
+      properties: { info: { id: 'sub1', parentID: 'main' } },
+    });
+    now.mockReturnValue(1000);
+    trail.before({ tool: 'read', sessionID: 'main', args: { filePath: join(root, 'a.ts') } });
+    now.mockReturnValue(5000);
+    trail.event({ type: 'session.idle', properties: { sessionID: 'sub1' } });
+    now.mockReturnValue(6000);
+    trail.before({ tool: 'read', sessionID: 'main', args: { filePath: join(root, 'b.ts') } });
+    expect(readLog(root)).toHaveLength(1);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
   });
 
   it('swallows write failures without breaking the tool flow', () => {
