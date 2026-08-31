@@ -9,6 +9,7 @@ import {
   buildEvent,
   deletePath,
   EventError,
+  findUnresolved,
   injectUpdatedAt,
   lastFoldedTs,
   normalizeTrees,
@@ -648,5 +649,45 @@ describe('injectUpdatedAt', () => {
       { type: 'set', key: 'log.try.a', value: {}, ts: '2026-08-26T10:00:00+09:00' },
     ]);
     expect(trees.product.name.updatedAt).toBeUndefined();
+  });
+});
+
+describe('findUnresolved', () => {
+  it('finds work units whose status stage is ready or implement', () => {
+    const trees = {
+      product: {
+        features: {
+          auth: { trigger: 't', status: { stage: 'ready', text: '実装待ち' } },
+          done: { trigger: 't', status: { stage: 'commit', text: '完了' } },
+        },
+      },
+      meta: {
+        skills: {
+          refactor: { purpose: 'p', path: 'x', status: { stage: 'implement', text: '作業中' } },
+          planned: { purpose: 'p', status: { stage: 'planned', text: '未着手' } },
+        },
+      },
+    };
+    const found = findUnresolved(trees);
+    expect(found).toEqual([
+      { name: 'product.features.auth', stage: 'ready', text: '実装待ち', path: '' },
+      { name: 'meta.skills.refactor', stage: 'implement', text: '作業中', path: 'x' },
+    ]);
+  });
+
+  it('returns an empty array when nothing is unresolved', () => {
+    const trees = {
+      product: { features: { a: { trigger: 't', status: { stage: 'commit', text: '完了' } } } },
+      meta: { skills: { b: { purpose: 'p', status: { stage: 'planned', text: '未着手' } } } },
+    };
+    expect(findUnresolved(trees)).toEqual([]);
+  });
+
+  it('ignores nodes without status and raw values', () => {
+    const trees = {
+      product: { name: { value: 'X' }, features: {} },
+      meta: { harness: { x: { purpose: 'p' } } },
+    };
+    expect(findUnresolved(trees)).toEqual([]);
   });
 });

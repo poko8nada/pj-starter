@@ -181,6 +181,10 @@ node events/scripts/compact.mjs
 
 node events/scripts/read.mjs --name product
 
+# Read unresolved work units (ready/implement) in human-readable form
+
+node events/scripts/read.mjs --name meta --unresolved
+
 ```
 
 Values are parsed as JSON; unparseable strings are kept raw. For testing, point `EVENTS_DIR` at a scratch copy of this directory.

@@ -20,11 +20,15 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 ## Procedure
 
 3. **Append status assertions mechanically** — for every touched component, assert `{"stage":"commit","text":"<今回の変更内容>"}`. No stage-transition judgment: always write `commit`, even when the component was already `commit` (the text is updated). `text` states only what changed this time — no reasons, no progress explanations. Multiple targets share one invocation: `node events/scripts/append-build.mjs --set <key>.status '{"stage":"commit","text":"…"}' --set …` (the wrapper runs the build to refresh snapshots). The log and snapshots are committed alongside the code.
-4. **Pre-commit inspection**:
+4. **Check unresolved components** — run `node events/scripts/read.mjs --name meta --unresolved` (and `--name product` as well) and list any unresolved (`ready`/`implement`) components to the user before proposing the message. For each, let the user decide:
+   - Implementation is done → it is covered by the status assertions above
+   - Not done / no longer wanted → record a withdrawal via `del` or a revert `set` **and re-run `append-build.mjs`** (canonical route) so the withdrawal lands in log and snapshots before committing
+   - Carry over to the next turn → leave as-is (carry-over is allowed; the follow-up is informational)
+5. **Pre-commit inspection**:
    - `git status` — intended files only
    - `git diff` — no secrets, no unintended changes
    - `git log --oneline -10` — match repo message style
-5. **Propose the commit message** — present the structured message to the user in chat and wait for approval or corrections:
+6. **Propose the commit message** — present the structured message to the user in chat and wait for approval or corrections:
 
    ```
    <type>(<scope>): <imperative subject in English, ≤50 chars, no period>
@@ -53,7 +57,7 @@ Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config
 
    - Subject is English imperative; body is Japanese in plain form (「〜した」), wrapped at ~72 chars; labels stay English. Blank line between subject and body.
 
-6. **Commit** — execute `git commit` only after the user approves the message.
+7. **Commit** — execute `git commit` only after the user approves the message.
 
 ## Strict no-commit moments
 

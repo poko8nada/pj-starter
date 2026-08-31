@@ -19,17 +19,18 @@ Pre-commit code review. The main agent handles scope and aggregation; the audito
 ## Procedure
 
 1. **Get the diff** — run `git diff HEAD` to collect the pending changes. If empty, report "nothing to review" and stop.
-2. **Chunk** — group the changed files into reviewable chunks:
+2. **Check unresolved components** — run `node events/scripts/read.mjs --name meta --unresolved` (and `--name product` as well). Note any `ready`/`implement` components that sit outside this audit's diff: they were left uncommitted in an earlier turn. Include them in the digest so the user can decide whether to withdraw (`del`) or carry them over.
+3. **Chunk** — group the changed files into reviewable chunks:
    - Map each changed file to its work unit (meta: via the component's `path` in the snapshot; product: by which feature the file implements)
    - One chunk = one work unit's full change set — code, tests, and docs together, so the auditor can cross-check the three viewpoints within the chunk
    - Shared libraries form their own chunk (e.g. `events/scripts/lib.mjs` → events-scripts chunk); generated artifacts (`log.jsonl`, `snapshots/`) are excluded — covered by build validation
    - If a chunk is too large for one auditor pass, split by cohesion, keeping each sub-group's code, tests, and docs together
-3. **Spawn auditors in parallel** — one Task call per chunk with `auditor` as sub agent, passing the chunk: the changed file paths, the diff for those files, and the work-unit context (purpose / definition). The auditor reads the files itself; it does not run git.
-4. **Aggregate** — collect the fixed-format findings returned by each auditor.
-5. **Digest** — group the findings and add your own assessment: clearly valid, needs user judgment, or likely false positive. Give a recommendation.
-6. **Present** — show the findings with your recommendation to the user. Do not fix anything yourself.
-7. **Fix** — implement the fixes the user decided on.
-8. **Re-review** — re-run the audit on the new diff (steps 1–6). Loop until the audit returns OK or the user stops.
+4. **Spawn auditors in parallel** — one Task call per chunk with `auditor` as sub agent, passing the chunk: the changed file paths, the diff for those files, and the work-unit context (purpose / definition). The auditor reads the files itself; it does not run git.
+5. **Aggregate** — collect the fixed-format findings returned by each auditor.
+6. **Digest** — group the findings and add your own assessment: clearly valid, needs user judgment, or likely false positive. Give a recommendation. Fold in the unresolved components from step 2.
+7. **Present** — show the findings with your recommendation to the user. Do not fix anything yourself.
+8. **Fix** — implement the fixes the user decided on.
+9. **Re-review** — re-run the audit on the new diff (steps 1–8). Loop until the audit returns OK or the user stops.
 
 ## Rules
 
