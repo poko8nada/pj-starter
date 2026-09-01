@@ -739,3 +739,10 @@
 {"ts":"2026-09-01T16:22:32.432+09:00","type":"set","key":"log.try.3981ba97","value":{"tool":"bash","gap":4831,"targets":["node"]}}
 {"ts":"2026-09-01T16:22:32.499+09:00","type":"set","key":"meta.harness.tool-trail.status","value":{"stage":"commit","text":"trailをwork unit窓（append〜closing append）に狭め、初期状態をログから判定するよう改修"}}
 {"ts":"2026-09-01T16:22:49.666+09:00","type":"set","key":"log.try.c2dd263b","value":{"tool":"bash","gap":2393,"targets":["node","git","git"]}}
+{"ts":"2026-09-01T16:30:12.837+09:00","type":"set","key":"meta.skills.pr","value":{"purpose":"PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし","status":{"stage":"planned","text":"未着手"}}}
+{"ts":"2026-09-01T16:30:12.837+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"planned","text":"未着手"}}
+{"ts":"2026-09-01T16:31:05.296+09:00","type":"set","key":"log.try.a08ec4aa","value":{"tool":"write","gap":0,"targets":[".opencode/skills/pr/SKILL.md"]}}
+{"ts":"2026-09-01T16:31:08.308+09:00","type":"set","key":"meta.skills.pr.path","value":".opencode/skills/pr/SKILL.md"}
+{"ts":"2026-09-01T16:31:35.550+09:00","type":"set","key":"log.try.9184c8f2","value":{"tool":"bash","gap":13385,"targets":["node","git","git"]}}
+{"ts":"2026-09-01T16:31:40.550+09:00","type":"set","key":"log.try.d209247a","value":{"tool":"task","gap":5000,"targets":["auditor"]}}
+{"ts":"2026-09-01T16:32:55.202+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"commit","text":"SKILL.mdを作成し、単一PR・ベース判定（devルール）・commit規約再利用・イベントログ追記なしを規定"}}

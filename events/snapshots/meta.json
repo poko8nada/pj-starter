@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T16:22:32.539+09:00",
-  "asOf": "2026-09-01T16:22:32.499+09:00",
+  "generatedAt": "2026-09-01T16:32:55.238+09:00",
+  "asOf": "2026-09-01T16:32:55.202+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -193,6 +193,15 @@
           "stage": "commit",
           "text": "audit 指摘8件を修正しコミット"
         },
+        "updatedAt": "20260901"
+      },
+      "pr": {
+        "purpose": "PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし",
+        "status": {
+          "stage": "commit",
+          "text": "SKILL.mdを作成し、単一PR・ベース判定（devルール）・commit規約再利用・イベントログ追記なしを規定"
+        },
+        "path": ".opencode/skills/pr/SKILL.md",
         "updatedAt": "20260901"
       }
     },
