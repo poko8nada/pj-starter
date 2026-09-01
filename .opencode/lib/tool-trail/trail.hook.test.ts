@@ -1,4 +1,4 @@
-// createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・マージ動作・commit抑止を検証する
+// createTrail のフック配線のテスト。ギャップ計測・ターン境界リセット・マージ動作・trail窓（append〜closing append）を検証する
 import {
   appendFileSync,
   existsSync,
@@ -13,11 +13,33 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createTrail } from './trail.hook';
 
-// スクラッチの events ディレクトリを作る（書き込み先の実在を保証する）
+// スクラッチの events ディレクトリを作る（書き込み先の実在を保証する）。
+// 既定は trail ON の初期状態（非commitの状態イベントをシード）にする
 const makeRoot = (): string => {
   const root = mkdtempSync(join(tmpdir(), 'trail-test-'));
   mkdirSync(join(root, 'events'));
+  seedActive(root);
   return root;
+};
+
+// trail OFF の初期状態（空ログ）を作る
+const makeRootInactive = (): string => {
+  const root = mkdtempSync(join(tmpdir(), 'trail-test-'));
+  mkdirSync(join(root, 'events'));
+  return root;
+};
+
+// 非commitの状態イベントをシードして trail ON の初期状態を作る
+const seedActive = (root: string): void => {
+  appendFileSync(
+    join(root, 'events', 'log.jsonl'),
+    `${JSON.stringify({
+      ts: '2026-08-30T10:00:00.000+09:00',
+      type: 'set',
+      key: 'meta.harness.x.status',
+      value: { stage: 'implement', text: 'x' },
+    })}\n`,
+  );
 };
 
 const readLog = (root: string): string[] => {
@@ -45,8 +67,8 @@ describe('createTrail', () => {
     const trail = createTrail(root);
     vi.spyOn(Date, 'now').mockReturnValue(1000);
     trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
-    expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 
   it('measures the thinking gap from the previous trail line', () => {
@@ -58,8 +80,8 @@ describe('createTrail', () => {
     trail.before({ tool: 'bash', sessionID: 's2', args: { command: 'ls' } });
     now.mockReturnValue(20000);
     trail.before({ tool: 'read', sessionID: 's2', args: { filePath: join(root, 'a.ts') } });
-    expect(readLog(root)).toHaveLength(2);
-    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 19000, targets: ['a.ts'] });
+    expect(readLog(root)).toHaveLength(3);
+    expect(valueOf(root, 2)).toEqual({ tool: 'read', gap: 19000, targets: ['a.ts'] });
   });
 
   it('merges consecutive same-tool tries into one line', () => {
@@ -73,8 +95,8 @@ describe('createTrail', () => {
     trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'b.ts') } });
     now.mockReturnValue(3000);
     trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'c.ts') } });
-    expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({
       tool: 'read',
       gap: 0,
       targets: ['a.ts', 'b.ts', 'c.ts'],
@@ -90,23 +112,14 @@ describe('createTrail', () => {
     trail.before({ tool: 'read', sessionID: 's4', args: { filePath: join(root, 'a.ts') } });
     now.mockReturnValue(2000);
     trail.before({ tool: 'edit', sessionID: 's4', args: { filePath: join(root, 'b.ts') } });
-    expect(readLog(root)).toHaveLength(2);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
-    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 1000, targets: ['b.ts'] });
+    expect(readLog(root)).toHaveLength(3);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+    expect(valueOf(root, 2)).toEqual({ tool: 'edit', gap: 1000, targets: ['b.ts'] });
   });
 
   it('never truncates a state event that precedes a try', () => {
     const root = makeRoot();
     roots.push(root);
-    appendFileSync(
-      join(root, 'events', 'log.jsonl'),
-      `${JSON.stringify({
-        ts: '2026-08-30T10:00:00.000+09:00',
-        type: 'set',
-        key: 'meta.harness.x.status',
-        value: { stage: 'commit', text: 'x' },
-      })}\n`,
-    );
     const trail = createTrail(root);
     trail.before({ tool: 'read', sessionID: 's5', args: { filePath: join(root, 'a.ts') } });
     expect(readLog(root)).toHaveLength(2);
@@ -130,8 +143,8 @@ describe('createTrail', () => {
     );
     vi.spyOn(Date, 'now').mockReturnValue(2000);
     trail.before({ tool: 'read', sessionID: 's5b', args: { filePath: join(root, 'b.ts') } });
-    expect(readLog(root)).toHaveLength(3);
-    expect(valueOf(root, 2)).toEqual({ tool: 'read', gap: 1000, targets: ['b.ts'] });
+    expect(readLog(root)).toHaveLength(4);
+    expect(valueOf(root, 3)).toEqual({ tool: 'read', gap: 1000, targets: ['b.ts'] });
   });
 });
 
@@ -151,8 +164,8 @@ describe('createTrail repair', () => {
     const trail = createTrail(root);
     trail.before({ tool: 'read', sessionID: 's5e', args: { filePath: join(root, 'a.ts') } });
     const log = readLog(root);
-    expect(log).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+    expect(log).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 
   it('drops multiple corrupted lines and empty lines in one repair', () => {
@@ -162,8 +175,8 @@ describe('createTrail repair', () => {
     const trail = createTrail(root);
     trail.before({ tool: 'read', sessionID: 's5f', args: { filePath: join(root, 'a.ts') } });
     const log = readLog(root);
-    expect(log).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+    expect(log).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 
   it('merges correctly when the file has no trailing newline', () => {
@@ -177,8 +190,8 @@ describe('createTrail repair', () => {
     writeFileSync(logPath, text.trimEnd());
     vi.spyOn(Date, 'now').mockReturnValue(2000);
     trail.before({ tool: 'read', sessionID: 's5g', args: { filePath: join(root, 'b.ts') } });
-    expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
   });
 });
 
@@ -205,8 +218,8 @@ describe('createTrail boundaries', () => {
     });
     now.mockReturnValue(61000);
     trail.before({ tool: 'read', sessionID: 's5d', args: { filePath: join(root, 'b.ts') } });
-    expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
   });
 
   it('does not reset on busy — different tools write separate lines', () => {
@@ -223,8 +236,8 @@ describe('createTrail boundaries', () => {
     });
     now.mockReturnValue(61000);
     trail.before({ tool: 'edit', sessionID: 's6', args: { filePath: join(root, 'b.ts') } });
-    expect(readLog(root)).toHaveLength(2);
-    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 60000, targets: ['b.ts'] });
+    expect(readLog(root)).toHaveLength(3);
+    expect(valueOf(root, 2)).toEqual({ tool: 'edit', gap: 60000, targets: ['b.ts'] });
   });
 
   it('deletes the baseline at session.idle so the next turn starts from 0', () => {
@@ -238,7 +251,7 @@ describe('createTrail boundaries', () => {
     trail.event({ type: 'session.idle', properties: { sessionID: 's7' } });
     now.mockReturnValue(61000);
     trail.before({ tool: 'edit', sessionID: 's7', args: { filePath: join(root, 'b.ts') } });
-    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
+    expect(valueOf(root, 2)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
   });
 
   it('deletes the baseline at session.error like session.idle', () => {
@@ -252,7 +265,7 @@ describe('createTrail boundaries', () => {
     trail.event({ type: 'session.error', properties: { sessionID: 's8' } });
     now.mockReturnValue(61000);
     trail.before({ tool: 'edit', sessionID: 's8', args: { filePath: join(root, 'b.ts') } });
-    expect(valueOf(root, 1)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
+    expect(valueOf(root, 2)).toEqual({ tool: 'edit', gap: 0, targets: ['b.ts'] });
   });
 
   it('excludes subagent sessions from recording', () => {
@@ -264,7 +277,7 @@ describe('createTrail boundaries', () => {
       properties: { info: { id: 'sub2', parentID: 'main' } },
     });
     trail.before({ tool: 'read', sessionID: 'sub2', args: { filePath: join(root, 'a.ts') } });
-    expect(readLog(root)).toHaveLength(0);
+    expect(readLog(root)).toHaveLength(1);
   });
 
   it('does not reset baseline on subagent idle', () => {
@@ -282,21 +295,22 @@ describe('createTrail boundaries', () => {
     trail.event({ type: 'session.idle', properties: { sessionID: 'sub1' } });
     now.mockReturnValue(6000);
     trail.before({ tool: 'read', sessionID: 'main', args: { filePath: join(root, 'b.ts') } });
-    expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts', 'b.ts'] });
   });
 
   it('swallows write failures without breaking the tool flow', () => {
-    const root = mkdtempSync(join(tmpdir(), 'trail-test-'));
+    const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
+    rmSync(join(root, 'events'), { recursive: true, force: true });
     expect(() => {
       trail.before({ tool: 'read', sessionID: 's9', args: { filePath: join(root, 'a.ts') } });
     }).not.toThrow();
   });
 });
 
-describe('createTrail commit suppression', () => {
+describe('createTrail window', () => {
   const roots: string[] = [];
 
   afterEach(() => {
@@ -305,44 +319,192 @@ describe('createTrail commit suppression', () => {
     roots.length = 0;
   });
 
-  it('suppresses trail after git commit until session.idle', () => {
+  it('does not record before the first append', () => {
+    const root = makeRootInactive();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(0);
+  });
+
+  it('turns trail on at a work-start append', () => {
+    const root = makeRootInactive();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({
+      tool: 'bash',
+      sessionID: 's1',
+      args: { command: 'node events/scripts/append-build.mjs --set meta.harness.x.status' },
+    });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(1);
+    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+
+  it('does not record the append command itself', () => {
+    const root = makeRootInactive();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({
+      tool: 'bash',
+      sessionID: 's1',
+      args: { command: 'node events/scripts/append-build.mjs --set meta.harness.x.status' },
+    });
+    expect(readLog(root)).toHaveLength(0);
+  });
+
+  it('turns trail off at a closing append (stage:commit)', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({
+      tool: 'bash',
+      sessionID: 's1',
+      args: {
+        command:
+          'node events/scripts/append-build.mjs --set meta.harness.x.status \'{"stage":"commit","text":"y"}\'',
+      },
+    });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(1);
+  });
+
+  it('turns trail off at git commit as a backstop', () => {
     const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
     trail.before({ tool: 'bash', sessionID: 's1', args: { command: 'git commit -m "feat: x"' } });
-    trail.before({ tool: 'bash', sessionID: 's1', args: { command: 'git status' } });
     trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
-    expect(readLog(root)).toHaveLength(0);
+    expect(readLog(root)).toHaveLength(1);
+  });
+
+  it('keeps trail off across session boundaries after a closing append', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({
+      tool: 'bash',
+      sessionID: 's1',
+      args: {
+        command:
+          'node events/scripts/append-build.mjs --set meta.harness.x.status \'{"stage":"commit","text":"y"}\'',
+      },
+    });
+    trail.event({ type: 'session.idle', properties: { sessionID: 's1' } });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(1);
+  });
+
+  it('keeps trail on across session boundaries mid-work-unit', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
     trail.event({ type: 'session.idle', properties: { sessionID: 's1' } });
     trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'b.ts') } });
-    expect(readLog(root)).toHaveLength(1);
-    expect(valueOf(root, 0)).toEqual({ tool: 'read', gap: 0, targets: ['b.ts'] });
+    expect(readLog(root)).toHaveLength(3);
+    expect(valueOf(root, 2)).toEqual({ tool: 'read', gap: 0, targets: ['b.ts'] });
   });
 
-  it('resets suppression on session.error', () => {
-    const root = makeRoot();
+  it('initializes off when the last state event is stage:commit', () => {
+    const root = makeRootInactive();
     roots.push(root);
+    appendFileSync(
+      join(root, 'events', 'log.jsonl'),
+      `${JSON.stringify({
+        ts: '2026-08-30T10:00:00.000+09:00',
+        type: 'set',
+        key: 'meta.harness.x.status',
+        value: { stage: 'commit', text: 'x' },
+      })}\n`,
+    );
     const trail = createTrail(root);
-    trail.before({ tool: 'bash', sessionID: 's2', args: { command: 'git commit -m "fix: y"' } });
-    trail.event({ type: 'session.error', properties: { sessionID: 's2' } });
-    trail.before({ tool: 'read', sessionID: 's2', args: { filePath: join(root, 'a.ts') } });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
     expect(readLog(root)).toHaveLength(1);
   });
 
-  it('does not suppress on non-commit git commands', () => {
-    const root = makeRoot();
+  it('initializes on when the last state event is not stage:commit', () => {
+    const root = makeRootInactive();
     roots.push(root);
+    appendFileSync(
+      join(root, 'events', 'log.jsonl'),
+      `${JSON.stringify({
+        ts: '2026-08-30T10:00:00.000+09:00',
+        type: 'set',
+        key: 'meta.harness.x.status',
+        value: { stage: 'implement', text: 'x' },
+      })}\n`,
+    );
     const trail = createTrail(root);
-    trail.before({ tool: 'bash', sessionID: 's3', args: { command: 'git status' } });
-    trail.before({ tool: 'read', sessionID: 's3', args: { filePath: join(root, 'a.ts') } });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
     expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 
   it('does not false-positive on git commit--amend', () => {
     const root = makeRoot();
     roots.push(root);
     const trail = createTrail(root);
-    trail.before({ tool: 'bash', sessionID: 's4', args: { command: 'git commit--amend' } });
-    expect(readLog(root)).toHaveLength(1);
+    trail.before({ tool: 'bash', sessionID: 's1', args: { command: 'git commit--amend' } });
+    expect(readLog(root)).toHaveLength(2);
+  });
+
+  it('does not close the window on non-commit git commands', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({ tool: 'bash', sessionID: 's1', args: { command: 'git status' } });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(3);
+    expect(valueOf(root, 2)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+
+  it('re-opens the window at a new work-start append after a closing append', () => {
+    const root = makeRoot();
+    roots.push(root);
+    const trail = createTrail(root);
+    trail.before({
+      tool: 'bash',
+      sessionID: 's1',
+      args: {
+        command:
+          'node events/scripts/append-build.mjs --set meta.harness.x.status \'{"stage":"commit","text":"y"}\'',
+      },
+    });
+    trail.before({
+      tool: 'bash',
+      sessionID: 's1',
+      args: { command: 'node events/scripts/append-build.mjs --set meta.harness.y.status' },
+    });
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(2);
+    expect(valueOf(root, 1)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
+  });
+
+  it('initializes from the last state event when the log ends in trail lines', () => {
+    const root = makeRootInactive();
+    roots.push(root);
+    appendFileSync(
+      join(root, 'events', 'log.jsonl'),
+      `${JSON.stringify({
+        ts: '2026-08-30T10:00:00.000+09:00',
+        type: 'set',
+        key: 'meta.harness.x.status',
+        value: { stage: 'implement', text: 'x' },
+      })}\n`,
+    );
+    appendFileSync(
+      join(root, 'events', 'log.jsonl'),
+      `${JSON.stringify({
+        ts: '2026-08-30T10:00:01.000+09:00',
+        type: 'set',
+        key: 'log.try.abc12345',
+        value: { tool: 'read', gap: 0, targets: ['a.ts'] },
+      })}\n`,
+    );
+    const trail = createTrail(root);
+    trail.before({ tool: 'read', sessionID: 's1', args: { filePath: join(root, 'a.ts') } });
+    expect(readLog(root)).toHaveLength(3);
+    expect(valueOf(root, 2)).toEqual({ tool: 'read', gap: 0, targets: ['a.ts'] });
   });
 });

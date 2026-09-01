@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T14:11:39.404+09:00",
-  "asOf": "2026-09-01T14:11:39.372+09:00",
+  "generatedAt": "2026-09-01T16:48:35.836+09:00",
+  "asOf": "2026-09-01T16:48:35.806+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -25,10 +25,10 @@
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
         "status": {
           "stage": "commit",
-          "text": "trail.hook.ts を状態管理と IO 層に分離"
+          "text": "trailをwork unit窓（append〜closing append）に狭め、初期状態をログから判定するよう改修"
         },
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
-        "updatedAt": "20260831"
+        "updatedAt": "20260901"
       },
       "edit-lint": {
         "purpose": "編集直後のreport-only lint",
@@ -182,7 +182,7 @@
         "path": ".opencode/skills/workflow/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "visual パターンを patterns.md に追加"
+          "text": "終端条件と終了時ダイジェスト（Steps/Done/State）を共通ルールとして追加"
         },
         "updatedAt": "20260901"
       },
@@ -193,6 +193,15 @@
           "stage": "commit",
           "text": "audit 指摘8件を修正しコミット"
         },
+        "updatedAt": "20260901"
+      },
+      "pr": {
+        "purpose": "PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし",
+        "status": {
+          "stage": "commit",
+          "text": "事前チェックのpush判定をupstream存在確認からリモートへの全コミット反映に修正"
+        },
+        "path": ".opencode/skills/pr/SKILL.md",
         "updatedAt": "20260901"
       }
     },

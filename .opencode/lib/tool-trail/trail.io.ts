@@ -50,3 +50,31 @@ export const repairLog = (logPath: string): void => {
 export const appendTrailEvent = (logPath: string, event: TrailEvent): void => {
   fs.appendFileSync(logPath, `${JSON.stringify(event)}\n`);
 };
+
+export interface LastState {
+  found: boolean;
+  stage: string | null;
+}
+
+// ログの最後の状態イベント（log.try.* 以外）を後方走査で探し、stage を返す。
+// 状態イベントが無ければ found: false。値に stage が無い（素の値・del）場合は found: true, stage: null
+export const readLastState = (logPath: string): LastState => {
+  if (!fs.existsSync(logPath)) return { found: false, stage: null };
+  const text = fs.readFileSync(logPath, 'utf8');
+  const lines = text.split('\n').filter((line) => line.trim() !== '');
+  for (let i = lines.length - 1; i >= 0; i--) {
+    try {
+      const parsed: unknown = JSON.parse(lines[i]);
+      if (typeof parsed !== 'object' || parsed === null || !('key' in parsed)) continue;
+      const key = (parsed as { key?: unknown }).key;
+      if (typeof key !== 'string' || key.startsWith('log.try.')) continue;
+      const value = (parsed as { key?: unknown; value?: unknown }).value;
+      if (typeof value !== 'object' || value === null) return { found: true, stage: null };
+      const stage = (value as { stage?: unknown }).stage;
+      return { found: true, stage: typeof stage === 'string' ? stage : null };
+    } catch {
+      continue;
+    }
+  }
+  return { found: false, stage: null };
+};
