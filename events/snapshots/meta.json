@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T16:44:51.197+09:00",
-  "asOf": "2026-09-01T16:44:51.166+09:00",
+  "generatedAt": "2026-09-01T16:48:35.836+09:00",
+  "asOf": "2026-09-01T16:48:35.806+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -199,7 +199,7 @@
         "purpose": "PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし",
         "status": {
           "stage": "commit",
-          "text": "ベース判定にdevelop→main（リリースPR）のケースを追加し、事前チェックをmainのみ停止に緩和"
+          "text": "事前チェックのpush判定をupstream存在確認からリモートへの全コミット反映に修正"
         },
         "path": ".opencode/skills/pr/SKILL.md",
         "updatedAt": "20260901"

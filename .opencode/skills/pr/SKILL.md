@@ -63,7 +63,7 @@ Reuse the commit message convention. Title is English; body text is Japanese (la
    - Current branch is not `main` (the stable trunk)
    - Working tree is clean (all committed)
    - No existing open PR for this branch — `gh pr list --head <branch> --state open --json number`; if one exists, report it and stop
-   - Push the branch if not yet pushed — `git push -u origin <branch>`
+   - Push the branch so the remote has all local commits — `git push -u origin <branch>` (no-op when up to date)
 2. **Determine the base branch** — dev rule above.
 3. **Draft the PR** — title and body from the commit convention.
 4. **Propose** — present title, body, and base to the user; wait for approval or corrections.

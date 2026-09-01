@@ -754,3 +754,6 @@
 {"ts":"2026-09-01T16:44:13.453+09:00","type":"set","key":"log.try.03424736","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/pr/SKILL.md",".opencode/skills/pr/SKILL.md"]}}
 {"ts":"2026-09-01T16:44:16.537+09:00","type":"set","key":"log.try.a3bcce87","value":{"tool":"read","gap":3084,"targets":[".opencode/skills/pr/SKILL.md"]}}
 {"ts":"2026-09-01T16:44:51.166+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"commit","text":"ベース判定にdevelop→main（リリースPR）のケースを追加し、事前チェックをmainのみ停止に緩和"}}
+{"ts":"2026-09-01T16:48:29.338+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"ready","text":"事前チェックのpush判定をupstream存在確認からリモートへの全コミット反映に修正"}}
+{"ts":"2026-09-01T16:48:32.656+09:00","type":"set","key":"log.try.6cc38022","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/pr/SKILL.md"]}}
+{"ts":"2026-09-01T16:48:35.806+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"commit","text":"事前チェックのpush判定をupstream存在確認からリモートへの全コミット反映に修正"}}
