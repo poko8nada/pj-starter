@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T12:24:44.469+09:00",
-  "asOf": "2026-09-01T12:24:44.440+09:00",
+  "generatedAt": "2026-09-01T13:08:58.714+09:00",
+  "asOf": "2026-09-01T13:08:58.684+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -191,7 +191,7 @@
         "path": ".opencode/skills/visual/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "visual skill を作成。SKILL.md + static.md + motion.md"
+          "text": "references (static.md, motion.md) を英語に修正"
         },
         "updatedAt": "20260901"
       }

@@ -1,20 +1,20 @@
 # Motion Principles
 
-スクロールトリガーとインタラクションの原則、ライブラリ選定、パフォーマンスガードレール。
+Scroll trigger and interaction principles, library selection, and performance guardrails.
 
 ## Scroll Trigger Principles
 
-- 「動きのための動き」を避ける：動きがコンテンツの理解を助ける場合のみ使う
-- スクロールトリガーのデフォルトタイミング：要素がビューポートに入ったら発火
-- 遅延は `0.1s` 単位、長すぎる遅延は離脱を招く
-- 繰り返しは基本オフ：一度表示したらそのまま（`whileInView` + `initial` の組み合わせ）
+- Avoid "motion for motion's sake": only use motion that aids content understanding
+- Default scroll trigger timing: fire when element enters viewport
+- Delay in `0.1s` increments; excessive delays cause users to leave
+- Repeat off by default: once revealed, stay revealed (`whileInView` + `initial` combination)
 
 ## Interaction Principles
 
-- ホバー/フォーカス/アクティブの3状態を考慮
-- トランジション時間：`150-300ms`（それ以上は遅延に感じる）
-- イージング：`ease-out` を基本（入りは加速、抜けは減速）
-- クリックフィードバックは必須：視覚的な反応がない操作は「効いていない」と誤解される
+- Consider three states: hover / focus / active
+- Transition duration: `150-300ms` (longer feels laggy)
+- Easing: `ease-out` as default (accelerate in, decelerate out)
+- Click feedback is mandatory: operations without visual response feel unresponsive
 
 ## Library Selection
 
@@ -22,32 +22,32 @@
 
 - React: `motion/react` → `<motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>`
 - Vanilla: `motion` → `animate(element, { opacity: 1 })`
-- スクロールトリガー：`inView()` 関数（vanilla）/ `whileInView` prop（React）
-- 宣言的で簡潔、React/Vanilla 両対応のためデフォルト
+- Scroll trigger: `inView()` function (vanilla) / `whileInView` prop (React)
+- Declarative and concise; default for both React and Vanilla
 
 ### Lightweight fallback: CSS only
 
-- `animation-timeline: scroll()` で依存ゼロのスクロール連動アニメーション
-- 対応ブラウザ（Chrome 115+）なら追加 JS 不要
-- 単純なフェードイン/スライドインは CSS で十分
+- `animation-timeline: scroll()` for zero-dependency scroll-linked animation
+- Works in supporting browsers (Chrome 115+) with no additional JS
+- Simple fade-in / slide-in is sufficient with CSS alone
 
 ### Escalation: GSAP
 
-- Motion で表現できない複雑なタイムライン制御が必要な場合
-- SVG モーフィング、複数要素の連動シーケンス、スクラブ制御
-- バンドルサイズ増大は許容条件で判断
+- When Motion cannot express complex timeline control
+- SVG morphing, multi-element coordinated sequences, scrub control
+- Bundle size increase is acceptable under conditions
 
 ### Selection priority
 
 ```
 CSS only → Motion → GSAP
-（依存ゼロを優先、足りない時だけ重いライブラリ）
+(prefer zero dependencies; escalate only when insufficient)
 ```
 
 ## Performance Guardrails
 
-- 60fps を崩さない：`transform` と `opacity` のみをアニメート（layout をトリガーしない）
-- `will-change` は必要な要素にのみ、アニメーション終了後に解除
-- `prefers-reduced-motion: reduce` の場合はモーションを無効化
-- 同時アニメーションは要素5つ以内を目安
-- Intersection Observer の `threshold` は `0.1` を基本（0だと発火が遅い）
+- Maintain 60fps: animate only `transform` and `opacity` (avoid layout triggers)
+- Apply `will-change` only to necessary elements; remove after animation ends
+- Disable motion when `prefers-reduced-motion: reduce` is set
+- Limit simultaneous animations to ~5 elements
+- Intersection Observer `threshold`: `0.1` as default (0 causes delayed firing)
