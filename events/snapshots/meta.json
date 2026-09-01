@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T10:37:34.549+09:00",
-  "asOf": "2026-09-01T10:37:34.517+09:00",
+  "generatedAt": "2026-09-01T11:32:09.598+09:00",
+  "asOf": "2026-09-01T11:32:09.567+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -176,6 +176,15 @@
         "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
         "path": ".opencode/skills/refactor/SKILL.md",
         "updatedAt": "20260831"
+      },
+      "workflow": {
+        "purpose": "ワークフローオーケストレーター。スラッシュコマンドによるユーザーのみがトリガーし、モデルからは決して呼び出されない。次以降のワークフローを提案し、ユーザー合意を得て実行する。yoloモードでは初期合意後に確認ステップを省略し最後まで走る",
+        "path": ".opencode/skills/workflow/SKILL.md",
+        "status": {
+          "stage": "commit",
+          "text": "workflowスキルを新規作成。SKILL.mdとreferences/patterns.mdを実装"
+        },
+        "updatedAt": "20260901"
       }
     },
     "docs": {
@@ -193,9 +202,9 @@
         "purpose": "駆動方式の仕様",
         "status": {
           "stage": "commit",
-          "text": "CLIリファレンスに--unresolvedを追記"
+          "text": "machineryをspec/に分離し、READMEを駆動方式の仕様に集中"
         },
-        "updatedAt": "20260831"
+        "updatedAt": "20260901"
       },
       "schema-spec": {
         "purpose": "product/metaスナップショットのコンテンツスキーマと方法論",
