@@ -17,15 +17,14 @@ Deliver a committed work unit to the remote as a single pull request. Triggered 
 
 PR creation does **not** append to the event log. The work unit lifecycle ends at commit; a PR is a GitHub-side artifact. Appending would reintroduce post-commit log noise and create stale state (PR state — merged/closed — diverges from the log).
 
-## Base branch determination (dev rule)
+## Base branch determination
 
-Determine the base from the fork point of the current branch:
+Determine the base from the current branch:
 
-1. Candidates: `main` and `develop` (the repo's trunk branches).
-2. Compute `mb_dev = git merge-base develop HEAD` and `mb_main = git merge-base main HEAD`.
-3. Base = `develop` if `mb_dev` is a **strict descendant** of `mb_main` (i.e. `mb_dev != mb_main` and `git merge-base --is-ancestor mb_main mb_dev` succeeds); otherwise base = `main`.
+- Current branch is `develop` → base = `main` (release PR from the integration branch)
+- Otherwise → dev rule: compute `mb_dev = git merge-base develop HEAD` and `mb_main = git merge-base main HEAD`. Base = `develop` if `mb_dev` is a **strict descendant** of `mb_main` (i.e. `mb_dev != mb_main` and `git merge-base --is-ancestor mb_main mb_dev` succeeds); otherwise base = `main`.
 
-This makes "branched from dev → target dev, branched from main → target main" deterministic. Present the result to the user for confirmation.
+This makes "branched from dev → target dev, branched from main → target main, on develop → target main" deterministic. Present the result to the user for confirmation.
 
 ## Title and body
 
@@ -61,7 +60,7 @@ Reuse the commit message convention. Title is English; body text is Japanese (la
 ## Procedure
 
 1. **Pre-flight checks**:
-   - Current branch is not a trunk (`main` / `develop`)
+   - Current branch is not `main` (the stable trunk)
    - Working tree is clean (all committed)
    - No existing open PR for this branch — `gh pr list --head <branch> --state open --json number`; if one exists, report it and stop
    - Push the branch if not yet pushed — `git push -u origin <branch>`

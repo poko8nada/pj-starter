@@ -750,3 +750,7 @@
 {"ts":"2026-09-01T16:37:04.988+09:00","type":"set","key":"log.try.89e9246f","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/pr/SKILL.md"]}}
 {"ts":"2026-09-01T16:37:16.222+09:00","type":"set","key":"log.try.9a824dcb","value":{"tool":"read","gap":11234,"targets":[".opencode/skills/pr/SKILL.md"]}}
 {"ts":"2026-09-01T16:37:55.555+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"commit","text":"PR本文のフォーマットをコードブロックで具体化し、Verification/Review focusの定義を明確化"}}
+{"ts":"2026-09-01T16:44:06.207+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"ready","text":"ベース判定にdevelop→main（リリースPR）のケースを追加"}}
+{"ts":"2026-09-01T16:44:13.453+09:00","type":"set","key":"log.try.03424736","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/pr/SKILL.md",".opencode/skills/pr/SKILL.md"]}}
+{"ts":"2026-09-01T16:44:16.537+09:00","type":"set","key":"log.try.a3bcce87","value":{"tool":"read","gap":3084,"targets":[".opencode/skills/pr/SKILL.md"]}}
+{"ts":"2026-09-01T16:44:51.166+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"commit","text":"ベース判定にdevelop→main（リリースPR）のケースを追加し、事前チェックをmainのみ停止に緩和"}}
