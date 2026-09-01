@@ -1,53 +1,44 @@
-# Motion Principles
+# Motion
 
-Scroll trigger and interaction principles, library selection, and performance guardrails.
+Controls animation intensity.
 
-## Scroll Trigger Principles
+| Value | Name      | Behavior                                                                                         |
+| ----- | --------- | ------------------------------------------------------------------------------------------------ |
+| 1     | Static    | No animation. Browser-native `:hover` / `:active` only.                                          |
+| 2     | Minimal   | Basic transitions (`opacity`, `color`).                                                          |
+| 3     | Standard  | CSS `transition` + `transform` / `opacity`. Easing `cubic-bezier(0.16,1,0.3,1)`.                 |
+| 4     | Enhanced  | Scroll-linked reveals. `whileInView` / `animation-timeline: view()`.                             |
+| 5     | Cinematic | GSAP ScrollTrigger, pin/scrub. Motion must be justified by hierarchy, storytelling, or feedback. |
 
-- Avoid "motion for motion's sake": only use motion that aids content understanding
-- Default scroll trigger timing: fire when element enters viewport
-- Delay in `0.1s` increments; excessive delays cause users to leave
-- Repeat off by default: once revealed, stay revealed (`whileInView` + `initial` combination)
+## Boundary
 
-## Interaction Principles
+Values are clamped to 1-5. Values below 1 treated as 1, above 5 treated as 5. Non-numeric values rejected — ask the user.
 
-- Consider three states: hover / focus / active
-- Transition duration: `150-300ms` (longer feels laggy)
-- Easing: `ease-out` as default (accelerate in, decelerate out)
-- Click feedback is mandatory: operations without visual response feel unresponsive
+## Gate Rules
 
-## Library Selection
+- `motion >= 4` → scroll-linked animation required
+- `motion >= 5` → every motion needs justification ("looks cool" is invalid)
+- `motion <= 2` → no JS animation library
+- `motion >= 4` → `prefers-reduced-motion` handling required
 
-### Default: Motion (motion.dev)
-
-- React: `motion/react` → `<motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}>`
-- Vanilla: `motion` → `animate(element, { opacity: 1 })`
-- Scroll trigger: `inView()` function (vanilla) / `whileInView` prop (React)
-- Declarative and concise; default for both React and Vanilla
-
-### Lightweight fallback: CSS only
-
-- `animation-timeline: scroll()` for zero-dependency scroll-linked animation
-- Works in supporting browsers (Chrome 115+) with no additional JS
-- Simple fade-in / slide-in is sufficient with CSS alone
-
-### Escalation: GSAP
-
-- When Motion cannot express complex timeline control
-- SVG morphing, multi-element coordinated sequences, scrub control
-- Bundle size increase is acceptable under conditions
-
-### Selection priority
+## Implementation Priority
 
 ```
-CSS only → Motion → GSAP
+CSS only → Motion (motion.dev) → GSAP
 (prefer zero dependencies; escalate only when insufficient)
 ```
 
+## Library Selection
+
+| Range | Default                            | Escalation                    |
+| ----- | ---------------------------------- | ----------------------------- |
+| 1-3   | CSS `transition`                   | None                          |
+| 4     | Motion (`motion/react` or vanilla) | GSAP for complex sequences    |
+| 5     | GSAP + ScrollTrigger               | Three.js (when canvas needed) |
+
 ## Performance Guardrails
 
-- Maintain 60fps: animate only `transform` and `opacity` (avoid layout triggers)
+- Animate only `transform` and `opacity` (avoid layout triggers)
 - Apply `will-change` only to necessary elements; remove after animation ends
-- Disable motion when `prefers-reduced-motion: reduce` is set
 - Limit simultaneous animations to ~5 elements
-- Intersection Observer `threshold`: `0.1` as default (0 causes delayed firing)
+- Intersection Observer `threshold`: `0.1` as default
