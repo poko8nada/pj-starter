@@ -29,10 +29,34 @@ This makes "branched from dev → target dev, branched from main → target main
 
 ## Title and body
 
-Reuse the commit message convention:
+Reuse the commit message convention. Title is English; body text is Japanese (labels and headings stay English).
 
-- **Title**: the work unit commit's subject (`<type>(<scope>): <subject>`)
-- **Body**: the commit body (Why/What/How) plus 動作確認 and レビューポイント
+- **Title** — the work unit commit's subject:
+
+  ```
+  <type>(<scope>): <imperative subject in English, ≤50 chars, no period>
+  ```
+
+- **Body** — the commit body (Why/What/How) plus Verification and Review focus:
+
+  ```md
+  Why: なぜこの変更が必要か
+  What: 何を変えたか
+  How: どう実装したか（自明な場合は省略）
+
+  ## Verification
+
+  - <実行コマンド> → <期待結果>
+  - <手動確認手順> → <期待結果>
+
+  ## Review focus
+
+  - <リスク/判断を伴う箇所（ファイルや領域を特定）>
+  - <特に見てほしい設計判断>
+  ```
+
+  - **Verification** — 変更が意図どおり動くことを確認する手順。各項目は「実行 → 期待結果」の形で書く。自動チェック（`pnpm test:run` / `typecheck` / `lint`）と、自動でカバーされない手動確認を列挙する。曖昧な記述（「動作確認済み」等）は禁止
+  - **Review focus** — レビュアーが特に注視すべき点。リスクや設計判断を伴う箇所をファイルや領域を特定して列挙する。漠然とした一般論（「コード全体」等）は禁止
 
 ## Procedure
 
