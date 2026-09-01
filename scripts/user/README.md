@@ -3,14 +3,14 @@
 - このディレクトリは**ユーザーがシェルから直接実行する**メンテナンスツール専用。
 - **エージェントは実行しないこと**（適用・初期化は状態を変える操作のため）。
 
-## starter:apply — スターターをプロジェクトへ一方向適用
+## apply — スターターをプロジェクトへ一方向適用
 
 プロジェクト内で実行し、スターターのハーネス一式（`.opencode/` 配下・scripts・events・AGENTS.md 等）をプロジェクトへ反映する。純 Node 実装（外部ツール不要）。
 
 ```bash
-pnpm starter:apply <スターターのパス>               # dry-run プレビュー
-pnpm starter:apply --run <スターターのパス>          # 実行（ミラー + meta 置換）
-pnpm starter:apply --run --init <スターターのパス>   # 実行 + ログ掃除（旧 reset 相当）
+pnpm apply <スターターのパス>               # dry-run プレビュー
+pnpm apply --run <スターターのパス>          # 実行（ミラー + meta 置換）
+pnpm apply --run --init <スターターのパス>   # 実行 + ログ掃除（旧 reset 相当）
 ```
 
 ### ファイルミラー（一方向）
