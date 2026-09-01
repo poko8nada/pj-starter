@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T14:11:39.404+09:00",
-  "asOf": "2026-09-01T14:11:39.372+09:00",
+  "generatedAt": "2026-09-01T15:42:33.611+09:00",
+  "asOf": "2026-09-01T15:42:33.580+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -182,7 +182,7 @@
         "path": ".opencode/skills/workflow/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "visual パターンを patterns.md に追加"
+          "text": "終端条件と終了時ダイジェスト（Steps/Done/State）を共通ルールとして追加"
         },
         "updatedAt": "20260901"
       },

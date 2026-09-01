@@ -679,3 +679,26 @@
 {"ts":"2026-09-01T14:11:39.305+09:00","type":"set","key":"log.try.983333ae","value":{"tool":"bash","gap":7443,"targets":["node"]}}
 {"ts":"2026-09-01T14:11:39.372+09:00","type":"set","key":"meta.skills.visual.status","value":{"stage":"commit","text":"audit 指摘8件を修正しコミット"}}
 {"ts":"2026-09-01T14:11:57.161+09:00","type":"set","key":"log.try.b1c4f7c7","value":{"tool":"bash","gap":17856,"targets":["git"]}}
+{"ts":"2026-09-01T15:32:31.081+09:00","type":"set","key":"log.try.23dcb1b5","value":{"tool":"read","gap":0,"targets":["events/README.md",".opencode/skills/workflow/SKILL.md",".opencode/skills/workflow/references/patterns.md","events/snapshots/meta.json"]}}
+{"ts":"2026-09-01T15:35:57.394+09:00","type":"set","key":"log.try.ceb24c0a","value":{"tool":"bash","gap":0,"targets":["rg"]}}
+{"ts":"2026-09-01T15:35:57.567+09:00","type":"set","key":"log.try.c1081a09","value":{"tool":"read","gap":173,"targets":[".opencode/lib/process-compliance/gate.hook.ts"]}}
+{"ts":"2026-09-01T15:36:02.952+09:00","type":"set","key":"log.try.7d9581cd","value":{"tool":"bash","gap":4057,"targets":["ls","ls"]}}
+{"ts":"2026-09-01T15:36:04.548+09:00","type":"set","key":"log.try.e67a24f3","value":{"tool":"read","gap":1596,"targets":[".opencode/lib/process-compliance/compliance.hook.ts"]}}
+{"ts":"2026-09-01T15:36:18.077+09:00","type":"set","key":"log.try.91a17f2d","value":{"tool":"bash","gap":10747,"targets":["rg","node","node","node"]}}
+{"ts":"2026-09-01T15:36:18.142+09:00","type":"set","key":"meta.skills.workflow.status","value":{"stage":"ready","text":"終端条件（パターン完了地点で終了し通常フローへ復帰）を共通ルールとして追加"}}
+{"ts":"2026-09-01T15:36:20.276+09:00","type":"set","key":"log.try.4c3e83ee","value":{"tool":"edit","gap":2199,"targets":[".opencode/skills/workflow/SKILL.md"]}}
+{"ts":"2026-09-01T15:36:21.955+09:00","type":"set","key":"log.try.53862388","value":{"tool":"bash","gap":1679,"targets":["node"]}}
+{"ts":"2026-09-01T15:36:22.019+09:00","type":"set","key":"meta.skills.workflow.status","value":{"stage":"implement","text":"終端条件を共通ルールとして追加"}}
+{"ts":"2026-09-01T15:36:23.467+09:00","type":"set","key":"log.try.5dca71ac","value":{"tool":"read","gap":1512,"targets":[".opencode/skills/workflow/SKILL.md"]}}
+{"ts":"2026-09-01T15:39:49.475+09:00","type":"set","key":"log.try.a263f2fa","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/workflow/SKILL.md"]}}
+{"ts":"2026-09-01T15:39:51.132+09:00","type":"set","key":"log.try.49a16624","value":{"tool":"bash","gap":1657,"targets":["node"]}}
+{"ts":"2026-09-01T15:39:51.194+09:00","type":"set","key":"meta.skills.workflow.status","value":{"stage":"implement","text":"終端条件と終了時ダイジェスト（Steps/Done/State）を共通ルールとして追加"}}
+{"ts":"2026-09-01T15:39:52.213+09:00","type":"set","key":"log.try.4073b71e","value":{"tool":"read","gap":1081,"targets":[".opencode/skills/workflow/SKILL.md"]}}
+{"ts":"2026-09-01T15:41:58.477+09:00","type":"set","key":"log.try.389b7241","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/workflow/SKILL.md"]}}
+{"ts":"2026-09-01T15:41:59.890+09:00","type":"set","key":"log.try.c5a6fd9d","value":{"tool":"bash","gap":1413,"targets":["node"]}}
+{"ts":"2026-09-01T15:41:59.953+09:00","type":"set","key":"meta.skills.workflow.status","value":{"stage":"implement","text":"終端条件と終了時ダイジェスト（Steps/Done/State）を共通ルールとして追加。不要な /workflow 言及を削除"}}
+{"ts":"2026-09-01T15:42:31.792+09:00","type":"set","key":"log.try.5da11853","value":{"tool":"skill","gap":0,"targets":["commit"]}}
+{"ts":"2026-09-01T15:42:33.515+09:00","type":"set","key":"log.try.71a5c729","value":{"tool":"bash","gap":1723,"targets":["node"]}}
+{"ts":"2026-09-01T15:42:33.580+09:00","type":"set","key":"meta.skills.workflow.status","value":{"stage":"commit","text":"終端条件と終了時ダイジェスト（Steps/Done/State）を共通ルールとして追加"}}
+{"ts":"2026-09-01T15:42:36.591+09:00","type":"set","key":"log.try.04bfcb7a","value":{"tool":"bash","gap":260,"targets":["node","git","git","git","git"]}}
+{"ts":"2026-09-01T15:43:03.219+09:00","type":"set","key":"log.try.2e2d14fa","value":{"tool":"bash","gap":0,"targets":["git"]}}

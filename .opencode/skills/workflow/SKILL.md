@@ -24,3 +24,9 @@ This skill can be triggered at any point in a workflow by user. Always identify 
 
 - Always propose before starting.
 - Follow each referenced skill's procedure faithfully — workflow is an orchestrator, not a replacement.
+- **Flow termination** — the flow ends when the agreed pattern reaches its completion point (implementation patterns end at **audit → commit**; non-implementation patterns end at their own completion). Present a closing digest in the fixed format below, then stop executing and return to normal flow: do not start new work units without explicit user agreement.
+
+  Closing digest (fixed format, a few lines):
+  - **Steps** — the steps executed in this flow
+  - **Done** — the work units completed
+  - **State** — the resulting state (e.g. commit result, snapshot status)
