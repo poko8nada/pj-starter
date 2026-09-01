@@ -1,6 +1,19 @@
 import path from 'node:path';
-import { buildTrailEvent, isCommitCommand, mergeTrailEvents, type TrailEvent } from './trail';
-import { isLastLineTrail, replaceLastLine, repairLog, appendTrailEvent } from './trail.io';
+import {
+  buildTrailEvent,
+  isAppendCommand,
+  isClosingAppend,
+  isCommitCommand,
+  mergeTrailEvents,
+  type TrailEvent,
+} from './trail';
+import {
+  appendTrailEvent,
+  isLastLineTrail,
+  readLastState,
+  replaceLastLine,
+  repairLog,
+} from './trail.io';
 
 export interface TrailBeforeInput {
   tool: string;
@@ -27,16 +40,26 @@ export const createTrail = (root: string): TrailHook => {
   const logPath = path.join(root, 'events', 'log.jsonl');
   let lastTrailLine: TrailEvent | null = null;
   const subSessions = new Set<string>();
-  let suppressTrail = false;
+  // trail 窓の状態。work unit の開始 append（非 closing）で ON、closing append（stage:commit）と git commit で OFF。
+  // 初期状態はログの最後の状態イベントから判定する（stage:commit なら OFF、それ以外は ON）
+  const last = readLastState(logPath);
+  let trailOn = last.found && last.stage !== 'commit';
 
   return {
     before(input) {
       if (subSessions.has(input.sessionID)) return;
-      if (suppressTrail) return;
-      if (input.tool === 'bash' && isCommitCommand(input.args.command)) {
-        suppressTrail = true;
-        return;
+      if (input.tool === 'bash') {
+        const command = input.args.command;
+        if (isAppendCommand(command)) {
+          trailOn = !isClosingAppend(command);
+          return; // append 自体は記録しない（境界マーカー）
+        }
+        if (isCommitCommand(command)) {
+          trailOn = false; // 直接コミットのバックストップ
+          return;
+        }
       }
+      if (!trailOn) return;
       const gap =
         lastTrailLine === null ? 0 : Math.max(0, Date.now() - new Date(lastTrailLine.ts).getTime());
       try {
@@ -71,7 +94,6 @@ export const createTrail = (root: string): TrailHook => {
         !subSessions.has(sessionID);
       if (isBoundary && sessionID) {
         lastTrailLine = null;
-        suppressTrail = false;
         subSessions.delete(sessionID);
       }
     },

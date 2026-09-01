@@ -3,6 +3,8 @@ import { homedir } from 'node:os';
 import { describe, expect, it } from 'vitest';
 import {
   buildTrailEvent,
+  isAppendCommand,
+  isClosingAppend,
   isCommitCommand,
   mergeTrailEvents,
   type TrailEvent,
@@ -234,5 +236,80 @@ describe('isCommitCommand', () => {
 
   it('rejects empty string', () => {
     expect(isCommitCommand('')).toBe(false);
+  });
+});
+
+describe('isAppendCommand', () => {
+  it('detects append-build with flags', () => {
+    expect(
+      isAppendCommand('node events/scripts/append-build.mjs --set meta.harness.x.status'),
+    ).toBe(true);
+  });
+
+  it('detects append without build', () => {
+    expect(isAppendCommand('node events/scripts/append.mjs --set product.name.value "x"')).toBe(
+      true,
+    );
+  });
+
+  it('detects append with leading whitespace', () => {
+    expect(isAppendCommand('  node events/scripts/append-build.mjs  ')).toBe(true);
+  });
+
+  it('detects append with a ./ prefix', () => {
+    expect(
+      isAppendCommand('node ./events/scripts/append-build.mjs --set meta.harness.x.status'),
+    ).toBe(true);
+  });
+
+  it('rejects non-append event scripts', () => {
+    expect(isAppendCommand('node events/scripts/build.mjs')).toBe(false);
+    expect(isAppendCommand('node events/scripts/read.mjs --name meta')).toBe(false);
+    expect(isAppendCommand('node events/scripts/compact.mjs')).toBe(false);
+  });
+
+  it('rejects non-string input', () => {
+    expect(isAppendCommand(undefined)).toBe(false);
+    expect(isAppendCommand(null)).toBe(false);
+    expect(isAppendCommand(123)).toBe(false);
+  });
+
+  it('rejects empty string', () => {
+    expect(isAppendCommand('')).toBe(false);
+  });
+});
+
+describe('isClosingAppend', () => {
+  it('detects an append asserting stage:commit', () => {
+    expect(
+      isClosingAppend(
+        'node events/scripts/append-build.mjs --set meta.harness.x.status \'{"stage":"commit","text":"y"}\'',
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects an append asserting a non-commit stage', () => {
+    expect(
+      isClosingAppend(
+        'node events/scripts/append-build.mjs --set meta.harness.x.status \'{"stage":"implement","text":"y"}\'',
+      ),
+    ).toBe(false);
+  });
+
+  it('rejects an append without a stage', () => {
+    expect(isClosingAppend('node events/scripts/append.mjs --set product.name.value "x"')).toBe(
+      false,
+    );
+  });
+
+  it('rejects a non-append command even with stage:commit text', () => {
+    expect(isClosingAppend('node events/scripts/build.mjs --set x \'{"stage":"commit"}\'')).toBe(
+      false,
+    );
+  });
+
+  it('rejects non-string input', () => {
+    expect(isClosingAppend(undefined)).toBe(false);
+    expect(isClosingAppend(null)).toBe(false);
   });
 });

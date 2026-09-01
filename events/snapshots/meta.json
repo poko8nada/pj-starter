@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T15:42:33.611+09:00",
-  "asOf": "2026-09-01T15:42:33.580+09:00",
+  "generatedAt": "2026-09-01T16:22:32.539+09:00",
+  "asOf": "2026-09-01T16:22:32.499+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -25,10 +25,10 @@
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
         "status": {
           "stage": "commit",
-          "text": "trail.hook.ts を状態管理と IO 層に分離"
+          "text": "trailをwork unit窓（append〜closing append）に狭め、初期状態をログから判定するよう改修"
         },
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
-        "updatedAt": "20260831"
+        "updatedAt": "20260901"
       },
       "edit-lint": {
         "purpose": "編集直後のreport-only lint",

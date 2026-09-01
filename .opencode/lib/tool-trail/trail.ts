@@ -85,11 +85,26 @@ export const buildTrailEvent = (input: TrailInput): TrailEvent | null => {
 };
 
 // bash コマンドが git commit かどうかを判定する。
-// commit 後のアイドル動作で trail が追記されるのを抑止するために使用する。
+// 直接コミット（commit スキルを経ない git commit）を trail 窓のバックストップとして閉じるために使用する。
 // "git commit" の後に空白または行末が続く場合のみ true（"git commit--amend" 等の誤検知を避ける）
 export const isCommitCommand = (command: unknown): boolean => {
   if (typeof command !== 'string') return false;
   return /^git\s+commit(\s|$)/.test(command.trim());
+};
+
+// bash コマンドが events への append かどうかを判定する。
+// append は work unit の開始（trail ON）と closing（stage:commit アサート、trail OFF）の境界マーカー。
+// "node events/scripts/append(-build)?.mjs"（./ プレフィックス許容）の後に空白または行末が続く場合のみ true
+export const isAppendCommand = (command: unknown): boolean => {
+  if (typeof command !== 'string') return false;
+  return /^node\s+(?:\.\/)?events\/scripts\/append(-build)?\.mjs(\s|$)/.test(command.trim());
+};
+
+// append コマンドが stage:commit をアサートする closing append かどうかを判定する。
+// work unit の意味的終了。バッチファイル（--file）内の stage:commit は検知しない（まれなケースとして許容）
+export const isClosingAppend = (command: unknown): boolean => {
+  if (typeof command !== 'string') return false;
+  return isAppendCommand(command) && /"stage"\s*:\s*"commit"/.test(command);
 };
 
 // 連続する同一ツールの試行を1行にマージする。異なるツールは null。
