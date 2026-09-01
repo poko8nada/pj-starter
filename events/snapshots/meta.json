@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T02:43:31.863+09:00",
-  "asOf": "2026-09-01T02:43:31.830+09:00",
+  "generatedAt": "2026-09-01T10:37:34.549+09:00",
+  "asOf": "2026-09-01T10:37:34.517+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -271,23 +271,14 @@
         },
         "updatedAt": "20260901"
       },
-      "user-reset": {
-        "path": "scripts/user/reset.mjs",
-        "purpose": "スターター複製の初期化ツール。checkpointへstatus/updatedAtなしの初期状態を書き、logをname/whatだけで始める。引数なしはdry-run",
+      "user-apply": {
+        "purpose": "スターターをプロジェクトへ一方向適用するツール。ハーネス一式をミラー（スターターに無いファイルは削除）し、meta.* をスターターのコミット済み在庫で置換する。--init でログ掃除（旧 reset 相当）を兼ねる",
+        "path": "scripts/user/apply.mjs",
         "status": {
           "stage": "commit",
-          "text": "stripHistory / writeCheckpoint を lib からの import に変更"
+          "text": "reset/sync-to-starter を統合し、純 Node 一方向ミラー apply として再実装"
         },
-        "updatedAt": "20260828"
-      },
-      "user-sync-to-starter": {
-        "path": "scripts/user/sync-to-starter.mjs",
-        "purpose": "ハーネスをプロジェクトとスターター間で双方向同期するツール。ファイルは rclone bisync、meta.* ログはコミット済みのみ双方向へ流し、プロジェクト側は reset 同様にストリップする",
-        "status": {
-          "stage": "commit",
-          "text": "sync/ ディレクトリに分割しファイル同期とメタ同期を分離"
-        },
-        "updatedAt": "20260831"
+        "updatedAt": "20260901"
       }
     },
     "agents": {

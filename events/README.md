@@ -101,7 +101,7 @@ Recording follows one of three paths, depending on what was agreed:
 
 ## Fresh-copy state and the starter boundary
 
-`scripts/user/` holds human-operated maintenance tools (project initialization, upstream sync to the starter). **Agents must not execute them** — initialization wipes recorded state, so it runs only when the user decides. If a task seems to need them, ask the user to run the tool instead.
+`scripts/user/` holds human-operated maintenance tools (project initialization, upstream apply from the starter). **Agents must not execute them** — initialization wipes recorded state, so it runs only when the user decides. If a task seems to need them, ask the user to run the tool instead.
 
 What agents must be able to read from a fresh copy's state:
 

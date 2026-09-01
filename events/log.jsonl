@@ -500,4 +500,50 @@
 {"ts":"2026-09-01T02:43:31.766+09:00","type":"set","key":"log.try.8790394d","value":{"tool":"bash","gap":0,"targets":["node"]}}
 {"ts":"2026-09-01T02:43:31.830+09:00","type":"set","key":"meta.harness.unresolved-followup.status","value":{"stage":"commit","text":"CLI文字列出力依存をやめ、findUnresolved を直接 import して構造的に0件判定するよう修正"}}
 {"ts":"2026-09-01T02:43:31.830+09:00","type":"set","key":"meta.scripts.event-read.status","value":{"stage":"commit","text":"--unresolved 出力を英語化し、テストを完全文言・no path 検証に強化"}}
-{"ts":"2026-09-01T02:43:44.065+09:00","type":"set","key":"log.try.caf9d93e","value":{"tool":"bash","gap":4416,"targets":["node","git","git","git","git"]}}
+{"ts":"2026-09-01T10:18:13.692+09:00","type":"set","key":"log.try.4d2b2bed","value":{"tool":"bash","gap":4483,"targets":["cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd"]}}
+{"ts":"2026-09-01T10:19:19.457+09:00","type":"set","key":"log.try.292130cc","value":{"tool":"bash","gap":0,"targets":["cd","cd","cd","cd"]}}
+{"ts":"2026-09-01T10:19:24.064+09:00","type":"set","key":"log.try.98d22e64","value":{"tool":"edit","gap":4607,"targets":["package.json"]}}
+{"ts":"2026-09-01T10:19:55.006+09:00","type":"set","key":"log.try.e32e4970","value":{"tool":"bash","gap":4356,"targets":["cd","cd","cd","cd","cd"]}}
+{"ts":"2026-09-01T10:20:05.936+09:00","type":"set","key":"log.try.83788ed3","value":{"tool":"write","gap":10930,"targets":["scripts/user/README.md"]}}
+{"ts":"2026-09-01T10:20:13.637+09:00","type":"set","key":"log.try.57fe53e6","value":{"tool":"edit","gap":7701,"targets":["events/README.md"]}}
+{"ts":"2026-09-01T10:20:18.629+09:00","type":"set","key":"log.try.2dce0677","value":{"tool":"bash","gap":4992,"targets":["cd"]}}
+{"ts":"2026-09-01T10:20:29.871+09:00","type":"set","key":"log.try.c4143905","value":{"tool":"edit","gap":5434,"targets":["events/scripts/lib.mjs","events/scripts/lib/paths.mjs"]}}
+{"ts":"2026-09-01T10:20:35.816+09:00","type":"set","key":"log.try.ba4877e7","value":{"tool":"bash","gap":5945,"targets":["cd"]}}
+{"ts":"2026-09-01T10:20:35.878+09:00","type":"set","key":"meta.scripts.user-apply","value":{"purpose":"スターターをプロジェクトへ一方向適用するツール。ハーネス一式をミラー（スターターに無いファイルは削除）し、meta.* をスターターのコミット済み在庫で置換する。--init でログ掃除（旧 reset 相当）を兼ねる","path":"scripts/user/apply.mjs","status":{"stage":"implement","text":"純 Node 一方向ミラー実装中（mtime/size 比較・除外保護）"}}}
+{"ts":"2026-09-01T10:20:35.878+09:00","type":"set","key":"meta.scripts.user-apply.status","value":{"stage":"implement","text":"純 Node 一方向ミラー実装中（mtime/size 比較・除外保護）"}}
+{"ts":"2026-09-01T10:20:35.878+09:00","type":"del","key":"meta.scripts.user-reset"}
+{"ts":"2026-09-01T10:20:35.878+09:00","type":"del","key":"meta.scripts.user-sync-to-starter"}
+{"ts":"2026-09-01T10:21:35.224+09:00","type":"set","key":"log.try.e7416612","value":{"tool":"bash","gap":4973,"targets":["cd","cd","cd","cd","cd","cd","cd","cd","cd","cd","cd"]}}
+{"ts":"2026-09-01T10:22:11.509+09:00","type":"set","key":"log.try.84c13309","value":{"tool":"skill","gap":0,"targets":["audit"]}}
+{"ts":"2026-09-01T10:22:29.933+09:00","type":"set","key":"log.try.b33d99f0","value":{"tool":"bash","gap":4768,"targets":["cd","cd","cd","cd","cd"]}}
+{"ts":"2026-09-01T10:22:41.830+09:00","type":"set","key":"log.try.7f1ba147","value":{"tool":"task","gap":11897,"targets":["auditor"]}}
+{"ts":"2026-09-01T10:25:15.695+09:00","type":"set","key":"log.try.a7f8d2e2","value":{"tool":"read","gap":0,"targets":["scripts/user/apply/files.mjs"]}}
+{"ts":"2026-09-01T10:25:24.712+09:00","type":"set","key":"log.try.34d49032","value":{"tool":"edit","gap":9017,"targets":["scripts/user/apply/files.mjs"]}}
+{"ts":"2026-09-01T10:25:31.538+09:00","type":"set","key":"log.try.bb0794b4","value":{"tool":"read","gap":6826,"targets":["scripts/user/apply/files.mjs"]}}
+{"ts":"2026-09-01T10:25:37.661+09:00","type":"set","key":"log.try.7b3f5b54","value":{"tool":"edit","gap":6123,"targets":["scripts/user/apply/files.mjs"]}}
+{"ts":"2026-09-01T10:25:43.064+09:00","type":"set","key":"log.try.fe82f144","value":{"tool":"read","gap":5403,"targets":["scripts/user/apply.test.mjs"]}}
+{"ts":"2026-09-01T10:26:14.014+09:00","type":"set","key":"log.try.59394de7","value":{"tool":"edit","gap":13104,"targets":["scripts/user/apply.test.mjs","scripts/user/apply.test.mjs","scripts/user/apply.test.mjs"]}}
+{"ts":"2026-09-01T10:26:19.427+09:00","type":"set","key":"log.try.fe190f1f","value":{"tool":"bash","gap":5413,"targets":["cd"]}}
+{"ts":"2026-09-01T10:26:27.663+09:00","type":"set","key":"log.try.ec731acd","value":{"tool":"edit","gap":8235,"targets":["scripts/user/README.md"]}}
+{"ts":"2026-09-01T10:26:42.192+09:00","type":"set","key":"log.try.ffebd4bd","value":{"tool":"bash","gap":5118,"targets":["cd","cd"]}}
+{"ts":"2026-09-01T10:26:42.250+09:00","type":"set","key":"meta.scripts.user-apply.status","value":{"stage":"implement","text":"audit指摘修正済み: 除外のネスト対応・src消失ガード・meta置換/--initテスト追加"}}
+{"ts":"2026-09-01T10:26:52.464+09:00","type":"set","key":"log.try.2a0d894d","value":{"tool":"task","gap":10272,"targets":["auditor"]}}
+{"ts":"2026-09-01T10:29:05.677+09:00","type":"set","key":"log.try.fd88f7be","value":{"tool":"read","gap":133213,"targets":["scripts/user/apply/meta.mjs"]}}
+{"ts":"2026-09-01T10:29:19.088+09:00","type":"set","key":"log.try.4adc2d7a","value":{"tool":"edit","gap":5669,"targets":["scripts/user/apply/meta.mjs","scripts/user/apply/files.mjs"]}}
+{"ts":"2026-09-01T10:29:24.719+09:00","type":"set","key":"log.try.724688f8","value":{"tool":"read","gap":5631,"targets":["scripts/user/apply/files.mjs"]}}
+{"ts":"2026-09-01T10:29:50.080+09:00","type":"set","key":"log.try.6bf026a8","value":{"tool":"edit","gap":6875,"targets":["scripts/user/apply/files.mjs","scripts/user/apply.test.mjs","scripts/user/apply.test.mjs"]}}
+{"ts":"2026-09-01T10:30:03.217+09:00","type":"set","key":"log.try.8d0ddc69","value":{"tool":"bash","gap":5748,"targets":["cd","cd"]}}
+{"ts":"2026-09-01T10:30:20.031+09:00","type":"set","key":"log.try.ed7091a4","value":{"tool":"task","gap":16814,"targets":["auditor"]}}
+{"ts":"2026-09-01T10:33:46.242+09:00","type":"set","key":"log.try.2de7f6b6","value":{"tool":"edit","gap":184541,"targets":["scripts/user/apply/meta.mjs","scripts/user/apply.test.mjs","scripts/user/apply.test.mjs","scripts/user/apply.test.mjs"]}}
+{"ts":"2026-09-01T10:33:52.437+09:00","type":"set","key":"log.try.9dafbe9e","value":{"tool":"read","gap":6195,"targets":["scripts/user/apply.test.mjs"]}}
+{"ts":"2026-09-01T10:33:58.706+09:00","type":"set","key":"log.try.d1279007","value":{"tool":"edit","gap":6269,"targets":["scripts/user/apply.test.mjs"]}}
+{"ts":"2026-09-01T10:34:11.248+09:00","type":"set","key":"log.try.8a3701e2","value":{"tool":"bash","gap":6347,"targets":["cd","cd"]}}
+{"ts":"2026-09-01T10:34:20.780+09:00","type":"set","key":"log.try.9ee955fe","value":{"tool":"edit","gap":9532,"targets":["scripts/user/README.md"]}}
+{"ts":"2026-09-01T10:34:26.473+09:00","type":"set","key":"log.try.75f21722","value":{"tool":"bash","gap":5692,"targets":["cd"]}}
+{"ts":"2026-09-01T10:34:26.532+09:00","type":"set","key":"meta.scripts.user-apply.status","value":{"stage":"implement","text":"audit再審対応: 不正JSON耐性・任意深度除外テスト・stack stripped断定・dry-run不変テストを追加"}}
+{"ts":"2026-09-01T10:34:34.001+09:00","type":"set","key":"log.try.14eff62b","value":{"tool":"task","gap":7528,"targets":["auditor"]}}
+{"ts":"2026-09-01T10:37:28.567+09:00","type":"set","key":"log.try.1d1312f7","value":{"tool":"skill","gap":0,"targets":["commit"]}}
+{"ts":"2026-09-01T10:37:34.454+09:00","type":"set","key":"log.try.072cee2e","value":{"tool":"bash","gap":5887,"targets":["cd"]}}
+{"ts":"2026-09-01T10:37:34.517+09:00","type":"set","key":"meta.scripts.user-apply.status","value":{"stage":"commit","text":"reset/sync-to-starter を統合し、純 Node 一方向ミラー apply として再実装"}}
+{"ts":"2026-09-01T10:37:45.375+09:00","type":"set","key":"log.try.45ef498a","value":{"tool":"bash","gap":5474,"targets":["cd","cd","cd"]}}
+{"ts":"2026-09-01T10:38:01.701+09:00","type":"set","key":"log.try.d4bd23cc","value":{"tool":"bash","gap":0,"targets":["cd"]}}
