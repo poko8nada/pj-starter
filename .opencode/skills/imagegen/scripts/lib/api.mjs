@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // api.mjs — OpenRouter 画像生成 API の共通クライアント。
-// generate.mjs / refine.mjs が共有する I/O 層: API_KEY 検証、/images 呼び出し、
+// generate.mjs / edit.mjs が共有する I/O 層: API_KEY 検証、/images 呼び出し、
 // レスポンス（usage.cost）取得、画像バイナリ保存、エラー処理（4xx/5xx）。
 // I/O 層のため単体テストは fetch / fs をモックした api.test.mjs で失敗モードを検証する。
 

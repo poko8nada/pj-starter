@@ -3,7 +3,7 @@
 // 単発（デフォルト）または複数候補（--n）を生成し、imagegen/tmp/ に保存する。
 // 使用法:
 //   node generate.mjs --prompt "..." [--n 5] [--aspect-ratio 1:1] [--quality medium] [--output-format png] [--final] [--out DIR]
-// 単発で完結する用途はそのまま使い、必要なら refine.mjs で仕上げる。
+// 単発で完結する用途はそのまま使い、必要なら edit.mjs で再生成/仕上げる。
 
 import process from 'node:process';
 import { buildGenerateBody, DRAFT_MODEL } from './lib/params.mjs';

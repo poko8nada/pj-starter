@@ -7,7 +7,7 @@ import {
   buildGenerateBody,
   buildRefineBody,
   clampN,
-  finishModelForStyle,
+  modelForStyle,
 } from './params';
 describe('assertModel', () => {
   it('accepts known models', () => {
@@ -93,17 +93,21 @@ describe('assertOutputFormat', () => {
   });
 });
 
-describe('finishModelForStyle', () => {
+describe('modelForStyle', () => {
+  it('maps draft to muse-image', () => {
+    expect(modelForStyle('draft')).toBe('meta/muse-image');
+  });
+
   it('maps photo to Nano Banana 2 Lite', () => {
-    expect(finishModelForStyle('photo')).toBe('google/gemini-3.1-flash-lite-image');
+    expect(modelForStyle('photo')).toBe('google/gemini-3.1-flash-lite-image');
   });
 
   it('maps illustration to Seedream 5.0 Lite', () => {
-    expect(finishModelForStyle('illustration')).toBe('bytedance-seed/seedream-5.0-lite');
+    expect(modelForStyle('illustration')).toBe('bytedance-seed/seedream-5.0-lite');
   });
 
   it('rejects unknown styles', () => {
-    expect(() => finishModelForStyle('3d')).toThrow(/unknown style/);
+    expect(() => modelForStyle('3d')).toThrow(/unknown style/);
   });
 });
 
@@ -193,7 +197,30 @@ describe('buildRefineBody', () => {
     expect(body.output_format).toBe('png');
   });
 
-  it('propagates aspect_ratio and output_format in refine body', () => {
+  it('builds a draft (muse) body without resolution or default output_format', () => {
+    const body = buildRefineBody({
+      model: 'meta/muse-image',
+      prompt: 'make the apple more red',
+      inputImage: 'data:image/png;base64,abc',
+      n: 10,
+    });
+    expect(body.model).toBe('meta/muse-image');
+    expect(body.n).toBe(10);
+    expect(body.resolution).toBeUndefined();
+    expect(body.output_format).toBeUndefined();
+  });
+
+  it('respects explicit output_format for draft (muse)', () => {
+    const body = buildRefineBody({
+      model: 'meta/muse-image',
+      prompt: 'make the apple more red',
+      inputImage: 'data:image/png;base64,abc',
+      outputFormat: 'webp',
+    });
+    expect(body.output_format).toBe('webp');
+  });
+
+  it('propagates aspect_ratio and output_format in edit body', () => {
     const body = buildRefineBody({
       model: 'bytedance-seed/seedream-5.0-lite',
       prompt: 'illustration',
@@ -206,7 +233,7 @@ describe('buildRefineBody', () => {
     expect(body.resolution).toBe('2K');
   });
 
-  it('rejects invalid aspect_ratio in refine body', () => {
+  it('rejects invalid aspect_ratio in edit body', () => {
     expect(() =>
       buildRefineBody({
         model: 'bytedance-seed/seedream-5.0-lite',
@@ -217,7 +244,7 @@ describe('buildRefineBody', () => {
     ).toThrow(/invalid aspect_ratio/);
   });
 
-  it('treats empty-string aspect_ratio and output_format as unspecified in refine body', () => {
+  it('treats empty-string aspect_ratio and output_format as unspecified in edit body', () => {
     const body = buildRefineBody({
       model: 'bytedance-seed/seedream-5.0-lite',
       prompt: 'illustration',

@@ -24,15 +24,16 @@ Assemble detailed prompts using the labels below; it stabilizes model fidelity. 
 
 ## Style routing
 
-In the finish phase, `--style` selects the model.
+In the edit phase, `--style` selects the model.
 
 | style          | model              | strength                                               |
 | -------------- | ------------------ | ------------------------------------------------------ |
+| `draft`        | muse-image         | cheap regeneration, iterative editing, anchored series |
 | `photo`        | Nano Banana 2 Lite | photoreal, fastest and cheapest, character consistency |
 | `illustration` | Seedream 5.0 Lite  | illustration/diagrams, in-image text, complex prompts  |
 
 - If the style is ambiguous, confirm with the user (illustration or photo).
-- Choose `photo` for photorealism; `illustration` for line art, anime, in-image text, or diagrams.
+- Choose `draft` for a cheap redo of a draft; `photo` for photorealism; `illustration` for line art, anime, in-image text, or diagrams.
 
 ## In-image text
 
@@ -51,6 +52,7 @@ In the finish phase, `--style` selects the model.
 
 ## Iterative editing
 
-- For tweaks after finishing, pass the previous output as `--input` and repeat refine.
+- For tweaks after finishing, pass the previous output as `--input` and repeat edit.
 - Each iteration must state **what to change** and **what to keep (KEEP)** to prevent drift.
   - Example: `change only the lighting to warm sunset; keep the composition and character unchanged`
+- For a cheap redo of a draft, use `edit.mjs --style draft` (muse img2img) instead of a higher-tier finish — it costs $0.01/image and is well suited to iterative refinement.

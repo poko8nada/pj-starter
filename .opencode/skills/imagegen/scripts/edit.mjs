@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-// refine.mjs — 上位モデルによる img2img 仕上げ。
-// 下書き画像（generate.mjs の出力）を参照画像として渡し、指定スタイルの仕上げモデルで再生成する。
+// edit.mjs — img2img 編集（再生成 / 仕上げ）。
+// 既存画像（generate.mjs の出力など）を参照画像として渡し、指定スタイルのモデルで再生成する。
 // 使用法:
-//   node refine.mjs --input IMAGE [--style photo|illustration] --prompt "..." [--model M] [--n N] [--resolution R] [--aspect-ratio AR] [--output-format F] [--out DIR]
-// 仕上げモデルは --style で出し分け: photo -> Nano Banana 2 Lite, illustration -> Seedream 5.0 Lite
-// 成果物は imagegen/ に保存する。
+//   node edit.mjs --input IMAGE --style <draft|photo|illustration> --prompt "..." [--model M] [--n N] [--resolution R] [--aspect-ratio AR] [--output-format F] [--out DIR]
+// モデルは --style で出し分け:
+//   draft        -> muse-image（安価な再生成、imagegen/tmp/ に保存）
+//   photo        -> Nano Banana 2 Lite（フォト仕上げ、imagegen/ に保存）
+//   illustration -> Seedream 5.0 Lite（イラスト/文字入り仕上げ、imagegen/ に保存）
 
 import process from 'node:process';
-import { buildRefineBody, finishModelForStyle } from './lib/params.mjs';
-import { generateImages, resolveInputReference, saveImages, resolveOutDir } from './lib/api.mjs';
-import { parsePositiveInt, slug } from './lib/cli.mjs';
+import { buildRefineBody, modelForStyle } from './lib/params.mjs';
+import { generateImages, resolveInputReference, saveImages } from './lib/api.mjs';
+import { parsePositiveInt, resolveEditOutDir, slug } from './lib/cli.mjs';
 
 // CLI 引数をパースする
 function parseArgs(argv) {
@@ -72,7 +74,7 @@ async function main() {
 
   if (!args.input || !args.prompt) {
     console.error(
-      'Usage: node refine.mjs --input IMAGE [--style photo|illustration] --prompt "..." [--model M] [--n N] [--resolution R] [--aspect-ratio AR] [--output-format F] [--out DIR]',
+      'Usage: node edit.mjs --input IMAGE --style <draft|photo|illustration> --prompt "..." [--model M] [--n N] [--resolution R] [--aspect-ratio AR] [--output-format F] [--out DIR]',
     );
     process.exit(1);
   }
@@ -81,11 +83,11 @@ async function main() {
     // モデル未指定なら style から決定する
     if (!args.model) {
       if (!args.style) throw new Error('either --model or --style is required');
-      args.model = finishModelForStyle(args.style);
+      args.model = modelForStyle(args.style);
     }
     const body = buildRefineBody({ ...args, inputImage: resolveInputReference(args.input) });
     const result = await generateImages(body);
-    const outDir = args.out || resolveOutDir({ final: true, cwd: process.cwd() });
+    const outDir = resolveEditOutDir({ ...args, cwd: process.cwd() });
     const baseName = slug(args.prompt);
     const saved = await saveImages(result, outDir, baseName);
 

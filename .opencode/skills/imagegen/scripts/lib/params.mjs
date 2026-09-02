@@ -2,7 +2,7 @@
 // params.mjs — モデル別パラメータ出し分けの純関数群。
 // 画像生成モデルごとに能力（解像度・枚数・対応パラメータ）が異なるため、
 // ここで一元的に管理し、リクエストボディを構築する。I/O を持たない純粋ロジック。
-// generate.mjs / refine.mjs の両方から利用される（重複の防止）。
+// generate.mjs / edit.mjs の両方から利用される（重複の防止）。
 
 // モデル能力テーブル。各モデルの対応パラメータを明示する。
 // 出典: OpenRouter /images API のモデル仕様（recon調査 2026-09-02）
@@ -94,13 +94,15 @@ export function assertOutputFormat(model, format) {
 // 下書き用モデルの取得（単発/複数候補生成）
 export const DRAFT_MODEL = 'meta/muse-image';
 
-// スタイルから仕上げモデルを選択する
-//   photo       -> Nano Banana 2 Lite（フォトリアル、最速・最安）
-//   illustration-> Seedream 5.0 Lite（イラスト/図解/画像内テキスト）
-export function finishModelForStyle(style) {
+// スタイルから img2img 編集モデルを選択する（edit.mjs 用）
+//   draft        -> muse-image（安価な再生成）
+//   photo        -> Nano Banana 2 Lite（フォトリアル、最速・最安）
+//   illustration -> Seedream 5.0 Lite（イラスト/図解/画像内テキスト）
+export function modelForStyle(style) {
+  if (style === 'draft') return DRAFT_MODEL;
   if (style === 'photo') return 'google/gemini-3.1-flash-lite-image';
   if (style === 'illustration') return 'bytedance-seed/seedream-5.0-lite';
-  throw new Error(`unknown style: ${style} (use photo or illustration)`);
+  throw new Error(`unknown style: ${style} (use draft, photo, or illustration)`);
 }
 
 // テキスト生成（画像生成）リクエストボディを構築する。
@@ -174,7 +176,12 @@ export function buildRefineBody({
   if (aspectRatio !== undefined && aspectRatio !== '') {
     body.aspect_ratio = assertAspectRatio(aspectRatio);
   }
-  // output_format: 明示指定は検証して尊重、未指定（空文字含む）はモデル既定を付与
-  body.output_format = assertOutputFormat(model, outputFormat);
+  // output_format: 明示指定は検証して尊重。未指定時は muse（draft）は送らない
+  // （OpenRouter 側で supported_parameters が空のため）、それ以外はモデル既定を付与
+  if (outputFormat !== undefined && outputFormat !== '') {
+    body.output_format = assertOutputFormat(model, outputFormat);
+  } else if (model !== DRAFT_MODEL) {
+    body.output_format = assertOutputFormat(model, outputFormat);
+  }
   return body;
 }
