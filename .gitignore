@@ -46,3 +46,6 @@ lerna-debug.log*
 
 # mockup workbench（独立ワークスペース。ビルド成果物は events から参照されるため追跡する）
 !.opencode/skills/mockup/workbench/dist/
+
+# imagegen skill の中間生成物（下書きは追跡しない。最終成果物 imagegen/ 直下は追跡する）
+imagegen/tmp/

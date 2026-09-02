@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T16:48:35.836+09:00",
-  "asOf": "2026-09-01T16:48:35.806+09:00",
+  "generatedAt": "2026-09-02T18:50:23.406+09:00",
+  "asOf": "2026-09-02T18:50:23.371+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -203,6 +203,15 @@
         },
         "path": ".opencode/skills/pr/SKILL.md",
         "updatedAt": "20260901"
+      },
+      "imagegen": {
+        "purpose": "OpenRouterの画像生成APIでイラスト/フォト両対応の画像を生成するスキル。muse-imageで下書き生成（単発で完結も可）し、必要に応じてNano Banana 2 Lite（フォト仕上げ）かSeedream 5.0 Lite（イラスト/文字入り仕上げ）でimg2img仕上げする。プロンプト展開・ユーザー対話フェーズ・モデル別パラメータ出し分けを持つ",
+        "status": {
+          "stage": "commit",
+          "text": "SKILL.md/prompting.md/scripts(generate/refine/lib: params/api/cli)を実装し、56テスト・lint・typecheck・実動作確認を通過"
+        },
+        "path": ".opencode/skills/imagegen/SKILL.md",
+        "updatedAt": "20260902"
       }
     },
     "docs": {

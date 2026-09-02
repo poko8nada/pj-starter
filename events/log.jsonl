@@ -757,3 +757,9 @@
 {"ts":"2026-09-01T16:48:29.338+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"ready","text":"事前チェックのpush判定をupstream存在確認からリモートへの全コミット反映に修正"}}
 {"ts":"2026-09-01T16:48:32.656+09:00","type":"set","key":"log.try.6cc38022","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/pr/SKILL.md"]}}
 {"ts":"2026-09-01T16:48:35.806+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"commit","text":"事前チェックのpush判定をupstream存在確認からリモートへの全コミット反映に修正"}}
+{"ts":"2026-09-02T18:07:43.177+09:00","type":"set","key":"meta.skills.imagegen","value":{"purpose":"OpenRouterの画像生成APIでイラスト/フォト両対応の画像を生成するスキル。muse-imageで下書き生成（単発で完結も可）し、必要に応じてNano Banana 2 Lite（フォト仕上げ）かSeedream 5.0 Lite（イラスト/文字入り仕上げ）でimg2img仕上げする。プロンプト展開・ユーザー対話フェーズ・モデル別パラメータ出し分けを持つ","status":{"stage":"planned","text":"未着手"}}}
+{"ts":"2026-09-02T18:07:43.177+09:00","type":"set","key":"meta.skills.imagegen.status","value":{"stage":"planned","text":"未着手"}}
+{"ts":"2026-09-02T18:14:39.807+09:00","type":"set","key":"meta.skills.imagegen.path","value":".opencode/skills/imagegen/SKILL.md"}
+{"ts":"2026-09-02T18:14:39.807+09:00","type":"set","key":"meta.skills.imagegen.status","value":{"stage":"ready","text":"実装計画確定。共通クライアントlib/api.mjs追加、params純関数化、SKILL.md/generate/refine/prompting.md/.gitignore更新の6オーダー"}}
+{"ts":"2026-09-02T18:14:44.377+09:00","type":"set","key":"meta.skills.imagegen.status","value":{"stage":"implement","text":"共通クライアントlib/api.mjs・params純関数を実装中"}}
+{"ts":"2026-09-02T18:50:23.371+09:00","type":"set","key":"meta.skills.imagegen.status","value":{"stage":"commit","text":"SKILL.md/prompting.md/scripts(generate/refine/lib: params/api/cli)を実装し、56テスト・lint・typecheck・実動作確認を通過"}}
