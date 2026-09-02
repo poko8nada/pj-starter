@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-02T20:54:07.119+09:00",
-  "asOf": "2026-09-02T20:54:07.084+09:00",
+  "generatedAt": "2026-09-02T21:27:19.837+09:00",
+  "asOf": "2026-09-02T21:27:19.805+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -127,9 +127,9 @@
         "purpose": "コミット前の変更をコードレビューする",
         "status": {
           "stage": "commit",
-          "text": "未確定コンポーネント確認ステップを手順に追加し連番化"
+          "text": "step4でテスト方針を渡し、step9を採用指摘+増分diffのみの再レビューに改訂"
         },
-        "updatedAt": "20260831",
+        "updatedAt": "20260902",
         "path": ".opencode/skills/audit/SKILL.md"
       },
       "mockup": {
@@ -182,9 +182,9 @@
         "path": ".opencode/skills/workflow/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "終端条件と終了時ダイジェスト（Steps/Done/State）を共通ルールとして追加"
+          "text": "参照スキルの手順スキップ禁止を明文化"
         },
-        "updatedAt": "20260901"
+        "updatedAt": "20260902"
       },
       "visual": {
         "purpose": "プロダクトのビジュアル（スタティック＋モーション）を実装する。mockupの成果物を参照して適用可能。look未決定時はmockupへハンズオフ",
@@ -322,10 +322,10 @@
         "purpose": "コミット前レビューを担う専任サブエージェント",
         "status": {
           "stage": "commit",
-          "text": "auditor.md を作成し運用中"
+          "text": "test観点をagendaテスト判定表に固定し、re-reviewモードと初回出し切りを明記"
         },
         "path": ".opencode/agent/auditor.md",
-        "updatedAt": "20260825"
+        "updatedAt": "20260902"
       },
       "web-researcher": {
         "purpose": "ライブラリやフレームワークの技術調査。公式サイトやGitHubの有無を確認",

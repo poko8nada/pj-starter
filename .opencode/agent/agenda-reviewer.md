@@ -1,8 +1,8 @@
 ---
 description: Reviews an agenda plan and its impact scope against the impact-scope/rebuild viewpoint. Returns findings in a fixed format. Use as the review engine of the agenda skill.
 mode: subagent
-model: opencode-go/muse-spark-1.2-contributor
-reasoningEffort: xhigh
+model: opencode-go/muse-spark-1.3-contributor
+reasoningEffort: high
 temperature: 0.1
 permission:
   edit: deny
