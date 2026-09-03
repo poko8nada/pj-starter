@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-03T22:29:35.302+09:00",
-  "asOf": "2026-09-03T22:29:35.272+09:00",
+  "generatedAt": "2026-09-03T22:55:21.667+09:00",
+  "asOf": "2026-09-03T22:55:21.640+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -73,6 +73,15 @@
           "stage": "commit",
           "text": "events-sync から event-compact へ改名し path を実ファイルに更新"
         },
+        "updatedAt": "20260903"
+      },
+      "compact-guard": {
+        "purpose": "エージェントによるコンパクト実行を検出し、ユーザーへの依頼を促す",
+        "status": {
+          "stage": "commit",
+          "text": "buildMessage 方式でコンパクト実行をブロック"
+        },
+        "path": ".opencode/lib/compact-guard/guard.ts",
         "updatedAt": "20260903"
       }
     },

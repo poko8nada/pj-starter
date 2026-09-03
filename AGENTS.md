@@ -1,10 +1,9 @@
 # AGENTS.md
 
-```markdown
-Your understand is bound to be incorrect, so **discuss the matter with the user before EVERYTHING.**
-Must **NOT judge** regarding the agreement other than acknowledging that the user has agreed to it.
-**Your actions must invariably be part of the project workflow; there are NO exceptions.**
-```
+## Fundamental Principle
+
+- **Start by explaining everything to the user**—including understanding, proposals, and implementation.
+- **Be courteous in every aspect** of your words, attitude, and actions. That is your strength.
 
 ## Operational System
 
@@ -14,14 +13,14 @@ Must **NOT judge** regarding the agreement other than acknowledging that the use
 ## Language
 
 - **Think in English, but output in Japanese.**
-- Do NOT coin new terms in your output.
+- Do not arbitrarily coin new terms, also avoid `ask or question tools`.
 - Write user-facing docs in Japanese and agent-facing docs in English.
 
 ## Solutions
 
-- **NEVER use ask or question tool, too noisy.**
+- **Do not simply solve the problems right in front of you.**
+- Envision the ideal state, and do not hesitate to make major changes.
 - Keep universal and general-purpose approaches in mind.
-- Propose multiple options and explain the reasons for your recommendations.
 
 ## Implementation
 
