@@ -817,3 +817,17 @@
 {"ts":"2026-09-03T10:11:04.796+09:00","type":"set","key":"log.try.113d53e1","value":{"tool":"bash","gap":2755,"targets":["git","node","git"]}}
 {"ts":"2026-09-03T10:11:08.503+09:00","type":"set","key":"log.try.c67cf849","value":{"tool":"task","gap":3707,"targets":["auditor"]}}
 {"ts":"2026-09-03T10:11:59.066+09:00","type":"set","key":"meta.scripts.event-merge-driver.status","value":{"stage":"commit","text":"相手側順＋自側新規末尾化のmerge driverとテストとgitattributesを実装"}}
+{"ts":"2026-09-03T10:17:20.151+09:00","type":"set","key":"meta.scripts.event-compact.status","value":{"stage":"implement","text":"最新残し化と敷居値5000化を実装中"}}
+{"ts":"2026-09-03T10:17:20.151+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"implement","text":"更新節の追加を実装中"}}
+{"ts":"2026-09-03T10:17:24.605+09:00","type":"set","key":"log.try.fc86f627","value":{"tool":"write","gap":0,"targets":["events/scripts/compact.mjs"]}}
+{"ts":"2026-09-03T10:17:36.985+09:00","type":"set","key":"log.try.6b017d2f","value":{"tool":"edit","gap":4,"targets":[".opencode/lib/event-compact/threshold.ts",".opencode/lib/event-compact/compact.hook.test.ts",".opencode/lib/event-compact/compact.hook.test.ts",".opencode/lib/event-compact/compact.hook.test.ts","events/spec/machinery.md"]}}
+{"ts":"2026-09-03T10:17:49.903+09:00","type":"set","key":"log.try.8cc0f21b","value":{"tool":"write","gap":12917,"targets":["events/scripts/compact.test.mjs"]}}
+{"ts":"2026-09-03T10:17:49.907+09:00","type":"set","key":"log.try.9f5087a2","value":{"tool":"edit","gap":4,"targets":[".opencode/skills/pr/SKILL.md"]}}
+{"ts":"2026-09-03T10:17:57.577+09:00","type":"set","key":"log.try.19c1e472","value":{"tool":"bash","gap":3567,"targets":["pnpm","pnpm"]}}
+{"ts":"2026-09-03T10:18:02.555+09:00","type":"set","key":"log.try.eaeb1bc3","value":{"tool":"edit","gap":4978,"targets":["events/scripts/compact.test.mjs"]}}
+{"ts":"2026-09-03T10:18:09.849+09:00","type":"set","key":"log.try.3bc49bed","value":{"tool":"bash","gap":3390,"targets":["pnpm","git"]}}
+{"ts":"2026-09-03T10:18:14.982+09:00","type":"set","key":"log.try.01168f75","value":{"tool":"task","gap":5118,"targets":["auditor","auditor"]}}
+{"ts":"2026-09-03T10:18:57.548+09:00","type":"set","key":"log.try.a06b45ab","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/pr/SKILL.md"]}}
+{"ts":"2026-09-03T10:19:04.235+09:00","type":"set","key":"log.try.fdb1efde","value":{"tool":"task","gap":6687,"targets":["auditor"]}}
+{"ts":"2026-09-03T10:19:11.117+09:00","type":"set","key":"meta.scripts.event-compact.status","value":{"stage":"commit","text":"ログ最新残し化・敷居値5000・hookテスト整合・machinery記述更新を実施"}}
+{"ts":"2026-09-03T10:19:11.117+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"commit","text":"stale PR更新節を追加"}}

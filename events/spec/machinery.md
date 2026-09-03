@@ -17,11 +17,11 @@ The `log` namespace records what the agent tried per tool call — a coarse acti
 
 ## Compaction
 
-The active log has a line threshold (**1000**, defined in `.opencode/lib/event-compact/threshold.ts`). When the idle hook observes the threshold crossed, it runs `compact.mjs`:
+The active log has a line threshold (**5000**, defined in `.opencode/lib/event-compact/threshold.ts`). When the idle hook observes the threshold crossed, it runs `compact.mjs`:
 
 1. Fold checkpoint + active log into current trees
 2. Write `checkpoint.json` (`{ compactedAt, asOf, trees }`)
-3. Empty `log.jsonl`; subsequent appends simply continue on top of the checkpoint
+3. Rewrite `log.jsonl` with survivor lines only: the last occurrence per exact key (including `del`), in original relative order; fold-excluded trail (`log.*`) is dropped. Because thinning preserves last-write-wins, the folded state is unchanged
 
 Pre-compaction history lives in git — no archive mechanism exists. Because compaction preserves folded state exactly, existing snapshots remain valid without an immediate rebuild.
 

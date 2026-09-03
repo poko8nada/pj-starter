@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { COMPACT_FAILURE_TTL_MS, compactEvents, compactFailureStates } from './compact.hook';
+import { COMPACTION_THRESHOLD } from './threshold';
 import { createShellMock } from '../utils/shell-mock';
 
 vi.mock('node:fs');
@@ -43,7 +44,7 @@ describe('compactEvents TTL guard', () => {
       '/root-a',
     );
     handler = mock.handler;
-    setupLog('/root-a', Array(1000).fill('{"ts":"x"}').join('\n'));
+    setupLog('/root-a', Array(COMPACTION_THRESHOLD).fill('{"ts":"x"}').join('\n'));
     const report = await compactEvents(mock.ctx as unknown as Parameters<typeof compactEvents>[0]); // oxlint-disable-line typescript/no-unsafe-type-assertion
     expect(report.errors).toEqual([]);
     expect(compactCalled(handler)).toBe(true);
@@ -70,9 +71,14 @@ describe('compactEvents TTL guard', () => {
     expect(compactFailureStates.has('/root-a')).toBe(false);
   });
 
-  it('runs compact at the threshold boundary (999 vs 1000)', async () => {
+  it('runs compact at the threshold boundary', async () => {
     const mockBelow = createShellMock({}, '/root-a');
-    setupLog('/root-a', Array(999).fill('x').join('\n'));
+    setupLog(
+      '/root-a',
+      Array(COMPACTION_THRESHOLD - 1)
+        .fill('x')
+        .join('\n'),
+    );
     await compactEvents(mockBelow.ctx as unknown as Parameters<typeof compactEvents>[0]); // oxlint-disable-line typescript/no-unsafe-type-assertion
     expect(compactCalled(mockBelow.handler)).toBe(false);
 
@@ -80,7 +86,7 @@ describe('compactEvents TTL guard', () => {
       { 'node events/scripts/compact.mjs': { exitCode: 0, stdout: '', stderr: '' } },
       '/root-b',
     );
-    setupLog('/root-b', Array(1000).fill('x').join('\n'));
+    setupLog('/root-b', Array(COMPACTION_THRESHOLD).fill('x').join('\n'));
     await compactEvents(mockAt.ctx as unknown as Parameters<typeof compactEvents>[0]); // oxlint-disable-line typescript/no-unsafe-type-assertion
     expect(compactCalled(mockAt.handler)).toBe(true);
   });
@@ -93,7 +99,7 @@ describe('compactEvents TTL guard', () => {
       },
       '/root-a',
     );
-    setupLog('/root-a', Array(1000).fill('x').join('\n'));
+    setupLog('/root-a', Array(COMPACTION_THRESHOLD).fill('x').join('\n'));
     const report = await compactEvents(mock.ctx as unknown as Parameters<typeof compactEvents>[0]); // oxlint-disable-line typescript/no-unsafe-type-assertion
     expect(report.errors).toEqual([]);
     expect(compactCalled(mock.handler)).toBe(false);
@@ -106,7 +112,7 @@ describe('compactEvents TTL guard', () => {
       '/root-a',
     );
     handler = mock.handler;
-    setupLog('/root-a', Array(1000).fill('x').join('\n'));
+    setupLog('/root-a', Array(COMPACTION_THRESHOLD).fill('x').join('\n'));
     const report = await compactEvents(mock.ctx as unknown as Parameters<typeof compactEvents>[0]); // oxlint-disable-line typescript/no-unsafe-type-assertion
     expect(report.errors).toEqual([]);
     expect(compactCalled(handler)).toBe(true);
@@ -120,7 +126,7 @@ describe('compactEvents TTL guard', () => {
       '/root-b',
     );
     handler = mock.handler;
-    setupLog('/root-b', Array(1000).fill('x').join('\n'));
+    setupLog('/root-b', Array(COMPACTION_THRESHOLD).fill('x').join('\n'));
     const report = await compactEvents(mock.ctx as unknown as Parameters<typeof compactEvents>[0]); // oxlint-disable-line typescript/no-unsafe-type-assertion
     expect(report.errors).toEqual([]);
     expect(compactCalled(handler)).toBe(true);
@@ -131,7 +137,7 @@ describe('compactEvents TTL guard', () => {
       { 'node events/scripts/compact.mjs': { exitCode: 1, stdout: '', stderr: 'compact-boom' } },
       '/root-a',
     );
-    setupLog('/root-a', Array(1000).fill('x').join('\n'));
+    setupLog('/root-a', Array(COMPACTION_THRESHOLD).fill('x').join('\n'));
     const report = await compactEvents(mock.ctx as unknown as Parameters<typeof compactEvents>[0]); // oxlint-disable-line typescript/no-unsafe-type-assertion
     expect(report.errors.some((e) => e.startsWith('[events] compact'))).toBe(true);
     expect(compactFailureStates.get('/root-a')).toBe(Date.now());
@@ -145,7 +151,7 @@ describe('compactEvents TTL guard', () => {
       '/root-a',
     );
     handler = mock.handler;
-    setupLog('/root-a', Array(1000).fill('x').join('\n'));
+    setupLog('/root-a', Array(COMPACTION_THRESHOLD).fill('x').join('\n'));
     const report = await compactEvents(mock.ctx as unknown as Parameters<typeof compactEvents>[0]); // oxlint-disable-line typescript/no-unsafe-type-assertion
     expect(report.errors).toEqual([]);
     expect(compactCalled(handler)).toBe(true);

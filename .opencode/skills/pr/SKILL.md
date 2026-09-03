@@ -71,6 +71,14 @@ Reuse the commit message convention. Title is English; body text is Japanese (la
    `gh pr create --base <base> --head <branch> --title "<title>" --body "<body>"`
 6. **Report** — present the PR URL.
 
+## Updating a stale PR
+
+When the base moved after PR creation (another PR merged first):
+
+1. Merge the base into the branch — `git merge <base>` (merge, not rebase: the union driver auto-resolves `events/log.jsonl`)
+2. Rebuild — `node events/scripts/build.mjs`, verify snapshots reflect the merged log
+3. Commit the rebuilt snapshots, then push — `git push origin <branch>`; the PR updates itself
+
 ## Strict no-PR moments
 
 - The user has not asked.

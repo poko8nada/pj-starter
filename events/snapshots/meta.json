@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-03T10:11:59.096+09:00",
-  "asOf": "2026-09-03T10:11:59.066+09:00",
+  "generatedAt": "2026-09-03T10:19:11.149+09:00",
+  "asOf": "2026-09-03T10:19:11.117+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -198,8 +198,8 @@
       "pr": {
         "purpose": "PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし",
         "status": {
-          "stage": "ready",
-          "text": "base追従と既存PR更新の手順追加が確定"
+          "stage": "commit",
+          "text": "stale PR更新節を追加"
         },
         "path": ".opencode/skills/pr/SKILL.md",
         "updatedAt": "20260903"
@@ -284,8 +284,8 @@
         "path": "events/scripts/compact.mjs",
         "purpose": "チェックポイント退避",
         "status": {
-          "stage": "ready",
-          "text": "compactを最新残し化し敷居値を5000に上げる改訂が確定"
+          "stage": "commit",
+          "text": "ログ最新残し化・敷居値5000・hookテスト整合・machinery記述更新を実施"
         },
         "updatedAt": "20260903"
       },
