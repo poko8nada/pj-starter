@@ -447,6 +447,33 @@ describe('auditMetaIntegrity', () => {
     expect(auditMetaIntegrity(trees)).toEqual([]);
   });
 
+  it('flags status-bearing nodes without purpose', () => {
+    const trees = {
+      meta: {
+        harness: {
+          ghost: { status: { stage: 'planned', text: 't' } },
+        },
+      },
+    };
+    const findings = auditMetaIntegrity(trees);
+    expect(findings).toEqual(['meta component meta.harness.ghost has status but no purpose']);
+  });
+
+  it('checks path regardless of purpose', () => {
+    const trees = {
+      meta: {
+        harness: {
+          ghost: { status: { stage: 'commit', text: 't' } },
+        },
+      },
+    };
+    const findings = auditMetaIntegrity(trees);
+    expect(findings).toEqual([
+      'meta component meta.harness.ghost has status but no purpose',
+      'meta component meta.harness.ghost is "commit" but has no path',
+    ]);
+  });
+
   it('walks nested containers and ignores non-meta namespaces', () => {
     const trees = {
       product: { features: { f: { trigger: 't', status: { stage: 'ready', text: 't' } } } },

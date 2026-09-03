@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-03T10:40:13.623+09:00",
-  "asOf": "2026-09-03T10:40:13.593+09:00",
+  "generatedAt": "2026-09-03T11:53:08.087+09:00",
+  "asOf": "2026-09-03T11:53:08.058+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -48,43 +48,6 @@
         },
         "updatedAt": "20260831"
       },
-      "events-sync": {
-        "purpose": "ターン完了時のevents同期（build/compact）",
-        "path": ".opencode/lib/events-sync/sync.hook.ts",
-        "status": {
-          "stage": "commit",
-          "text": "wc -l を fs ベースの行数カウントに置換"
-        },
-        "updatedAt": "20260831"
-      },
-      "event-lib": {
-        "status": {
-          "stage": "commit",
-          "text": "log 名前空間を log.try.<id> と {tool, gap, path|name} に更新"
-        },
-        "updatedAt": "20260830"
-      },
-      "events-readme": {
-        "status": {
-          "stage": "commit",
-          "text": "機械注入トレイル節と ts 契約を log.try に更新"
-        },
-        "updatedAt": "20260830"
-      },
-      "user-reset": {
-        "status": {
-          "stage": "commit",
-          "text": "テストフィクスチャを log.try に更新"
-        },
-        "updatedAt": "20260830"
-      },
-      "user-sync-to-starter": {
-        "status": {
-          "stage": "commit",
-          "text": "テストフィクスチャを log.try に更新"
-        },
-        "updatedAt": "20260830"
-      },
       "unresolved-followup": {
         "purpose": "コミット時に未確定コンポーネント（ready/implementのまま）を検知し、実装完了/取り下げ/持ち越しの判断を促す。監視はaudit/commitスキル/直接git commitの3経路で、いずれかで1回発火したらcommitが通るまでスルーし、commit成功で復活する",
         "status": {
@@ -96,12 +59,21 @@
       },
       "process-compliance": {
         "purpose": "プロセス無視の編集を検出し、ステータス記録まで edit/write をブロックするプロセス順守チェック",
-        "path": ".opencode/lib/process-compliance/gate.hook.ts",
+        "path": ".opencode/lib/process-compliance/compliance.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "edit-gate を process-compliance へ改名し、ブロック文言をプロセス無視の指摘へ変更"
+          "text": "path を compliance.hook.ts に更新"
         },
-        "updatedAt": "20260901"
+        "updatedAt": "20260903"
+      },
+      "event-compact": {
+        "purpose": "ログ行数が敷居値を超えたターン完了時に compact.mjs を実行する",
+        "path": ".opencode/lib/event-compact/compact.hook.ts",
+        "status": {
+          "stage": "commit",
+          "text": "events-sync から event-compact へ改名し path を実ファイルに更新"
+        },
+        "updatedAt": "20260903"
       }
     },
     "skills": {
@@ -303,7 +275,7 @@
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
           "stage": "commit",
-          "text": "行識別子を見送りreadyを取り下げ"
+          "text": "auditMetaIntegrity を purpose/path 必須に強化"
         },
         "updatedAt": "20260903"
       },

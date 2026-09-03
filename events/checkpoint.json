@@ -1,6 +1,6 @@
 {
-  "compactedAt": "2026-08-31T17:52:19.621+09:00",
-  "asOf": "2026-08-31T17:46:55.883+09:00",
+  "compactedAt": "2026-09-03T11:53:12.584+09:00",
+  "asOf": "2026-09-03T11:53:08.058+09:00",
   "trees": {
     "product": {
       "name": {
@@ -64,74 +64,55 @@
           "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
           "status": {
             "stage": "commit",
-            "text": "プラグイン間共有の問題を修正: lastActivity/subSessionsをクロージャ局所化、busyリセット削除、状態イベント保護を追加"
+            "text": "行識別子を見送りreadyを取り下げ"
           },
           "path": ".opencode/lib/tool-trail/trail.hook.ts",
-          "updatedAt": "20260831"
-        },
-        "edit-gate": {
-          "purpose": "ステータス記録を要求し、記録まで edit/write をブロックするゲート",
-          "path": ".opencode/lib/edit-gate/gate.hook.ts",
-          "status": {
-            "stage": "commit",
-            "text": "gate.open 除去・テストモック共通化・PluginInput 集約"
-          },
-          "updatedAt": "20260830"
+          "updatedAt": "20260903"
         },
         "edit-lint": {
           "purpose": "編集直後のreport-only lint",
           "path": ".opencode/lib/checks/edit-lint.hook.ts",
           "status": {
             "stage": "commit",
-            "text": "DIRTY_TTL_MS の export 化・PluginInput 集約"
+            "text": "dirtyAt をクロージャにカプセル化しファクトリパターンに"
           },
-          "updatedAt": "20260830"
+          "updatedAt": "20260831"
         },
         "idle-review": {
           "purpose": "ターン完了時の品質レビュー",
           "path": ".opencode/lib/checks/idle-review.hook.ts",
           "status": {
             "stage": "commit",
-            "text": "stale コメント修正・PluginInput 集約"
+            "text": "reviewIdle を実行層と判定層に分離"
           },
-          "updatedAt": "20260830"
+          "updatedAt": "20260831"
         },
-        "events-sync": {
-          "purpose": "ターン完了時のevents同期（build/compact）",
-          "path": ".opencode/lib/events-sync/sync.hook.ts",
+        "unresolved-followup": {
+          "purpose": "コミット時に未確定コンポーネント（ready/implementのまま）を検知し、実装完了/取り下げ/持ち越しの判断を促す。監視はaudit/commitスキル/直接git commitの3経路で、いずれかで1回発火したらcommitが通るまでスルーし、commit成功で復活する",
           "status": {
             "stage": "commit",
-            "text": "テストモック共通化・PluginInput 集約"
+            "text": "CLI文字列出力依存をやめ、findUnresolved を直接 import して構造的に0件判定するよう修正"
           },
-          "updatedAt": "20260830"
+          "path": ".opencode/lib/unresolved-followup/unresolved.hook.ts",
+          "updatedAt": "20260901"
         },
-        "event-lib": {
+        "process-compliance": {
+          "purpose": "プロセス無視の編集を検出し、ステータス記録まで edit/write をブロックするプロセス順守チェック",
+          "path": ".opencode/lib/process-compliance/compliance.hook.ts",
           "status": {
             "stage": "commit",
-            "text": "log 名前空間を log.try.<id> と {tool, gap, path|name} に更新"
+            "text": "path を compliance.hook.ts に更新"
           },
-          "updatedAt": "20260830"
+          "updatedAt": "20260903"
         },
-        "events-readme": {
+        "event-compact": {
+          "purpose": "ログ行数が敷居値を超えたターン完了時に compact.mjs を実行する",
+          "path": ".opencode/lib/event-compact/compact.hook.ts",
           "status": {
             "stage": "commit",
-            "text": "機械注入トレイル節と ts 契約を log.try に更新"
+            "text": "events-sync から event-compact へ改名し path を実ファイルに更新"
           },
-          "updatedAt": "20260830"
-        },
-        "user-reset": {
-          "status": {
-            "stage": "commit",
-            "text": "テストフィクスチャを log.try に更新"
-          },
-          "updatedAt": "20260830"
-        },
-        "user-sync-to-starter": {
-          "status": {
-            "stage": "commit",
-            "text": "テストフィクスチャを log.try に更新"
-          },
-          "updatedAt": "20260830"
+          "updatedAt": "20260903"
         }
       },
       "skills": {
@@ -157,9 +138,9 @@
           "purpose": "コミット前の変更をコードレビューする",
           "status": {
             "stage": "commit",
-            "text": "SKILL.md を作成し運用中"
+            "text": "step4でテスト方針を渡し、step9を採用指摘+増分diffのみの再レビューに改訂"
           },
-          "updatedAt": "20260825",
+          "updatedAt": "20260902",
           "path": ".opencode/skills/audit/SKILL.md"
         },
         "mockup": {
@@ -185,9 +166,9 @@
           "purpose": "コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める",
           "status": {
             "stage": "commit",
-            "text": "重複記述を圧縮"
+            "text": "未確定コンポーネント確認ステップを手順に追加し連番化"
           },
-          "updatedAt": "20260827"
+          "updatedAt": "20260831"
         },
         "readme": {
           "purpose": "ルートREADME.mdを起草・更新する",
@@ -201,11 +182,47 @@
         "refactor": {
           "status": {
             "stage": "commit",
-            "text": "Step1にドメイン選択を追加し照合スコープを限定。定義乖離のルーティングを追記"
+            "text": "探索をexplore委譲、理由ある重複ラベル、モジュール解決レンズをSKILL.mdに反映"
           },
           "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
           "path": ".opencode/skills/refactor/SKILL.md",
-          "updatedAt": "20260827"
+          "updatedAt": "20260831"
+        },
+        "workflow": {
+          "purpose": "ワークフローオーケストレーター。スラッシュコマンドによるユーザーのみがトリガーし、モデルからは決して呼び出されない。次以降のワークフローを提案し、ユーザー合意を得て実行する。yoloモードでは初期合意後に確認ステップを省略し最後まで走る",
+          "path": ".opencode/skills/workflow/SKILL.md",
+          "status": {
+            "stage": "commit",
+            "text": "参照スキルの手順スキップ禁止を明文化"
+          },
+          "updatedAt": "20260902"
+        },
+        "visual": {
+          "purpose": "プロダクトのビジュアル（スタティック＋モーション）を実装する。mockupの成果物を参照して適用可能。look未決定時はmockupへハンズオフ",
+          "path": ".opencode/skills/visual/SKILL.md",
+          "status": {
+            "stage": "commit",
+            "text": "audit 指摘8件を修正しコミット"
+          },
+          "updatedAt": "20260901"
+        },
+        "pr": {
+          "purpose": "PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし",
+          "status": {
+            "stage": "commit",
+            "text": "作成前base取込みと手順順序を改訂"
+          },
+          "path": ".opencode/skills/pr/SKILL.md",
+          "updatedAt": "20260903"
+        },
+        "imagegen": {
+          "purpose": "OpenRouterの画像生成APIでイラスト/フォト両対応の画像を生成するスキル。generate（muse text-to-image）で下書き生成し、edit（img2img）で再生成（muse）または仕上げ（Nano Banana 2 Liteフォト / Seedream 5.0 Liteイラスト・文字）を行う。各段階で完了可能な決定木フローを持ち、仕上げ前のユーザー確認を必須とする。プロンプト展開・モデル別パラメータ出し分けを持つ",
+          "path": ".opencode/skills/imagegen/SKILL.md",
+          "status": {
+            "stage": "commit",
+            "text": "refineをeditに改名しmuse img2img再生成を追加、決定木フローとユーザー確認必須化を実装"
+          },
+          "updatedAt": "20260902"
         }
       },
       "docs": {
@@ -223,9 +240,9 @@
           "purpose": "駆動方式の仕様",
           "status": {
             "stage": "commit",
-            "text": "fresh-copy状態の意味論とuser tools境界を追記"
+            "text": "machineryをspec/に分離し、READMEを駆動方式の仕様に集中"
           },
-          "updatedAt": "20260826"
+          "updatedAt": "20260901"
         },
         "schema-spec": {
           "purpose": "product/metaスナップショットのコンテンツスキーマと方法論",
@@ -261,9 +278,9 @@
           "purpose": "イベントの追記（単発・バッチ）",
           "status": {
             "stage": "commit",
-            "text": "status assertion追記で更新"
+            "text": "行識別子を見送りreadyを取り下げ"
           },
-          "updatedAt": "20260826"
+          "updatedAt": "20260903"
         },
         "event-build": {
           "path": "events/scripts/build.mjs",
@@ -279,45 +296,45 @@
           "purpose": "チェックポイント退避",
           "status": {
             "stage": "commit",
-            "text": "シグネチャ不変のため無変更、移行で検証済み"
+            "text": "ログ最新残し化・敷居値5000・hookテスト整合・machinery記述更新を実施"
           },
-          "updatedAt": "20260825"
+          "updatedAt": "20260903"
         },
         "event-read": {
           "path": "events/scripts/read.mjs",
           "purpose": "スナップショットcontentの読み出し",
           "status": {
             "stage": "commit",
-            "text": "agendaオプションを除去済み"
+            "text": "--unresolved 出力を英語化し、テストを完全文言・no path 検証に強化"
           },
-          "updatedAt": "20260825"
+          "updatedAt": "20260901"
         },
         "event-lib": {
           "path": "events/scripts/lib.mjs",
           "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
           "status": {
             "stage": "commit",
-            "text": "stripHistory / writeCheckpoint を抽出し reset / sync で共有"
+            "text": "auditMetaIntegrity を purpose/path 必須に強化"
           },
-          "updatedAt": "20260828"
+          "updatedAt": "20260903"
         },
-        "user-reset": {
-          "path": "scripts/user/reset.mjs",
-          "purpose": "スターター複製の初期化ツール。checkpointへstatus/updatedAtなしの初期状態を書き、logをname/whatだけで始める。引数なしはdry-run",
+        "user-apply": {
+          "purpose": "スターターをプロジェクトへ一方向適用するツール。ハーネス一式をミラー（スターターに無いファイルは削除）し、meta.* をスターターのコミット済み在庫で置換する。--init でログ掃除（旧 reset 相当）を兼ねる",
+          "path": "scripts/user/apply.mjs",
           "status": {
             "stage": "commit",
-            "text": "stripHistory / writeCheckpoint を lib からの import に変更"
+            "text": ".gitattributes伝搬を追加"
           },
-          "updatedAt": "20260828"
+          "updatedAt": "20260903"
         },
-        "user-sync-to-starter": {
-          "path": "scripts/user/sync-to-starter.mjs",
-          "purpose": "ハーネスをプロジェクトとスターター間で双方向同期するツール。ファイルは rclone bisync、meta.* ログはコミット済みのみ双方向へ流し、プロジェクト側は reset 同様にストリップする",
+        "event-merge-driver": {
+          "purpose": "log.jsonl結合時の行順序を一意に定めるmerge driver。base順保持＋自側新規の末尾化",
           "status": {
             "stage": "commit",
-            "text": "双方向シンクを実装: bisync 単位同期 + コミット済みメタのみ双方向 + プロジェクト側ストリップ"
+            "text": "登録配線と生成物規則と文書とprepare組込みを整備"
           },
-          "updatedAt": "20260828"
+          "path": "events/scripts/merge-driver.mjs",
+          "updatedAt": "20260903"
         }
       },
       "agents": {
@@ -325,10 +342,10 @@
           "purpose": "コミット前レビューを担う専任サブエージェント",
           "status": {
             "stage": "commit",
-            "text": "auditor.md を作成し運用中"
+            "text": "test観点をagendaテスト判定表に固定し、re-reviewモードと初回出し切りを明記"
           },
           "path": ".opencode/agent/auditor.md",
-          "updatedAt": "20260825"
+          "updatedAt": "20260902"
         },
         "web-researcher": {
           "purpose": "ライブラリやフレームワークの技術調査。公式サイトやGitHubの有無を確認",

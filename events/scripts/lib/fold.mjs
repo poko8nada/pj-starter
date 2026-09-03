@@ -107,7 +107,10 @@ export const foldAll = () => {
   return { trees: base.trees, asOf, events };
 };
 
-// 畳み込み状態に対する meta 整合性チェック。実装が進んでいる (ready/implement/commit) のにpath を持たないコンポーネントを検出する（旧 auditMeta の検証を events 側に統合したもの）
+// 畳み込み状態に対する meta 整合性チェック。
+// 1) status を持つノードは必ず purpose を持つ（管理された作業単位は正規コンポーネントであること）
+// 2) ready/implement/commit のノードは purpose の有無によらず path を持つ（実装済みは実体パス必須）
+// 旧 auditMeta の検証を events 側に統合し、purpose 無しの幽霊ノードも検出対象に拡張したもの
 const PATH_STAGES = new Set(['ready', 'implement', 'commit']);
 
 export const auditMetaIntegrity = (trees) => {
@@ -117,11 +120,12 @@ export const auditMetaIntegrity = (trees) => {
     for (const [key, node] of Object.entries(container ?? {})) {
       if (!node || typeof node !== 'object' || Array.isArray(node)) continue;
       const keyPath = `${prefix}.${key}`;
-      if ('purpose' in node) {
-        const stage = node.status?.stage;
-        if (PATH_STAGES.has(stage) && (typeof node.path !== 'string' || node.path === '')) {
-          findings.push(`meta component ${keyPath} is "${stage}" but has no path`);
-        }
+      const stage = node.status?.stage;
+      if ('status' in node && !('purpose' in node)) {
+        findings.push(`meta component ${keyPath} has status but no purpose`);
+      }
+      if (PATH_STAGES.has(stage) && (typeof node.path !== 'string' || node.path === '')) {
+        findings.push(`meta component ${keyPath} is "${stage}" but has no path`);
       }
       walk(node, keyPath);
     }
