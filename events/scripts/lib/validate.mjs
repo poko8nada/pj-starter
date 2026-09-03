@@ -1,4 +1,5 @@
 // イベントの検証と組み立て。append の受け入れ条件（events/README.md 参照）をここで強制する
+import process from 'node:process';
 import { EventError, jstNow } from './util.mjs';
 import {
   EVENT_TYPES,
@@ -100,6 +101,15 @@ export const buildEvent = (draft, ts = jstNow()) => {
   }
   validateKey(draft.key);
   const event = { ts, type: draft.type, key: draft.key };
+  // ブランチ名は環境変数から付与する（merge で自ブランチのデルタを特定するため）。
+  // 未設定（テスト・非 git 環境）なら省略し、空文字は不正として拒否する
+  const branch = process.env.EVENTS_BRANCH;
+  if (branch !== undefined) {
+    if (typeof branch !== 'string' || branch === '') {
+      throw new EventError('EVENTS_BRANCH must be a non-empty string');
+    }
+    event.branch = branch;
+  }
   if (draft.type === 'set') {
     if (draft.value === undefined) throw new EventError('value is required for set');
     if (draft.key.endsWith('.status')) assertStatusValue(draft.key, draft.value);

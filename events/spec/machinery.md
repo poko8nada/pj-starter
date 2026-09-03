@@ -21,13 +21,13 @@ The active log has a line threshold (**5000**, defined in `.opencode/lib/event-c
 
 1. Fold checkpoint + active log into current trees
 2. Write `checkpoint.json` (`{ compactedAt, asOf, trees }`)
-3. Rewrite `log.jsonl` with survivor lines only: the last occurrence per exact key (including `del`), in original relative order; fold-excluded trail (`log.*`) is dropped. Because thinning preserves last-write-wins, the folded state is unchanged
+3. Empty `log.jsonl` — the log is the delta since the last compaction, so it resets to zero
 
 Pre-compaction history lives in git — no archive mechanism exists. Because compaction preserves folded state exactly, existing snapshots remain valid without an immediate rebuild.
 
 ## Merge
 
-Parallel git worktrees merge `events/log.jsonl` with the custom driver `event-merge-driver`: the incoming block first, then the current branch's new lines, with exact-duplicate lines deduped. Register per clone with `pnpm setup:merge-driver`. Generated files (`checkpoint.json`, `snapshots/*.json`) keep the current side via the `events-generated` driver and are rebuilt from the merged log with `build.mjs` — never hand-resolved.
+Parallel git worktrees merge `events/log.jsonl` with the custom driver `event-merge-driver`: the parent's (incoming) log block first, then the current branch's delta — the lines whose `branch` field matches the current branch — appended at the end, with exact-duplicate lines deduped. Because the delta lands last, the current branch wins on conflicting keys, and deletions are preserved regardless of merge direction. Register per clone with `pnpm setup:merge-driver`. Generated files (`checkpoint.json`, `snapshots/*.json`) keep the current side via the `events-generated` driver and are rebuilt from the merged log with `build.mjs` — never hand-resolved. When both sides compacted, the checkpoint conflicts and needs manual resolution (see the merge-conflict skill).
 
 ## Rebuild rules
 

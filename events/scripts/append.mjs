@@ -1,6 +1,7 @@
 // イベントを追記する。1回の呼び出しで複数操作（--set / --del の繰り返し）とバッチ（--file）に対応する。全操作を検証してから一括追記し、1行でも不正なら何も書かない。同一呼び出し内のイベントは同一tsを持つ。
 // 追記前に仮畳み込み（checkpoint + 既存ログ + 新イベント）で meta 整合性を検証し、違反があれば何も書かずに失敗する（原子性の確保）。
 // 順序はファイル並び順そのものであり、付番処理は存在しない
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import process from 'node:process';
 import {
@@ -15,6 +16,19 @@ import {
   parseValue,
   readEvents,
 } from './lib.mjs';
+
+// ブランチ名を解決する。EVENTS_BRANCH が設定されていればそれを、無ければ git から読む。
+// 空文字は「設定済みだが不正」として上書きせず、buildEvent の検証で拒否させる。
+// 非 git 環境では未設定のまま（branch フィールドは付与されない）
+const ensureBranch = () => {
+  if (process.env.EVENTS_BRANCH !== undefined) return;
+  try {
+    const branch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
+    if (branch) process.env.EVENTS_BRANCH = branch;
+  } catch {
+    // 非 git 環境では branch を付与しない
+  }
+};
 
 // --set key value と --del key の繰り返し、または --file path を解釈する
 const parseOps = (argv) => {
@@ -56,6 +70,7 @@ const readDrafts = (file) =>
     });
 
 const main = () => {
+  ensureBranch();
   const ops = parseOps(process.argv.slice(2));
   const fileOp = ops.find((op) => op.op === 'file');
   if (fileOp && ops.length > 1) fail('--file cannot be combined with --set/--del');

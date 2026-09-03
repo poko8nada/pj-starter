@@ -16,9 +16,10 @@ const makeScratch = () => {
   return { root, eventsDir };
 };
 
-const runWrapper = (eventsDir, args) =>
+const runWrapper = (eventsDir, args, options = {}) =>
   spawnSync(process.execPath, [SCRIPT, ...args], {
-    env: { ...process.env, EVENTS_DIR: eventsDir },
+    env: options.env ?? { ...process.env, EVENTS_DIR: eventsDir },
+    cwd: options.cwd,
     encoding: 'utf8',
   });
 
@@ -57,6 +58,29 @@ describe('append-build', () => {
     expect(result.stderr).toContain('has no path');
     expect(fs.existsSync(path.join(eventsDir, 'log.jsonl'))).toBe(false);
     expect(fs.existsSync(path.join(eventsDir, 'snapshots', 'meta.json'))).toBe(false);
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('omits the branch field when EVENTS_BRANCH is unset and not a git repo', () => {
+    const { root, eventsDir } = makeScratch();
+    const env = { ...process.env, EVENTS_DIR: eventsDir };
+    delete env.EVENTS_BRANCH;
+    const result = runWrapper(eventsDir, ['--set', 'product.name.value', 'X'], { env, cwd: root });
+    expect(result.status).toBe(0);
+    const log = fs.readFileSync(path.join(eventsDir, 'log.jsonl'), 'utf8');
+    expect(log).not.toContain('"branch"');
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('adds the branch field from git when EVENTS_BRANCH is unset', () => {
+    const { root, eventsDir } = makeScratch();
+    spawnSync('git', ['init', '-b', 'feature/test'], { cwd: root });
+    const env = { ...process.env, EVENTS_DIR: eventsDir };
+    delete env.EVENTS_BRANCH;
+    const result = runWrapper(eventsDir, ['--set', 'product.name.value', 'X'], { env, cwd: root });
+    expect(result.status).toBe(0);
+    const log = fs.readFileSync(path.join(eventsDir, 'log.jsonl'), 'utf8');
+    expect(log).toContain('"branch":"feature/test"');
     fs.rmSync(root, { recursive: true, force: true });
   });
 });
