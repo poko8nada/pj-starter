@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-02T21:27:19.837+09:00",
-  "asOf": "2026-09-02T21:27:19.805+09:00",
+  "generatedAt": "2026-09-03T10:11:59.096+09:00",
+  "asOf": "2026-09-03T10:11:59.066+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -24,11 +24,11 @@
       "tool-trail": {
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
         "status": {
-          "stage": "commit",
-          "text": "trailをwork unit窓（append〜closing append）に狭め、初期状態をログから判定するよう改修"
+          "stage": "ready",
+          "text": "trail行へのsessionID付与の改訂が確定"
         },
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
-        "updatedAt": "20260901"
+        "updatedAt": "20260903"
       },
       "edit-lint": {
         "purpose": "編集直後のreport-only lint",
@@ -198,11 +198,11 @@
       "pr": {
         "purpose": "PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし",
         "status": {
-          "stage": "commit",
-          "text": "事前チェックのpush判定をupstream存在確認からリモートへの全コミット反映に修正"
+          "stage": "ready",
+          "text": "base追従と既存PR更新の手順追加が確定"
         },
         "path": ".opencode/skills/pr/SKILL.md",
-        "updatedAt": "20260901"
+        "updatedAt": "20260903"
       },
       "imagegen": {
         "purpose": "OpenRouterの画像生成APIでイラスト/フォト両対応の画像を生成するスキル。generate（muse text-to-image）で下書き生成し、edit（img2img）で再生成（muse）または仕上げ（Nano Banana 2 Liteフォト / Seedream 5.0 Liteイラスト・文字）を行う。各段階で完了可能な決定木フローを持ち、仕上げ前のユーザー確認を必須とする。プロンプト展開・モデル別パラメータ出し分けを持つ",
@@ -266,10 +266,10 @@
         "path": "events/scripts/append.mjs",
         "purpose": "イベントの追記（単発・バッチ）",
         "status": {
-          "stage": "commit",
-          "text": "status assertion追記で更新"
+          "stage": "ready",
+          "text": "行へのsessionID欄受け渡しの改訂が確定"
         },
-        "updatedAt": "20260826"
+        "updatedAt": "20260903"
       },
       "event-build": {
         "path": "events/scripts/build.mjs",
@@ -284,10 +284,10 @@
         "path": "events/scripts/compact.mjs",
         "purpose": "チェックポイント退避",
         "status": {
-          "stage": "commit",
-          "text": "シグネチャ不変のため無変更、移行で検証済み"
+          "stage": "ready",
+          "text": "compactを最新残し化し敷居値を5000に上げる改訂が確定"
         },
-        "updatedAt": "20260825"
+        "updatedAt": "20260903"
       },
       "event-read": {
         "path": "events/scripts/read.mjs",
@@ -302,10 +302,10 @@
         "path": "events/scripts/lib.mjs",
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
-          "stage": "commit",
-          "text": "lib.mjsをlib/へ分割しパスを遅延解決化"
+          "stage": "ready",
+          "text": "buildEventで行にsessionID欄を付与する改訂が確定"
         },
-        "updatedAt": "20260901"
+        "updatedAt": "20260903"
       },
       "user-apply": {
         "purpose": "スターターをプロジェクトへ一方向適用するツール。ハーネス一式をミラー（スターターに無いファイルは削除）し、meta.* をスターターのコミット済み在庫で置換する。--init でログ掃除（旧 reset 相当）を兼ねる",
@@ -315,6 +315,15 @@
           "text": "reset/sync-to-starter を統合し、純 Node 一方向ミラー apply として再実装"
         },
         "updatedAt": "20260901"
+      },
+      "event-merge-driver": {
+        "purpose": "log.jsonl結合時の行順序を一意に定めるmerge driver。base順保持＋自側新規の末尾化",
+        "status": {
+          "stage": "commit",
+          "text": "相手側順＋自側新規末尾化のmerge driverとテストとgitattributesを実装"
+        },
+        "path": "events/scripts/merge-driver.mjs",
+        "updatedAt": "20260903"
       }
     },
     "agents": {

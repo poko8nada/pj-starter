@@ -797,3 +797,23 @@
 {"ts":"2026-09-02T21:27:19.805+09:00","type":"set","key":"meta.agents.auditor.status","value":{"stage":"commit","text":"test観点をagendaテスト判定表に固定し、re-reviewモードと初回出し切りを明記"}}
 {"ts":"2026-09-02T21:27:19.805+09:00","type":"set","key":"meta.skills.audit.status","value":{"stage":"commit","text":"step4でテスト方針を渡し、step9を採用指摘+増分diffのみの再レビューに改訂"}}
 {"ts":"2026-09-02T21:27:19.805+09:00","type":"set","key":"meta.skills.workflow.status","value":{"stage":"commit","text":"参照スキルの手順スキップ禁止を明文化"}}
+{"ts":"2026-09-03T10:06:16.495+09:00","type":"set","key":"meta.scripts.event-merge-driver","value":{"purpose":"log.jsonl結合時の行順序を一意に定めるmerge driver。base順保持＋自側新規の末尾化","status":{"stage":"planned","text":"未着手"}}}
+{"ts":"2026-09-03T10:06:16.495+09:00","type":"set","key":"meta.scripts.event-merge-driver.status","value":{"stage":"planned","text":"未着手"}}
+{"ts":"2026-09-03T10:06:16.495+09:00","type":"set","key":"meta.scripts.event-compact.status","value":{"stage":"ready","text":"compactを最新残し化し敷居値を5000に上げる改訂が確定"}}
+{"ts":"2026-09-03T10:06:16.495+09:00","type":"set","key":"meta.scripts.event-append.status","value":{"stage":"ready","text":"行へのsessionID欄受け渡しの改訂が確定"}}
+{"ts":"2026-09-03T10:06:16.495+09:00","type":"set","key":"meta.scripts.event-lib.status","value":{"stage":"ready","text":"buildEventで行にsessionID欄を付与する改訂が確定"}}
+{"ts":"2026-09-03T10:06:16.495+09:00","type":"set","key":"meta.harness.tool-trail.status","value":{"stage":"ready","text":"trail行へのsessionID付与の改訂が確定"}}
+{"ts":"2026-09-03T10:06:16.495+09:00","type":"set","key":"meta.skills.pr.status","value":{"stage":"ready","text":"base追従と既存PR更新の手順追加が確定"}}
+{"ts":"2026-09-03T10:06:34.293+09:00","type":"set","key":"log.try.c879e54a","value":{"tool":"read","gap":0,"targets":[".opencode/skills/agenda/references/code-axes.md","events/scripts","events/scripts/append-build.test.mjs"]}}
+{"ts":"2026-09-03T10:09:06.921+09:00","type":"set","key":"log.try.5df2259b","value":{"tool":"task","gap":0,"targets":["agenda-reviewer"]}}
+{"ts":"2026-09-03T10:09:32.680+09:00","type":"set","key":"log.try.c29b2eb9","value":{"tool":"read","gap":25758,"targets":[".opencode/skills/agenda/references/meta.md"]}}
+{"ts":"2026-09-03T10:09:55.213+09:00","type":"set","key":"meta.scripts.event-merge-driver.path","value":"events/scripts/merge-driver.mjs"}
+{"ts":"2026-09-03T10:09:55.213+09:00","type":"set","key":"meta.scripts.event-merge-driver.status","value":{"stage":"ready","text":"base順保持＋自側新規末尾化のdriver実装計画が確定"}}
+{"ts":"2026-09-03T10:10:17.703+09:00","type":"set","key":"log.try.590fe9ba","value":{"tool":"write","gap":0,"targets":["events/scripts/merge-driver.mjs","events/scripts/merge-driver.test.mjs",".gitattributes"]}}
+{"ts":"2026-09-03T10:10:21.182+09:00","type":"set","key":"log.try.d094993f","value":{"tool":"bash","gap":3478,"targets":["pnpm"]}}
+{"ts":"2026-09-03T10:10:34.255+09:00","type":"set","key":"log.try.c1cee30f","value":{"tool":"edit","gap":7327,"targets":["events/scripts/merge-driver.mjs","events/scripts/merge-driver.mjs","events/scripts/merge-driver.mjs"]}}
+{"ts":"2026-09-03T10:10:51.778+09:00","type":"set","key":"log.try.b21dbb9c","value":{"tool":"bash","gap":2631,"targets":["pnpm","pnpm","rm","rm"]}}
+{"ts":"2026-09-03T10:10:56.125+09:00","type":"set","key":"log.try.9b8af3f9","value":{"tool":"read","gap":4347,"targets":[".opencode/skills/audit/SKILL.md"]}}
+{"ts":"2026-09-03T10:11:04.796+09:00","type":"set","key":"log.try.113d53e1","value":{"tool":"bash","gap":2755,"targets":["git","node","git"]}}
+{"ts":"2026-09-03T10:11:08.503+09:00","type":"set","key":"log.try.c67cf849","value":{"tool":"task","gap":3707,"targets":["auditor"]}}
+{"ts":"2026-09-03T10:11:59.066+09:00","type":"set","key":"meta.scripts.event-merge-driver.status","value":{"stage":"commit","text":"相手側順＋自側新規末尾化のmerge driverとテストとgitattributesを実装"}}
