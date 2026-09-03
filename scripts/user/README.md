@@ -15,7 +15,8 @@ pnpm apply --run --init <スターターのパス>   # 実行 + ログ掃除（�
 
 ### ファイルミラー（一方向）
 
-- 同期単位は静的定義（`apply/files.mjs` の `SYNC_UNITS`）: harness（`.opencode/lib` + `.opencode/plugin`）/ agents（`.opencode/agent`）/ skills（`.opencode/skills`）/ config（`.opencode` の tsconfig.json・package.json・.gitignore）/ scripts / events（状態ファイルを除外）/ docs（`AGENTS.md` + `lefthook.yaml`）
+- 同期単位は静的定義（`apply/files.mjs` の `SYNC_UNITS`）: harness（`.opencode/lib` + `.opencode/plugin`）/ agents（`.opencode/agent`）/ skills（`.opencode/skills`）/ config（`.opencode` の tsconfig.json・package.json・.gitignore）/ scripts / events（状態ファイルを除外）/ docs（`AGENTS.md` + `lefthook.yaml` + `.gitattributes`）
+- 適用先では merge driver を手動登録する: `pnpm setup:merge-driver`（各cloneで一度だけ）
 - **スターターが正**: スターターに無いプロジェクト側ファイルは削除される（単位内のみ）
 - 比較は mtime/size。コピー時に mtime を保持するため、再実行は冪等（差分ゼロ）
 - 除外: `COMMON_EXCLUDES`（`node_modules/` / `.DS_Store` / ロックファイル）+ events 状態ファイル（`log.jsonl` / `checkpoint.json` / `snapshots/`）。これらは削除・上書きされない。ディレクトリ除外（`node_modules/` 等）は任意深度のセグメント一致で効く

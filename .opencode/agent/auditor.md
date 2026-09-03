@@ -2,7 +2,7 @@
 description: Reviews one chunk of pending changes against three core best-practice viewpoints and returns findings in a fixed format. Use as the review engine of the audit skill.
 mode: subagent
 model: opencode-go/muse-spark-1.3-contributor
-reasoningEffort: high
+reasoningEffort: xhigh
 temperature: 0.1
 permission:
   edit: deny

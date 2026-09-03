@@ -2,7 +2,7 @@
 description: Researches libraries, frameworks, and technologies on the web and returns candidates with official sites and GitHub links in a fixed format. Use as the web research engine of the recon skill.
 mode: subagent
 model: opencode-go/muse-spark-1.3-contributor
-reasoningEffort: high
+reasoningEffort: xhigh
 temperature: 0.1
 permission:
   edit: deny

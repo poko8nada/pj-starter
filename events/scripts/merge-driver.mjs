@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // log.jsonl 用の custom merge driver。相手側ブロック順＋自側新規行の末尾追加で結合し、自側ファイルへ書き出す。行は不透明なテキストとして扱い JSON 解釈しない。
-// 登録: git config merge.event-merge-driver.driver "node events/scripts/merge-driver.mjs %O %A %B"
-// 併せて .gitattributes に `events/log.jsonl merge=event-merge-driver` を置く
+// 登録: pnpm setup:merge-driver（各cloneで一度実行する）
+// 併せて .gitattributes が log.jsonl に本driver、生成物に keep 用driverを割当てる。
+// 生成物は手解消せず build で再生成する。詳細は events/spec/machinery.md の Merge 節
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';

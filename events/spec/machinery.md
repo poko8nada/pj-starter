@@ -25,6 +25,10 @@ The active log has a line threshold (**5000**, defined in `.opencode/lib/event-c
 
 Pre-compaction history lives in git — no archive mechanism exists. Because compaction preserves folded state exactly, existing snapshots remain valid without an immediate rebuild.
 
+## Merge
+
+Parallel git worktrees merge `events/log.jsonl` with the custom driver `event-merge-driver`: the incoming block first, then the current branch's new lines, with exact-duplicate lines deduped. Register per clone with `pnpm setup:merge-driver`. Generated files (`checkpoint.json`, `snapshots/*.json`) keep the current side via the `events-generated` driver and are rebuilt from the merged log with `build.mjs` — never hand-resolved.
+
 ## Rebuild rules
 
 1. Load `checkpoint.json` as the base trees (empty trees when absent)

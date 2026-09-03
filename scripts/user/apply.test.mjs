@@ -248,6 +248,23 @@ describe('apply.mjs の一方向ミラー', () => {
     expect(exists(path.join(project, 'events', 'snapshots', 'product.json'))).toBe(true);
   });
 
+  it('docs 単位は .gitattributes を運ぶ', () => {
+    const project = makeProject();
+    const starter = makeStarter();
+    write(path.join(starter, '.gitattributes'), 'events/log.jsonl merge=event-merge-driver\n');
+    write(path.join(starter, 'unrelated.txt'), 'starter unrelated');
+    write(path.join(project, 'keep.txt'), 'project keep');
+
+    const result = runApply(project, starter, ['--run']);
+
+    expect(result.status).toBe(0);
+    expect(read(path.join(project, '.gitattributes'))).toBe(
+      'events/log.jsonl merge=event-merge-driver\n',
+    );
+    expect(exists(path.join(project, 'unrelated.txt'))).toBe(false);
+    expect(read(path.join(project, 'keep.txt'))).toBe('project keep');
+  });
+
   it('存在しないスターターパスは失敗する', () => {
     const project = makeProject();
     const result = runApply(project, '/tmp/definitely-not-exist-12345');

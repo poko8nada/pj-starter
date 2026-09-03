@@ -14,7 +14,7 @@ events/
     append.mjs         # Append events — the raw append script (used by the append-build wrapper)
     append-build.mjs   # Append + build wrapper — the canonical path agents and skills call
     build.mjs          # Regenerate snapshots from checkpoint + log
-    compact.mjs        # Fold state into checkpoint.json and empty the log
+    compact.mjs        # Fold state into checkpoint.json and thin the log
     read.mjs           # Read a snapshot's content
   log.jsonl            # Append-only event log (the truth, git-tracked)
   checkpoint.json      # Base state: compaction result or reset-seeded baseline (generated, git-tracked)

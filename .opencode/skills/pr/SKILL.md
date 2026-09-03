@@ -59,12 +59,14 @@ Reuse the commit message convention. Title is English; body text is Japanese (la
 
 ## Procedure
 
-1. **Pre-flight checks**:
+1. **Determine the base branch** — dev rule above.
+2. **Pre-flight checks**:
    - Current branch is not `main` (the stable trunk)
    - Working tree is clean (all committed)
    - No existing open PR for this branch — `gh pr list --head <branch> --state open --json number`; if one exists, report it and stop
+   - Fetch the base — `git fetch origin <base>`
+   - Sync with the base — `git merge <base>` into the branch. The merge driver auto-resolves `events/log.jsonl`; check with `git status --short events/log.jsonl`: if the log changed, run `node events/scripts/build.mjs` and commit the resolution. If conflicts appear outside the log, stop and resolve them before continuing
    - Push the branch so the remote has all local commits — `git push -u origin <branch>` (no-op when up to date)
-2. **Determine the base branch** — dev rule above.
 3. **Draft the PR** — title and body from the commit convention.
 4. **Propose** — present title, body, and base to the user; wait for approval or corrections.
 5. **Create** — non-interactive, all flags supplied:
@@ -75,7 +77,7 @@ Reuse the commit message convention. Title is English; body text is Japanese (la
 
 When the base moved after PR creation (another PR merged first):
 
-1. Merge the base into the branch — `git merge <base>` (merge, not rebase: the union driver auto-resolves `events/log.jsonl`)
+1. Merge the base into the branch — `git merge <base>` (merge, not rebase: the merge driver auto-resolves `events/log.jsonl`)
 2. Rebuild — `node events/scripts/build.mjs`, verify snapshots reflect the merged log
 3. Commit the rebuilt snapshots, then push — `git push origin <branch>`; the PR updates itself
 
