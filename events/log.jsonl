@@ -1,0 +1,10 @@
+{"ts":"2026-09-03T22:28:10.785+09:00","type":"set","key":"meta.scripts.event-compact.status","branch":"develop","value":{"stage":"ready","text":"--user-confirmed 必須化の再適用"}}
+{"ts":"2026-09-03T22:28:56.130+09:00","type":"set","key":"meta.scripts.event-compact.status","branch":"develop","value":{"stage":"commit","text":"ログを空にするコンパクトに回帰"}}
+{"ts":"2026-09-03T22:29:02.668+09:00","type":"set","key":"meta.harness.edit-lint.status","branch":"develop","value":{"stage":"ready","text":"--deny-warnings で警告をエラー化するプランが確定"}}
+{"ts":"2026-09-03T22:29:02.668+09:00","type":"set","key":"meta.harness.idle-review.status","branch":"develop","value":{"stage":"ready","text":"--deny-warnings で警告をエラー化するプランが確定"}}
+{"ts":"2026-09-03T22:29:02.668+09:00","type":"set","key":"meta.harness.quality-gate.status","branch":"develop","value":{"stage":"ready","text":"--deny-warnings で警告をエラー化するプランが確定"}}
+{"ts":"2026-09-03T22:29:22.892+09:00","type":"set","key":"log.try.a86a9286","value":{"tool":"edit","gap":0,"targets":["package.json",".opencode/lib/checks/edit-lint.hook.ts",".opencode/lib/checks/idle-review.hook.ts"]}}
+{"ts":"2026-09-03T22:29:27.497+09:00","type":"set","key":"log.try.da3034f9","value":{"tool":"bash","gap":4605,"targets":["pnpm"]}}
+{"ts":"2026-09-03T22:29:35.272+09:00","type":"set","key":"meta.harness.edit-lint.status","branch":"develop","value":{"stage":"commit","text":"--deny-warnings で警告をエラー化"}}
+{"ts":"2026-09-03T22:29:35.272+09:00","type":"set","key":"meta.harness.idle-review.status","branch":"develop","value":{"stage":"commit","text":"--deny-warnings で警告をエラー化"}}
+{"ts":"2026-09-03T22:29:35.272+09:00","type":"set","key":"meta.harness.quality-gate.status","branch":"develop","value":{"stage":"commit","text":"--deny-warnings で警告をエラー化"}}

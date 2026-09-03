@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-03T21:51:51.788+09:00",
-  "asOf": "2026-09-03T21:51:51.760+09:00",
+  "generatedAt": "2026-09-03T22:29:35.302+09:00",
+  "asOf": "2026-09-03T22:29:35.272+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -8,9 +8,9 @@
         "purpose": "コミット時のformat/lint/typecheck強制",
         "status": {
           "stage": "commit",
-          "text": "lefthook で pre-commit フックを運用中"
+          "text": "--deny-warnings で警告をエラー化"
         },
-        "updatedAt": "20260824"
+        "updatedAt": "20260903"
       },
       "mockup-notify": {
         "purpose": "mockup指示の追記を検知しエージェントを起床させる",
@@ -35,18 +35,18 @@
         "path": ".opencode/lib/checks/edit-lint.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "dirtyAt をクロージャにカプセル化しファクトリパターンに"
+          "text": "--deny-warnings で警告をエラー化"
         },
-        "updatedAt": "20260831"
+        "updatedAt": "20260903"
       },
       "idle-review": {
         "purpose": "ターン完了時の品質レビュー",
         "path": ".opencode/lib/checks/idle-review.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "reviewIdle を実行層と判定層に分離"
+          "text": "--deny-warnings で警告をエラー化"
         },
-        "updatedAt": "20260831"
+        "updatedAt": "20260903"
       },
       "unresolved-followup": {
         "purpose": "コミット時に未確定コンポーネント（ready/implementのまま）を検知し、実装完了/取り下げ/持ち越しの判断を促す。監視はaudit/commitスキル/直接git commitの3経路で、いずれかで1回発火したらcommitが通るまでスルーし、commit成功で復活する",

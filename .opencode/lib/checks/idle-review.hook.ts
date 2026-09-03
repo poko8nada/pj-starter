@@ -21,7 +21,7 @@ const runChecks = async (
   $: PluginInput['$'],
   root: string,
 ): Promise<{ fix: CheckResult; tsc: CheckResult }> => {
-  const fix = await $`pnpm exec oxlint --fix`.cwd(root).nothrow().quiet();
+  const fix = await $`pnpm exec oxlint --fix --deny-warnings`.cwd(root).nothrow().quiet();
   const tsc = await $`pnpm exec tsc --noEmit`.cwd(root).nothrow().quiet();
   return { fix, tsc };
 };

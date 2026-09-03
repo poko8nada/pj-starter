@@ -34,7 +34,10 @@ export const runEditLint = async (
   const file = input.args?.filePath;
   if (typeof file !== 'string' || file === '') return { errors: [] };
   markDirty();
-  const result = await ctx.$`pnpm exec oxlint ${file}`.cwd(ctx.root).nothrow().quiet();
+  const result = await ctx.$`pnpm exec oxlint --deny-warnings ${file}`
+    .cwd(ctx.root)
+    .nothrow()
+    .quiet();
   if (result.exitCode === 0) return { errors: [] };
   const report = clipLines(
     `${result.stdout.toString()}\n${result.stderr.toString()}`,
