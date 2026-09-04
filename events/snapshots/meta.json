@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-03T22:55:21.667+09:00",
-  "asOf": "2026-09-03T22:55:21.640+09:00",
+  "generatedAt": "2026-09-04T09:25:37.329+09:00",
+  "asOf": "2026-09-04T09:25:37.302+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -91,9 +91,9 @@
         "path": ".opencode/skills/agenda/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "Status semantics節を正規の置き場として維持"
+          "text": "2フェーズ・複数対象対応に全面書き換え、references/を削除"
         },
-        "updatedAt": "20260827"
+        "updatedAt": "20260904"
       },
       "recon": {
         "purpose": "実装前の調査と記録",
@@ -348,9 +348,9 @@
         "path": ".opencode/agent/agenda-reviewer.md",
         "status": {
           "stage": "commit",
-          "text": "レビュー観点を影響範囲/作り直しの2点のみに限定し、code-axes.md参照に簡略化"
+          "text": "report/planの2モード狭化、reasoningEffortをmediumに"
         },
-        "updatedAt": "20260827"
+        "updatedAt": "20260904"
       }
     }
   }

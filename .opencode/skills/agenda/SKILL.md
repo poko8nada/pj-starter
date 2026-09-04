@@ -1,6 +1,6 @@
 ---
 name: agenda
-description: Select and fix the unit of work before implementation. Use when the user decides to build something (実装しよう / 作ろう), says "agenda", or asks to plan work (作業単位). Identifies the impact scope first, plans a rebuild of the feature including that scope (never an accretion), reviews the plan via the agenda-reviewer subagent, and records stage transitions after explicit agreement.
+description: Turn an implementation decision into an agreed plan, then record it. Use when the user decides to build something (実装しよう / 作ろう), says "agenda", or asks to plan work (作業単位). Reads current code, agrees on a report of intent, plans keep-vs-rebuild orders from that report, reviews twice with narrow checks, and records ready on agreement.
 ---
 
 # Agenda
@@ -9,109 +9,98 @@ Turn an implementation decision into an agreed plan, then record it. Never imple
 
 ## Scope
 
-- Idea capture ("ログインを作りたい") is not agenda — it is plain discussion: once the content is agreed, append it directly (new features enter as `planned`; stack / roadmap changes surfaced by the same discussion go together).
-- Pure JSON value changes (copy tweaks, status flips) skip agenda entirely — append directly.
+- Idea capture ("ログインを作りたい") is not agenda — plain discussion: once agreed, append directly (new entries enter as `planned`).
+- Pure value changes (copy tweaks, status flips) skip agenda — append directly.
 - When unsure whether something counts as implementation, run agenda.
-- One agenda = one coherent deliverable; split unrelated areas into separate sessions.
-
-## Responsibilities
-
-|          | Main agent (YOU)                                 | agenda-reviewer                                   |
-| -------- | ------------------------------------------------ | ------------------------------------------------- |
-| Scope    | Decide the plan, targets, scope, and conventions | Receive the plan and the impact scope             |
-| Review   | Never (delegate to the sub-agent)                | Check plan and files against the review viewpoint |
-| Judgment | Integrate findings, decide adoption              | Never                                             |
-| Output   | Present the plan and findings                    | Return findings in a fixed format                 |
+- One agenda = one coherent deliverable carried by one or more related targets in the same domain; split unrelated areas into separate sessions.
 
 ## Procedure
 
-1. **Domain & Definition axes**: Decide whether the work targets product or meta, then check the target keys against the definition axes below. Any hit means agenda cannot proceed; register / revise / split via the feature skill, then restart from scratch.
-2. **Impact scope & conventions**:
-   1. Enumerate the impact scope using the scope conditions in code-axes.md
-   2. Read each file in the scope and their siblings (same directory)
-   3. Discover conventions (naming, return types, language) from what was read (code-axes.md 軸13)
-   4. Present in the format below; wait for user approval. If rejected, revise and repeat from step 2.1
+### 1. Target
 
-   The approved scope and conventions become the premise for step 3.
+Decide product or meta and pick one or more related target keys in that same domain from snapshots. Product and meta never mix in one agenda — when both are needed, run separate linked agendas.
 
-   ```markdown
-   ## Impact scope
+- Product targets: `product.features.<id>` entries with trigger / result / route.
+- Meta targets: `meta.<section>.<id>` entries with purpose (+ `path` once it exists).
+- Check every target; if any definition is missing, drifted from reality, or too large for one session, hand off to the feature skill (register / revise / split), then restart agenda from scratch.
+- If the targets or orders grow large, consider splitting into smaller agendas.
 
-   - `<path>`: <scope condition> (<create/modify>)
+Output: domain + target keys, one line each.
 
-   ## Conventions
+### 2. Report
 
-   - <category>: <discovered pattern>
+Goal: agree on what the current code tries to do. No design decisions here.
 
-   If no conventions are discovered, state 'none discovered'.
-   ```
+1. Read the files touching all targets (their union). Keep the list minimal: the target files themselves, their callers, same-directory siblings, and shared types / tests only as needed.
+2. Write the report in chat in the format below and wait for user approval. If rejected, revise and repeat.
+3. Spawn `agenda-reviewer` in `report` mode (facts only — narrow check). Fold every finding (fix or defer with a reason, never silently drop), present report + findings to the user, and iterate until explicit agreement on reality.
 
-3. **Design**:
-   - Using the approved scope and conventions as premises, check the files against the code axes below and decide the design direction with the four labels below.
-   - The agreed refactor enters the plan completely, never partially; if refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle.
+```markdown
+## Report
 
-4. **Tests**: Decide the test policy per order using the test criteria below.
-5. **Review & Integrate**:
-   - Spawn the `agenda-reviewer` subagent with the draft plan and the impact scope.
-   - It checks ONLY the impact-scope/rebuild viewpoint code-axes and returns findings.
-   - Fold the findings into the plan, address each or defer with a reason. Never silently drop a finding.
-6. **Present & discuss**: Show the plan and the findings to the user, and iterate until explicit agreement.
-7. **Record**: On consensus, append the stage transitions. Findings such as a needed stack revision are irregular: stop, handle outside this flow, then restart agenda.
-
-## Judgment axes
-
-All deliberations happen in chat and are **never recorded**; their outcomes materialize as the Files layout and Tests entries of each order.
-
-### Definition axes (step 1)
-
-Checked against snapshots alone. Any hit aborts agenda here — the fix belongs to the feature skill (registration / revision / splitting).
-
-| Axis           | Hit condition                                                        |
-| -------------- | -------------------------------------------------------------------- |
-| Existence      | no snapshot entry matches the request                                |
-| Truth          | definition drifted from reality                                      |
-| Single purpose | explaining the purpose needs "and" / "etc."                          |
-| Route size     | route exceeds 3 steps (see feature/SKILL.md)                         |
-| Session size   | ready → commit cannot fit one working session (see feature/SKILL.md) |
-
-### Impact scope conditions (step 2)
-
-The impact scope is the set of files the change touches. Enumerate it before design using the scope conditions in [references/code-axes.md](./references/code-axes.md) — a file is in scope when it matches any condition there.
-
-Files outside the scope stay untouched.
-
-### Code axes (step 3)
-
-Checked by reading the files in the impact scope. A hit does not abort agenda — it routes to the step 3 design decision, and the agreed refactor is added as orders in this agenda.
-
-The axes are defined in [references/code-axes.md](./references/code-axes.md).
-
-### Design labels (step 3)
-
-```
-Responsibilities: the existing responsibility boundaries this change touches
-Ideal design:     the desired shape of the impact scope, not pulled by the current code
-Gap bridging:     how to rebuild from the current state to the ideal, scope included
-Debt:             where debt grows and why it is accepted
+- Targets:
+  - `product.features.auth`
+  - `product.features.auth-session` (or meta keys)
+- Files:
+  - `<path>`: <one-line role>
+- Intent: <what the code tries to do, structurally>
+- Conventions: <found patterns, or `none`>
 ```
 
-### Test criteria (step 4)
+The approved report is the premise for step 3. Files outside it stay untouched unless the plan justifies the addition and the report is updated first.
 
-| Target                                        | Policy                                  |
-| --------------------------------------------- | --------------------------------------- |
-| UI components / markup                        | No unit tests                           |
-| Pure functions (fold, validators, formatters) | Unit tests — happy path AND error paths |
-| Boundaries (CLI, shell, I/O)                  | Boundary tests including failure modes  |
+### 3. Plan
 
-Keep to the minimum set that catches regressions. Tests live next to their source as `*.test.ts` and run via `pnpm test:run`.
+Goal: decide what rides on the intent and what breaks it, as concrete orders.
 
-## Presentation
+1. For each file in the approved report, mark `keep` (ride on the intent) or `rebuild` (break it, with why).
+2. Write minimal orders in the format below. Each order is independently verifiable; `Depends on` references earlier numbers only.
+3. Spawn `agenda-reviewer` in `plan` mode (consistency only — narrow check). Fold every finding the same way, present plan + findings to the user, and iterate until explicit agreement.
 
-Each order is fully independent: implementable and verifiable on its own. `Depends on` always references earlier numbers (one-way dependencies). Refactor orders look like ordinary orders; their Surface verifies behavior preservation (existing tests stay green).
+```markdown
+# Agenda: <short title>
 
-Present the plan in the format defined in [references/product.md](./references/product.md) (product) or [references/meta.md](./references/meta.md) (meta) — read only the file for the decided domain.
+Domain: <product | meta>
 
-## Status semantics
+## Targets (from snapshot, read-only)
 
-- On consensus: one status assertion per target — `node events/scripts/append-build.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`. Multiple targets can share one invocation (one shared ts)
-- No manual build: the idle hook syncs snapshots after the turn ends
+- `<target key>`: Trigger / Result / Route, or Purpose (+ Stage)
+- (repeat per target)
+
+## Files
+
+- `<path>` — keep: <why it can stay>
+- `<path>` — rebuild: <why it must change>
+
+## Orders
+
+### 1. <what to do> (keep | rebuild)
+
+- Target: `<one of the listed targets>`
+- Depends on: none
+- Files:
+  - `<path>` (create | modify)
+    - <change>
+- Tests:
+  - <test file and scope, or `none (with reason)`>
+- Check:
+  - <command or behavior proving trigger → result>
+```
+
+Test policy: UI / markup → none. Pure functions (fold, validators, formatters) → unit tests for happy path and error paths. Boundaries (CLI, shell, I/O) → boundary tests including failure modes. Keep the minimum set that catches regressions. Tests live next to their source as `*.test.ts` and run via `pnpm test:run`.
+
+If refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle. Refactor orders verify behavior preservation (existing tests stay green).
+
+### 4. Record
+
+On consensus, assert one status per target:
+
+`node events/scripts/append-build.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`
+
+Multiple targets can share one invocation (one shared ts). No manual build: the idle hook syncs snapshots after the turn ends.
+
+## Rules
+
+- Never implement inside agenda.
+- Deliberations stay in chat; only the `ready` status is recorded.
+- Never silently drop a reviewer finding.
