@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-04T11:40:52.013+09:00",
-  "asOf": "2026-09-04T11:40:51.983+09:00",
+  "generatedAt": "2026-09-04T14:27:24.328+09:00",
+  "asOf": "2026-09-04T14:27:24.301+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -91,6 +91,15 @@
           "text": "二段階検知・活動ゲート付き自動継続を追加"
         },
         "path": ".opencode/plugin/yolo-continue.ts",
+        "updatedAt": "20260904"
+      },
+      "output-budget": {
+        "purpose": "冗長なコマンド出力を要約に切り詰め全文を退避する出力予算",
+        "status": {
+          "stage": "commit",
+          "text": "長文bash出力を切り詰め全文をtmpへ退避"
+        },
+        "path": ".opencode/lib/output-budget/budget.ts",
         "updatedAt": "20260904"
       }
     },
