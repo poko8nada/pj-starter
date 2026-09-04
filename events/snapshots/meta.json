@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-04T14:27:24.328+09:00",
-  "asOf": "2026-09-04T14:27:24.301+09:00",
+  "generatedAt": "2026-09-04T14:38:53.794+09:00",
+  "asOf": "2026-09-04T14:38:53.767+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -100,6 +100,24 @@
           "text": "長文bash出力を切り詰め全文をtmpへ退避"
         },
         "path": ".opencode/lib/output-budget/budget.ts",
+        "updatedAt": "20260904"
+      },
+      "quiet-defaults": {
+        "purpose": "テスト・lint・型検査を静かな表示で実行する既定",
+        "status": {
+          "stage": "commit",
+          "text": "vitest既定を静音化しTEST_VERBOSE抜け道を追加"
+        },
+        "path": "vitest.config.ts",
+        "updatedAt": "20260904"
+      },
+      "verbose-guide": {
+        "purpose": "冗長な実行コマンドの使用時に静かな呼び出しを案内する事前誘導",
+        "status": {
+          "stage": "commit",
+          "text": "冗長指定の検出と事前誘導をbeforeへ配線"
+        },
+        "path": ".opencode/lib/verbose-guide/guide.ts",
         "updatedAt": "20260904"
       }
     },
