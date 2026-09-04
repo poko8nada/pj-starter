@@ -79,3 +79,19 @@
 {"ts":"2026-09-04T10:52:11.590+09:00","type":"set","key":"log.try.d8401350","value":{"tool":"bash","gap":0,"targets":["git","node"]}}
 {"ts":"2026-09-04T10:52:18.277+09:00","type":"set","key":"log.try.14d18cd8","value":{"tool":"task","gap":6687,"targets":["auditor"]}}
 {"ts":"2026-09-04T10:54:00.186+09:00","type":"set","key":"meta.harness.yolo-continue.status","branch":"develop","value":{"stage":"commit","text":"二段階検知・活動ゲート付き自動継続を追加"}}
+{"ts":"2026-09-04T11:35:37.433+09:00","type":"set","key":"log.try.6570f3f2","value":{"tool":"read","gap":0,"targets":["events/spec/schema.md"]}}
+{"ts":"2026-09-04T11:35:42.301+09:00","type":"set","key":"meta.skills.merge-conflict.path","branch":"develop","value":".opencode/skills/merge-conflict/SKILL.md"}
+{"ts":"2026-09-04T11:35:42.301+09:00","type":"set","key":"meta.skills.merge-conflict.status","branch":"develop","value":{"stage":"ready","text":"worktree並列のbase取込み時コンフリクト解消手順を整備中"}}
+{"ts":"2026-09-04T11:35:42.301+09:00","type":"set","key":"meta.skills.pr.status","branch":"develop","value":{"stage":"ready","text":"merge-conflictへのハンズオフ追記中"}}
+{"ts":"2026-09-04T11:36:27.115+09:00","type":"set","key":"log.try.23da0f75","value":{"tool":"write","gap":49682,"targets":[".opencode/skills/merge-conflict/SKILL.md"]}}
+{"ts":"2026-09-04T11:36:30.508+09:00","type":"set","key":"log.try.ebdaa5ee","value":{"tool":"read","gap":3393,"targets":[".opencode/skills/pr/SKILL.md"]}}
+{"ts":"2026-09-04T11:36:37.927+09:00","type":"set","key":"log.try.03d7ac7a","value":{"tool":"edit","gap":3736,"targets":[".opencode/skills/pr/SKILL.md",".opencode/skills/pr/SKILL.md"]}}
+{"ts":"2026-09-04T11:36:50.654+09:00","type":"set","key":"log.try.6ff83130","value":{"tool":"bash","gap":6742,"targets":["git","git"]}}
+{"ts":"2026-09-04T11:36:56.614+09:00","type":"set","key":"log.try.c72f0555","value":{"tool":"task","gap":5948,"targets":["auditor","auditor"]}}
+{"ts":"2026-09-04T11:38:11.564+09:00","type":"set","key":"log.try.34685510","value":{"tool":"bash","gap":74950,"targets":["git"]}}
+{"ts":"2026-09-04T11:38:18.044+09:00","type":"set","key":"meta.skills.merge-conflict.status","branch":"develop","value":{"stage":"commit","text":"base取込み時の実コードとcheckpointの解消手順を整備"}}
+{"ts":"2026-09-04T11:38:18.044+09:00","type":"set","key":"meta.skills.pr.status","branch":"develop","value":{"stage":"commit","text":"非logコンフリクト時をmerge-conflictへのハンズオフに改訂"}}
+{"ts":"2026-09-04T11:40:51.983+09:00","type":"del","key":"meta.skills.merge-conflict","branch":"develop"}
+{"ts":"2026-09-04T11:40:51.983+09:00","type":"set","key":"meta.skills.conflict","branch":"develop","value":{"purpose":"merge 時のコンフリクト（実コード / checkpoint）を解消し、解消結果をログに記録する","path":".opencode/skills/conflict/SKILL.md","status":{"stage":"commit","text":"base取込み時の実コードとcheckpointの解消手順を整備"}}}
+{"ts":"2026-09-04T11:40:51.983+09:00","type":"set","key":"meta.skills.conflict.status","branch":"develop","value":{"stage":"commit","text":"base取込み時の実コードとcheckpointの解消手順を整備"}}
+{"ts":"2026-09-04T11:40:51.983+09:00","type":"set","key":"meta.skills.pr.status","branch":"develop","value":{"stage":"commit","text":"非logコンフリクト時をconflictへのハンズオフに改訂"}}

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-04T10:54:00.211+09:00",
-  "asOf": "2026-09-04T10:54:00.186+09:00",
+  "generatedAt": "2026-09-04T11:40:52.013+09:00",
+  "asOf": "2026-09-04T11:40:51.983+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -189,10 +189,10 @@
         "purpose": "PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし",
         "status": {
           "stage": "commit",
-          "text": "作成前base取込みと手順順序を改訂"
+          "text": "非logコンフリクト時をconflictへのハンズオフに改訂"
         },
         "path": ".opencode/skills/pr/SKILL.md",
-        "updatedAt": "20260903"
+        "updatedAt": "20260904"
       },
       "imagegen": {
         "purpose": "OpenRouterの画像生成APIでイラスト/フォト両対応の画像を生成するスキル。generate（muse text-to-image）で下書き生成し、edit（img2img）で再生成（muse）または仕上げ（Nano Banana 2 Liteフォト / Seedream 5.0 Liteイラスト・文字）を行う。各段階で完了可能な決定木フローを持ち、仕上げ前のユーザー確認を必須とする。プロンプト展開・モデル別パラメータ出し分けを持つ",
@@ -203,13 +203,14 @@
         },
         "updatedAt": "20260902"
       },
-      "merge-conflict": {
+      "conflict": {
         "purpose": "merge 時のコンフリクト（実コード / checkpoint）を解消し、解消結果をログに記録する",
+        "path": ".opencode/skills/conflict/SKILL.md",
         "status": {
-          "stage": "planned",
-          "text": "未着手"
+          "stage": "commit",
+          "text": "base取込み時の実コードとcheckpointの解消手順を整備"
         },
-        "updatedAt": "20260903"
+        "updatedAt": "20260904"
       }
     },
     "docs": {
