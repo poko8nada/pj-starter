@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-04T09:29:07.630+09:00",
-  "asOf": "2026-09-04T09:29:07.603+09:00",
+  "generatedAt": "2026-09-04T10:54:00.211+09:00",
+  "asOf": "2026-09-04T10:54:00.186+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -83,6 +83,15 @@
         },
         "path": ".opencode/lib/compact-guard/guard.ts",
         "updatedAt": "20260903"
+      },
+      "yolo-continue": {
+        "purpose": "/workflow yolo後の合意を起点にコミットまで自動継続させる",
+        "status": {
+          "stage": "commit",
+          "text": "二段階検知・活動ゲート付き自動継続を追加"
+        },
+        "path": ".opencode/plugin/yolo-continue.ts",
+        "updatedAt": "20260904"
       }
     },
     "skills": {

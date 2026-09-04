@@ -40,7 +40,7 @@ export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }
       );
       // compliance と unresolved は prefix を分けて汚染しない
       const message = buildMessage(
-        '[process-compliance] You are bypassing the project process. Load the skill for the work unit, record the status transition first, then edit.',
+        '[process-compliance] This is a clear violation of the rules. MUST explain the situation to the user via chat and STOP work until you receive a reply.',
         complianceReport,
       );
       const compactMessage = buildMessage(compactReport);
