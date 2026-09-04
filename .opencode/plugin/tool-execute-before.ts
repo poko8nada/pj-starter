@@ -11,6 +11,7 @@ import { isGitClean, isGitRepo } from '../lib/process-compliance/git.hook';
 import { resolveProjectRoot } from '../lib/harness/resolve-root';
 import { createTrail } from '../lib/tool-trail/trail.hook';
 import { runUnresolvedFollowup, settleFollowup } from '../lib/unresolved-followup/unresolved.hook';
+import { buildVerboseGuide } from '../lib/verbose-guide/guide';
 import { buildMessage } from '../lib/utils/message';
 import type { Report } from '../lib/utils/shared';
 
@@ -38,6 +39,8 @@ export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }
         { $, root },
         { tool: input.tool, command: output.args?.command },
       );
+      // 冗長な実行は静かな既定へ誘導する（compactガードと同様の事前案内）。
+      const verboseReport: Report = buildVerboseGuide(output.args?.command);
       // compliance と unresolved は prefix を分けて汚染しない
       const message = buildMessage(
         '[process-compliance] This is a clear violation of the rules. MUST explain the situation to the user via chat and STOP work until you receive a reply.',
@@ -45,7 +48,8 @@ export const ToolExecuteBeforePlugin: Plugin = async ({ worktree, directory, $ }
       );
       const compactMessage = buildMessage(compactReport);
       const followupMessage = buildMessage(followupReport);
-      const parts = [message, compactMessage, followupMessage].filter(
+      const verboseMessage = buildMessage(verboseReport);
+      const parts = [message, compactMessage, followupMessage, verboseMessage].filter(
         (m): m is string => m !== null,
       );
       if (parts.length > 0) throw new Error(parts.join('\n\n'));
