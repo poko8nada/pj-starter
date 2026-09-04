@@ -31,7 +31,7 @@ export const SYNC_UNITS = [
     paths: ['events'],
     excludes: ['log.jsonl', 'checkpoint.json', 'snapshots/'],
   },
-  { label: 'docs', paths: ['.'], files: ['AGENTS.md', 'lefthook.yaml'] },
+  { label: 'docs', paths: ['.'], files: ['AGENTS.md', 'lefthook.yaml', '.gitattributes'] },
 ];
 
 // ディレクトリ単位に適用する共通除外。lock は生成物なので運ばない

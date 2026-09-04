@@ -261,7 +261,7 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 | `path`    | Where the component lives. Omit while only planned; set once implemented |
 | `purpose` | One-sentence intent. Required — its presence defines a component leaf    |
 
-The append path enforces the integrity rule: a component whose `status.stage` is `ready` / `implement` / `commit` must carry a `path` — `append-build.mjs` fails the append when the folded state violates this.
+The append path enforces the integrity rule: any meta node carrying `status` must also carry `purpose`, and a node whose `status.stage` is `ready` / `implement` / `commit` must carry a `path` — regardless of whether it carries `purpose`. `append-build.mjs` fails the append when the folded state violates this.
 
 ### Granularity policy
 

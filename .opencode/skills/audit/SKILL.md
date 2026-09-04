@@ -18,19 +18,19 @@ Pre-commit code review. The main agent handles scope and aggregation; the audito
 
 ## Procedure
 
-1. **Get the diff** — run `git diff HEAD` to collect the pending changes. If empty, report "nothing to review" and stop.
-2. **Check unresolved components** — run `node events/scripts/read.mjs --name meta --unresolved` (and `--name product` as well). Note any `ready`/`implement` components that sit outside this audit's diff: they were left uncommitted in an earlier turn. Include them in the digest so the user can decide whether to withdraw (`del`) or carry them over.
-3. **Chunk** — group the changed files into reviewable chunks:
-   - Map each changed file to its work unit (meta: via the component's `path` in the snapshot; product: by which feature the file implements)
-   - One chunk = one work unit's full change set — code, tests, and docs together, so the auditor can cross-check the three viewpoints within the chunk
-   - Shared libraries form their own chunk (e.g. `events/scripts/lib.mjs` → events-scripts chunk); generated artifacts (`log.jsonl`, `snapshots/`) are excluded — covered by build validation
-   - If a chunk is too large for one auditor pass, split by cohesion, keeping each sub-group's code, tests, and docs together
-4. **Spawn auditors in parallel** — one Task call per chunk with `auditor` as sub agent, passing the chunk: the changed file paths, the diff for those files, and the work-unit context (purpose / definition). The auditor reads the files itself; it does not run git.
-5. **Aggregate** — collect the fixed-format findings returned by each auditor.
-6. **Digest** — group the findings and add your own assessment: clearly valid, needs user judgment, or likely false positive. Give a recommendation. Fold in the unresolved components from step 2.
-7. **Present** — show the findings with your recommendation to the user. Do not fix anything yourself.
+1. **Get the diff** — `git diff HEAD`. Empty → report "nothing to review" and stop.
+2. **Check unresolved components** — `node events/scripts/read.mjs --name meta --unresolved` (and `--name product`). Note any `ready`/`implement` components outside this audit's diff (left uncommitted earlier). Include in the digest for the user to withdraw (`del`) or carry over.
+3. **Chunk** — group changed files into reviewable chunks:
+   - Map each file to its work unit (meta: component `path`; product: feature)
+   - One chunk = one work unit's full change set (code + tests + docs) so the auditor can cross-check the three viewpoints
+   - Shared libraries form their own chunk; generated artifacts (`log.jsonl`, `snapshots/`) excluded — covered by build validation
+   - Oversized chunk → split by cohesion, keeping each sub-group's code/tests/docs together
+4. **Spawn auditors in parallel** — one Task per chunk with `auditor`. Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass: changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests). The auditor reads the diff file and the files themselves; it does not run git.
+5. **Aggregate** — collect the fixed-format findings from each auditor.
+6. **Digest** — group findings, add your assessment (clearly valid / needs user judgment / likely false positive), recommend. Fold in unresolved components from step 2.
+7. **Present** — show findings + recommendation. Do not fix anything yourself.
 8. **Fix** — implement the fixes the user decided on.
-9. **Re-review** — re-run the audit on the new diff (steps 1–8). Loop until the audit returns OK or the user stops.
+9. **Re-review** — re-run on the fixes only: the incremental diff is the changes made during the fix round (the files edited since the last review). Delegate ONLY the adopted findings + that diff (via a diff file as in step 4). Auditor verifies resolution, must NOT raise new findings. Loop until OK or the user stops.
 
 ## Rules
 
@@ -38,4 +38,4 @@ Pre-commit code review. The main agent handles scope and aggregation; the audito
 - Never review outside the diff
 - Aggregate auditor findings as-is; do not override the review judgment
 - Adoption decisions belong to the user; the main agent only digests and recommends
-- Re-review after every fix round — fixes can introduce new issues
+- Re-review after every fix round — verify the adopted fixes resolved the findings; new issues surface in the next full audit round

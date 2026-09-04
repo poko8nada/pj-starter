@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-01T16:48:35.836+09:00",
-  "asOf": "2026-09-01T16:48:35.806+09:00",
+  "generatedAt": "2026-09-04T11:40:52.013+09:00",
+  "asOf": "2026-09-04T11:40:51.983+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -8,9 +8,9 @@
         "purpose": "コミット時のformat/lint/typecheck強制",
         "status": {
           "stage": "commit",
-          "text": "lefthook で pre-commit フックを運用中"
+          "text": "--deny-warnings で警告をエラー化"
         },
-        "updatedAt": "20260824"
+        "updatedAt": "20260903"
       },
       "mockup-notify": {
         "purpose": "mockup指示の追記を検知しエージェントを起床させる",
@@ -25,65 +25,28 @@
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
         "status": {
           "stage": "commit",
-          "text": "trailをwork unit窓（append〜closing append）に狭め、初期状態をログから判定するよう改修"
+          "text": "行識別子を見送りreadyを取り下げ"
         },
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
-        "updatedAt": "20260901"
+        "updatedAt": "20260903"
       },
       "edit-lint": {
         "purpose": "編集直後のreport-only lint",
         "path": ".opencode/lib/checks/edit-lint.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "dirtyAt をクロージャにカプセル化しファクトリパターンに"
+          "text": "--deny-warnings で警告をエラー化"
         },
-        "updatedAt": "20260831"
+        "updatedAt": "20260903"
       },
       "idle-review": {
         "purpose": "ターン完了時の品質レビュー",
         "path": ".opencode/lib/checks/idle-review.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "reviewIdle を実行層と判定層に分離"
+          "text": "--deny-warnings で警告をエラー化"
         },
-        "updatedAt": "20260831"
-      },
-      "events-sync": {
-        "purpose": "ターン完了時のevents同期（build/compact）",
-        "path": ".opencode/lib/events-sync/sync.hook.ts",
-        "status": {
-          "stage": "commit",
-          "text": "wc -l を fs ベースの行数カウントに置換"
-        },
-        "updatedAt": "20260831"
-      },
-      "event-lib": {
-        "status": {
-          "stage": "commit",
-          "text": "log 名前空間を log.try.<id> と {tool, gap, path|name} に更新"
-        },
-        "updatedAt": "20260830"
-      },
-      "events-readme": {
-        "status": {
-          "stage": "commit",
-          "text": "機械注入トレイル節と ts 契約を log.try に更新"
-        },
-        "updatedAt": "20260830"
-      },
-      "user-reset": {
-        "status": {
-          "stage": "commit",
-          "text": "テストフィクスチャを log.try に更新"
-        },
-        "updatedAt": "20260830"
-      },
-      "user-sync-to-starter": {
-        "status": {
-          "stage": "commit",
-          "text": "テストフィクスチャを log.try に更新"
-        },
-        "updatedAt": "20260830"
+        "updatedAt": "20260903"
       },
       "unresolved-followup": {
         "purpose": "コミット時に未確定コンポーネント（ready/implementのまま）を検知し、実装完了/取り下げ/持ち越しの判断を促す。監視はaudit/commitスキル/直接git commitの3経路で、いずれかで1回発火したらcommitが通るまでスルーし、commit成功で復活する",
@@ -96,12 +59,39 @@
       },
       "process-compliance": {
         "purpose": "プロセス無視の編集を検出し、ステータス記録まで edit/write をブロックするプロセス順守チェック",
-        "path": ".opencode/lib/process-compliance/gate.hook.ts",
+        "path": ".opencode/lib/process-compliance/compliance.hook.ts",
         "status": {
           "stage": "commit",
-          "text": "edit-gate を process-compliance へ改名し、ブロック文言をプロセス無視の指摘へ変更"
+          "text": "path を compliance.hook.ts に更新"
         },
-        "updatedAt": "20260901"
+        "updatedAt": "20260903"
+      },
+      "event-compact": {
+        "purpose": "ログ行数が敷居値を超えたターン完了時に compact.mjs を実行する",
+        "path": ".opencode/lib/event-compact/compact.hook.ts",
+        "status": {
+          "stage": "commit",
+          "text": "events-sync から event-compact へ改名し path を実ファイルに更新"
+        },
+        "updatedAt": "20260903"
+      },
+      "compact-guard": {
+        "purpose": "エージェントによるコンパクト実行を検出し、ユーザーへの依頼を促す",
+        "status": {
+          "stage": "commit",
+          "text": "buildMessage 方式でコンパクト実行をブロック"
+        },
+        "path": ".opencode/lib/compact-guard/guard.ts",
+        "updatedAt": "20260903"
+      },
+      "yolo-continue": {
+        "purpose": "/workflow yolo後の合意を起点にコミットまで自動継続させる",
+        "status": {
+          "stage": "commit",
+          "text": "二段階検知・活動ゲート付き自動継続を追加"
+        },
+        "path": ".opencode/plugin/yolo-continue.ts",
+        "updatedAt": "20260904"
       }
     },
     "skills": {
@@ -110,9 +100,9 @@
         "path": ".opencode/skills/agenda/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "Status semantics節を正規の置き場として維持"
+          "text": "2フェーズ・複数対象対応に全面書き換え、references/を削除"
         },
-        "updatedAt": "20260827"
+        "updatedAt": "20260904"
       },
       "recon": {
         "purpose": "実装前の調査と記録",
@@ -127,9 +117,9 @@
         "purpose": "コミット前の変更をコードレビューする",
         "status": {
           "stage": "commit",
-          "text": "未確定コンポーネント確認ステップを手順に追加し連番化"
+          "text": "差分受け渡しをファイル経由に明示化"
         },
-        "updatedAt": "20260831",
+        "updatedAt": "20260904",
         "path": ".opencode/skills/audit/SKILL.md"
       },
       "mockup": {
@@ -182,9 +172,9 @@
         "path": ".opencode/skills/workflow/SKILL.md",
         "status": {
           "stage": "commit",
-          "text": "終端条件と終了時ダイジェスト（Steps/Done/State）を共通ルールとして追加"
+          "text": "参照スキルの手順スキップ禁止を明文化"
         },
-        "updatedAt": "20260901"
+        "updatedAt": "20260902"
       },
       "visual": {
         "purpose": "プロダクトのビジュアル（スタティック＋モーション）を実装する。mockupの成果物を参照して適用可能。look未決定時はmockupへハンズオフ",
@@ -199,10 +189,28 @@
         "purpose": "PR作成の手順と規約を定める。単一PRのみ、ベースブランチは分岐元（dev/main）を判定、タイトル/本文はcommit規約を再利用、イベントログへの追記なし",
         "status": {
           "stage": "commit",
-          "text": "事前チェックのpush判定をupstream存在確認からリモートへの全コミット反映に修正"
+          "text": "非logコンフリクト時をconflictへのハンズオフに改訂"
         },
         "path": ".opencode/skills/pr/SKILL.md",
-        "updatedAt": "20260901"
+        "updatedAt": "20260904"
+      },
+      "imagegen": {
+        "purpose": "OpenRouterの画像生成APIでイラスト/フォト両対応の画像を生成するスキル。generate（muse text-to-image）で下書き生成し、edit（img2img）で再生成（muse）または仕上げ（Nano Banana 2 Liteフォト / Seedream 5.0 Liteイラスト・文字）を行う。各段階で完了可能な決定木フローを持ち、仕上げ前のユーザー確認を必須とする。プロンプト展開・モデル別パラメータ出し分けを持つ",
+        "path": ".opencode/skills/imagegen/SKILL.md",
+        "status": {
+          "stage": "commit",
+          "text": "refineをeditに改名しmuse img2img再生成を追加、決定木フローとユーザー確認必須化を実装"
+        },
+        "updatedAt": "20260902"
+      },
+      "conflict": {
+        "purpose": "merge 時のコンフリクト（実コード / checkpoint）を解消し、解消結果をログに記録する",
+        "path": ".opencode/skills/conflict/SKILL.md",
+        "status": {
+          "stage": "commit",
+          "text": "base取込み時の実コードとcheckpointの解消手順を整備"
+        },
+        "updatedAt": "20260904"
       }
     },
     "docs": {
@@ -258,9 +266,9 @@
         "purpose": "イベントの追記（単発・バッチ）",
         "status": {
           "stage": "commit",
-          "text": "status assertion追記で更新"
+          "text": "branch フィールドを付与（git 直接読み + EVENTS_BRANCH 上書き）"
         },
-        "updatedAt": "20260826"
+        "updatedAt": "20260903"
       },
       "event-build": {
         "path": "events/scripts/build.mjs",
@@ -276,9 +284,9 @@
         "purpose": "チェックポイント退避",
         "status": {
           "stage": "commit",
-          "text": "シグネチャ不変のため無変更、移行で検証済み"
+          "text": "ログを空にするコンパクトに回帰"
         },
-        "updatedAt": "20260825"
+        "updatedAt": "20260903"
       },
       "event-read": {
         "path": "events/scripts/read.mjs",
@@ -294,18 +302,27 @@
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
           "stage": "commit",
-          "text": "lib.mjsをlib/へ分割しパスを遅延解決化"
+          "text": "buildEvent に branch 検証を追加"
         },
-        "updatedAt": "20260901"
+        "updatedAt": "20260903"
       },
       "user-apply": {
         "purpose": "スターターをプロジェクトへ一方向適用するツール。ハーネス一式をミラー（スターターに無いファイルは削除）し、meta.* をスターターのコミット済み在庫で置換する。--init でログ掃除（旧 reset 相当）を兼ねる",
         "path": "scripts/user/apply.mjs",
         "status": {
           "stage": "commit",
-          "text": "reset/sync-to-starter を統合し、純 Node 一方向ミラー apply として再実装"
+          "text": ".gitattributes伝搬を追加"
         },
-        "updatedAt": "20260901"
+        "updatedAt": "20260903"
+      },
+      "event-merge-driver": {
+        "purpose": "log.jsonl結合時の行順序を一意に定めるmerge driver。base順保持＋自側新規の末尾化",
+        "status": {
+          "stage": "commit",
+          "text": "親のログ + 自ブランチのデルタ末尾アペンドに改造（git 直接読み）"
+        },
+        "path": "events/scripts/merge-driver.mjs",
+        "updatedAt": "20260903"
       }
     },
     "agents": {
@@ -313,10 +330,10 @@
         "purpose": "コミット前レビューを担う専任サブエージェント",
         "status": {
           "stage": "commit",
-          "text": "auditor.md を作成し運用中"
+          "text": "test観点をagendaテスト判定表に固定し、re-reviewモードと初回出し切りを明記"
         },
         "path": ".opencode/agent/auditor.md",
-        "updatedAt": "20260825"
+        "updatedAt": "20260902"
       },
       "web-researcher": {
         "purpose": "ライブラリやフレームワークの技術調査。公式サイトやGitHubの有無を確認",
@@ -341,9 +358,9 @@
         "path": ".opencode/agent/agenda-reviewer.md",
         "status": {
           "stage": "commit",
-          "text": "レビュー観点を影響範囲/作り直しの2点のみに限定し、code-axes.md参照に簡略化"
+          "text": "report/planの2モード狭化、reasoningEffortをmediumに"
         },
-        "updatedAt": "20260827"
+        "updatedAt": "20260904"
       }
     }
   }

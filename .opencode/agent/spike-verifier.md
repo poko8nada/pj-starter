@@ -1,7 +1,7 @@
 ---
 description: Verifies whether a library or framework can be integrated into the current project using a git worktree, then generates a runbook and cleans up. Use as the spike verification engine of the recon skill.
 mode: subagent
-model: opencode-go/muse-spark-1.2-contributor
+model: opencode-go/muse-spark-1.3-contributor
 reasoningEffort: xhigh
 temperature: 0.1
 permission:

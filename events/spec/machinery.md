@@ -17,13 +17,17 @@ The `log` namespace records what the agent tried per tool call — a coarse acti
 
 ## Compaction
 
-The active log has a line threshold (**1000**, defined in `.opencode/lib/event-compact/threshold.ts`). When the idle hook observes the threshold crossed, it runs `compact.mjs`:
+The active log has a line threshold (**5000**, defined in `.opencode/lib/event-compact/threshold.ts`). When the idle hook observes the threshold crossed, it runs `compact.mjs`:
 
 1. Fold checkpoint + active log into current trees
 2. Write `checkpoint.json` (`{ compactedAt, asOf, trees }`)
-3. Empty `log.jsonl`; subsequent appends simply continue on top of the checkpoint
+3. Empty `log.jsonl` — the log is the delta since the last compaction, so it resets to zero
 
 Pre-compaction history lives in git — no archive mechanism exists. Because compaction preserves folded state exactly, existing snapshots remain valid without an immediate rebuild.
+
+## Merge
+
+Parallel git worktrees merge `events/log.jsonl` with the custom driver `event-merge-driver`: the parent's (incoming) log block first, then the current branch's delta — the lines whose `branch` field matches the current branch — appended at the end, with exact-duplicate lines deduped. Because the delta lands last, the current branch wins on conflicting keys, and deletions are preserved regardless of merge direction. Register per clone with `pnpm setup:merge-driver`. Generated files (`checkpoint.json`, `snapshots/*.json`) keep the current side via the `events-generated` driver and are rebuilt from the merged log with `build.mjs` — never hand-resolved. When both sides compacted, the checkpoint conflicts and needs manual resolution (see the conflict skill).
 
 ## Rebuild rules
 

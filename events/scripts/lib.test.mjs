@@ -56,6 +56,42 @@ describe('buildEvent', () => {
     expect(() => buildEvent({ type: 'set', key: 'product.name' })).toThrow(EventError);
     expect(buildEvent({ type: 'del', key: 'product.name' }).value).toBeUndefined();
   });
+
+  it('adds the branch field from the EVENTS_BRANCH env var', () => {
+    const previous = process.env.EVENTS_BRANCH;
+    process.env.EVENTS_BRANCH = 'feature/foo';
+    try {
+      const event = buildEvent({ type: 'set', key: 'product.name', value: 'x' });
+      expect(event.branch).toBe('feature/foo');
+    } finally {
+      if (previous === undefined) delete process.env.EVENTS_BRANCH;
+      else process.env.EVENTS_BRANCH = previous;
+    }
+  });
+
+  it('omits the branch field when EVENTS_BRANCH is unset', () => {
+    const previous = process.env.EVENTS_BRANCH;
+    delete process.env.EVENTS_BRANCH;
+    try {
+      const event = buildEvent({ type: 'set', key: 'product.name', value: 'x' });
+      expect(event.branch).toBeUndefined();
+    } finally {
+      if (previous !== undefined) process.env.EVENTS_BRANCH = previous;
+    }
+  });
+
+  it('rejects an empty EVENTS_BRANCH', () => {
+    const previous = process.env.EVENTS_BRANCH;
+    process.env.EVENTS_BRANCH = '';
+    try {
+      expect(() => buildEvent({ type: 'set', key: 'product.name', value: 'x' })).toThrow(
+        /EVENTS_BRANCH must be a non-empty string/,
+      );
+    } finally {
+      if (previous === undefined) delete process.env.EVENTS_BRANCH;
+      else process.env.EVENTS_BRANCH = previous;
+    }
+  });
 });
 
 describe('status key validation', () => {
@@ -445,6 +481,33 @@ describe('auditMetaIntegrity', () => {
       },
     };
     expect(auditMetaIntegrity(trees)).toEqual([]);
+  });
+
+  it('flags status-bearing nodes without purpose', () => {
+    const trees = {
+      meta: {
+        harness: {
+          ghost: { status: { stage: 'planned', text: 't' } },
+        },
+      },
+    };
+    const findings = auditMetaIntegrity(trees);
+    expect(findings).toEqual(['meta component meta.harness.ghost has status but no purpose']);
+  });
+
+  it('checks path regardless of purpose', () => {
+    const trees = {
+      meta: {
+        harness: {
+          ghost: { status: { stage: 'commit', text: 't' } },
+        },
+      },
+    };
+    const findings = auditMetaIntegrity(trees);
+    expect(findings).toEqual([
+      'meta component meta.harness.ghost has status but no purpose',
+      'meta component meta.harness.ghost is "commit" but has no path',
+    ]);
   });
 
   it('walks nested containers and ignores non-meta namespaces', () => {

@@ -6,7 +6,7 @@
     "clean": "rm -rf dist",
     "test": "vitest",
     "test:run": "vitest run",
-    "lint": "oxlint",
+    "lint": "oxlint --deny-warnings",
     "lint:fix": "oxlint --fix && oxfmt",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -15,7 +15,8 @@
     "typecheck:opencode": "tsc -p .opencode/tsconfig.json --noEmit",
     "typecheck:staged": "node scripts/typecheck-staged.mjs",
     "apply": "node scripts/user/apply.mjs",
-    "prepare": "lefthook install"
+    "setup:merge-driver": "git config merge.event-merge-driver.driver \"node events/scripts/merge-driver.mjs %O %A %B\" && git config merge.events-generated.driver true",
+    "prepare": "lefthook install && pnpm setup:merge-driver"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

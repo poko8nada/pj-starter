@@ -43,19 +43,20 @@ The current project state is the fold result under `snapshots/`: `product.json` 
 
 ## Log format
 
-JSONL. One event per line. **One line carries one concern** — a value assertion, or a whole status assertion. `ts` is always assigned by `append.mjs` (never handwritten) — except machine-injected `log.*` lines, which the harness plugin assigns via the same builder — and **all events from one invocation share one ts**. Timestamps are fixed-offset JST (`+09:00`, ISO 8601). There is no sequence number — ordering is simply file order.
+JSONL. One event per line. **One line carries one concern** — a value assertion, or a whole status assertion. `ts` is always assigned by `append.mjs` (never handwritten) — except machine-injected `log.*` lines, which the harness plugin assigns via the same builder — and **all events from one invocation share one ts**. Timestamps are fixed-offset JST (`+09:00`, ISO 8601). There is no sequence number — ordering is simply file order. `branch` is the current git branch at append time (from `git branch --show-current`, overridable via `EVENTS_BRANCH`), used to identify a branch's delta when merging logs; it is omitted when unset.
 
 ```jsonl
-{"ts":"2026-08-25T10:00:00.000+09:00","type":"set","key":"product.name.value","value":"Pj Docs"}
-{"ts":"2026-08-25T10:00:00.000+09:00","type":"set","key":"product.name.status","value":{"text":"プロダクト名を確定"}}
-{"ts":"2026-08-25T10:05:00.000+09:00","type":"set","key":"product.features.auth.status","value":{"stage":"implement","text":"認証APIを実装中"}}
-{"ts":"2026-08-25T10:06:00.000+09:00","type":"del","key":"product.features.old_feature"}
+{"ts":"2026-08-25T10:00:00.000+09:00","type":"set","key":"product.name.value","value":"Pj Docs","branch":"develop"}
+{"ts":"2026-08-25T10:00:00.000+09:00","type":"set","key":"product.name.status","value":{"text":"プロダクト名を確定"},"branch":"develop"}
+{"ts":"2026-08-25T10:05:00.000+09:00","type":"set","key":"product.features.auth.status","value":{"stage":"implement","text":"認証APIを実装中"},"branch":"feature/auth"}
+{"ts":"2026-08-25T10:06:00.000+09:00","type":"del","key":"product.features.old_feature","branch":"feature/auth"}
 ```
 
 - `ts` — ISO 8601 in JST (`+09:00`), assigned by `append.mjs`. All events from one invocation share one ts
 - `type` — `set` (overwrite, last-write-wins) or `del` (remove leaf, prune empty ancestors)
 - `key` — dotted path, always required
 - `value` — JSON string or object. **A full-state assertion at that exact path, never a diff**
+- `branch` — the current git branch at append time (from `git branch --show-current`, overridable via `EVENTS_BRANCH`). Omitted when unset; an empty `EVENTS_BRANCH` is rejected on append. Used to identify a branch's delta when merging logs
 
 ## Recording contract
 
