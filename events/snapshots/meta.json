@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-04T09:25:37.329+09:00",
-  "asOf": "2026-09-04T09:25:37.302+09:00",
+  "generatedAt": "2026-09-04T09:29:07.630+09:00",
+  "asOf": "2026-09-04T09:29:07.603+09:00",
   "content": {
     "harness": {
       "quality-gate": {
@@ -108,9 +108,9 @@
         "purpose": "コミット前の変更をコードレビューする",
         "status": {
           "stage": "commit",
-          "text": "step4でテスト方針を渡し、step9を採用指摘+増分diffのみの再レビューに改訂"
+          "text": "差分受け渡しをファイル経由に明示化"
         },
-        "updatedAt": "20260902",
+        "updatedAt": "20260904",
         "path": ".opencode/skills/audit/SKILL.md"
       },
       "mockup": {

@@ -25,12 +25,12 @@ Pre-commit code review. The main agent handles scope and aggregation; the audito
    - One chunk = one work unit's full change set (code + tests + docs) so the auditor can cross-check the three viewpoints
    - Shared libraries form their own chunk; generated artifacts (`log.jsonl`, `snapshots/`) excluded — covered by build validation
    - Oversized chunk → split by cohesion, keeping each sub-group's code/tests/docs together
-4. **Spawn auditors in parallel** — one Task per chunk with `auditor`, passing: changed file paths, the diff, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests). The auditor reads files itself; it does not run git.
+4. **Spawn auditors in parallel** — one Task per chunk with `auditor`. Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass: changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests). The auditor reads the diff file and the files themselves; it does not run git.
 5. **Aggregate** — collect the fixed-format findings from each auditor.
 6. **Digest** — group findings, add your assessment (clearly valid / needs user judgment / likely false positive), recommend. Fold in unresolved components from step 2.
 7. **Present** — show findings + recommendation. Do not fix anything yourself.
 8. **Fix** — implement the fixes the user decided on.
-9. **Re-review** — re-run on the fixes only: the incremental diff is the changes made during the fix round (the files edited since the last review). Delegate ONLY the adopted findings + that diff. Auditor verifies resolution, must NOT raise new findings. Loop until OK or the user stops.
+9. **Re-review** — re-run on the fixes only: the incremental diff is the changes made during the fix round (the files edited since the last review). Delegate ONLY the adopted findings + that diff (via a diff file as in step 4). Auditor verifies resolution, must NOT raise new findings. Loop until OK or the user stops.
 
 ## Rules
 
