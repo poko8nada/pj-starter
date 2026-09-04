@@ -10,12 +10,11 @@
 ```bash
 pnpm apply <スターターのパス>               # dry-run プレビュー
 pnpm apply --run <スターターのパス>          # 実行（ミラー + meta 置換）
-pnpm apply --run --init <スターターのパス>   # 実行 + ログ掃除（旧 reset 相当）
 ```
 
 ### ファイルミラー（一方向）
 
-- 同期単位は静的定義（`apply/files.mjs` の `SYNC_UNITS`）: harness（`.opencode/lib` + `.opencode/plugin`）/ agents（`.opencode/agent`）/ skills（`.opencode/skills`）/ config（`.opencode` の tsconfig.json・package.json・.gitignore）/ scripts / events（状態ファイルを除外）/ docs（`AGENTS.md` + `lefthook.yaml` + `.gitattributes`）
+- 同期単位はグループ定義（`groups.mjs` の `GROUPS`）が正本。apply が対象にするのは tools に `apply` を含む群: harness（`.opencode/lib` + `.opencode/plugin`）/ agents（`.opencode/agent`）/ skills（`.opencode/skills`）/ config（`.opencode` の tsconfig.json・package.json・.gitignore）/ scripts（`new` 関連を除外）/ events（状態ファイルを除外）/ docs（`AGENTS.md` + `lefthook.yaml` + `.gitattributes`）/ lint（`.oxlintrc.json`・`.oxfmtrc.json`）
 - 適用先では merge driver を手動登録する: `pnpm setup:merge-driver`（各cloneで一度だけ）
 - **スターターが正**: スターターに無いプロジェクト側ファイルは削除される（単位内のみ）
 - 比較は mtime/size。コピー時に mtime を保持するため、再実行は冪等（差分ゼロ）
@@ -27,12 +26,7 @@ pnpm apply --run --init <スターターのパス>   # 実行 + ログ掃除（�
 - プロジェクトのログからコミット済み meta イベントを除去し、非コミット（ready/implement）+ `product.*` + `log.try.*` は残す
 - 履歴はスターター側が保持する。プロジェクトのメタは「最新ハーネスの在庫」として読める
 
-### --init（旧 reset 相当）
+### 新規立ち上げ
 
-- 上記に加えて:
-  - `events/checkpoint.json` とルート README 2種（README.md / README.ja.md）を削除
-  - `log.jsonl` を空にし、`product.name.value` / `product.what.value` の 2 イベントで再開
-  - checkpoint は `product.stack`（プロジェクト現状の stripped）+ スターター在庫の meta を種まき
-- 最後に `events/scripts/build.mjs` でスナップショットを再生成する（手動 build 不要）
-- `--init` は単体では dry-run 扱い。実実行は `--init --run` で行う
-- コピー先プロジェクトの新規立ち上げ時に一度だけ実行する
+- `node scripts/user/new.mjs` に移管した。詳しくは `NEW.md` を参照（スターター側のみに存在）
+- `apply --init` は受け付けない（移管案内を出して失敗する）

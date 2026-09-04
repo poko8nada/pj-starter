@@ -113,7 +113,7 @@ What agents must be able to read from a fresh copy's state:
 - The log is the truth for everything that happens inside the project; the checkpoint additionally carries the shipped baseline seeded at initialization
 - Pre-copy history lives only in the starter's git
 
-Usage of the tools is documented in `scripts/user/README.md` for the operator.
+Usage of the tools is documented in `scripts/user/APPLY.md` (`NEW.md` for bootstrapping, starter only) for the operator.
 
 ## Harness independence
 

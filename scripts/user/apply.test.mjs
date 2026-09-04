@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
 
 const SCRIPT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'apply.mjs');
+const GROUPS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'groups.mjs');
 const FILES = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'apply/files.mjs');
 const META = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'apply/meta.mjs');
 const EVENTS_SCRIPTS = path.resolve(
@@ -102,6 +103,7 @@ const makeProject = ({ logEvents = PROJECT_LOG } = {}) => {
     fs.mkdirSync(path.join(root, dir), { recursive: true });
   }
   fs.copyFileSync(SCRIPT, path.join(root, 'scripts', 'user', 'apply.mjs'));
+  fs.copyFileSync(GROUPS, path.join(root, 'scripts', 'user', 'groups.mjs'));
   fs.copyFileSync(FILES, path.join(root, 'scripts', 'user', 'apply', 'files.mjs'));
   fs.copyFileSync(META, path.join(root, 'scripts', 'user', 'apply', 'meta.mjs'));
   seedEvents(eventsDir);
@@ -317,75 +319,61 @@ describe('apply.mjs の一方向ミラー', () => {
     expect(meta.content.skills.recon.status.stage).toBe('implement');
   });
 
-  it('--init は checkpoint 種まき・log 初期化・README 削除・build を一貫して行う', () => {
-    const project = makeProject({
-      logEvents: [
-        {
-          ts: '2026-09-01T00:00:00.000+09:00',
-          type: 'set',
-          key: 'product.name.value',
-          value: 'old',
-        },
-      ],
-    });
+  it('--init は拒否され、new への移管を案内する', () => {
+    const project = makeProject();
     const starter = makeStarter();
-    write(path.join(project, '.opencode', 'lib', 'x.ts'), '// project stack file');
-    write(path.join(project, 'README.md'), '# old');
-    write(path.join(project, 'README.ja.md'), '# old ja');
+    const result = runApply(project, starter, ['--init']);
 
-    const result = runApply(project, starter, ['--init', '--run']);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('new.mjs');
+  });
+});
 
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain('init 完了');
-    expect(exists(path.join(project, 'README.md'))).toBe(false);
-    expect(exists(path.join(project, 'README.ja.md'))).toBe(false);
+describe('グループ定義の等価性', () => {
+  it('SYNC_UNITS は apply タグ群と一致する', async () => {
+    const { SYNC_UNITS } = await import('./apply/files.mjs');
+    const { groupsFor } = await import('./groups.mjs');
 
-    // log は name/what の 2 イベントのみ
-    const log = read(path.join(project, 'events', 'log.jsonl'))
-      .split('\n')
-      .filter((line) => line.trim() !== '')
-      .map((line) => JSON.parse(line));
-    expect(log.map((event) => event.key)).toEqual(['product.name.value', 'product.what.value']);
-    expect(log[0].value).toBe('プロジェクト名が入ります');
+    // 順序も含めて一致すること
+    expect(SYNC_UNITS.map((unit) => unit.id)).toEqual(groupsFor('apply').map((group) => group.id));
+    expect(SYNC_UNITS.map((unit) => unit.id)).toEqual([
+      'harness',
+      'agents',
+      'skills',
+      'config',
+      'scripts',
+      'events',
+      'docs',
+      'lint',
+    ]);
 
-    // checkpoint: product.stack（stripped）+ スターター在庫の meta
-    const checkpoint = JSON.parse(read(path.join(project, 'events', 'checkpoint.json')));
-    expect(checkpoint.asOf).toBeNull();
-    expect(checkpoint.trees.meta.skills.agenda).toEqual({
-      path: '.opencode/skills/agenda/SKILL.md',
-      purpose: '作業単位を確定する',
-    });
-    expect(checkpoint.trees.product.name).toBeUndefined();
-    expect(checkpoint.trees.product.stack).toBeDefined();
-    // stack は status/updatedAt を含まない（stripped）
-    expect(checkpoint.trees.product.stack.status).toBeUndefined();
-    expect(checkpoint.trees.product.stack.updatedAt).toBeUndefined();
+    // scripts 群は new 関連を除外する
+    const scripts = SYNC_UNITS.find((unit) => unit.id === 'scripts');
+    expect(scripts.excludes).toContain('new.mjs');
+    expect(scripts.excludes).toContain('new.test.mjs');
 
-    // build でスナップショットが再生成される（name/what が反映される）
-    const product = JSON.parse(read(path.join(project, 'events', 'snapshots', 'product.json')));
-    expect(product.content.name.value).toBe('プロジェクト名が入ります');
+    // lint 群は oxlint 2種を運ぶ
+    const lint = SYNC_UNITS.find((unit) => unit.id === 'lint');
+    expect(lint.files).toEqual(['.oxlintrc.json', '.oxfmtrc.json']);
   });
 
-  it('dry-run は checkpoint / log / README を変更しない', () => {
+  it('EVENTS_DIR 未設定時はスクリプト位置からプロジェクトルートを解決する', () => {
     const project = makeProject();
     const starter = makeStarter();
     write(path.join(starter, '.opencode', 'lib', 'a.ts'), '// starter a');
-    write(path.join(project, 'README.md'), '# old');
-    const beforeLog = read(path.join(project, 'events', 'log.jsonl'));
-    const beforeCheckpoint = fs.existsSync(path.join(project, 'events', 'checkpoint.json'))
-      ? read(path.join(project, 'events', 'checkpoint.json'))
-      : null;
 
-    const result = runApply(project, starter, ['--init']);
+    const env = { ...process.env };
+    delete env.EVENTS_DIR;
+    const result = spawnSync(
+      process.execPath,
+      [path.join(project, 'scripts/user/apply.mjs'), starter],
+      { env, encoding: 'utf8' },
+    );
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain('[dry-run]');
-    expect(read(path.join(project, 'events', 'log.jsonl'))).toBe(beforeLog);
-    const checkpointExists = fs.existsSync(path.join(project, 'events', 'checkpoint.json'));
-    expect(checkpointExists ? read(path.join(project, 'events', 'checkpoint.json')) : null).toBe(
-      beforeCheckpoint,
-    );
-    expect(exists(path.join(project, 'README.md'))).toBe(true);
-    expect(exists(path.join(project, '.opencode', 'lib', 'a.ts'))).toBe(false);
+    // スクラッチのプロジェクト直下の events/log.jsonl が見つかり、meta が skip されないこと
+    expect(result.stdout).toContain('スターターのコミット済み在庫');
+    expect(result.stdout).not.toContain('[meta] skip');
+    expect(result.stdout).toContain('コピー: .opencode/lib/a.ts');
   });
 });

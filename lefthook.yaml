@@ -23,11 +23,6 @@ pre-commit:
               - .opencode/skills/mockup/workbench/**
             run: pnpm typecheck:staged {staged_files}
             fail_text: 'Type check failed. Run: pnpm typecheck:staged for details.'
-    - name: sync-config-snapshots
-      skip:
-        - run: test ! -f scripts/sync-config-snapshots.mjs || test ! -f _package.json || test ! -f _tsconfig.json
-      run: node scripts/sync-config-snapshots.mjs
-      fail_text: 'Config snapshot sync failed. _package.json / _tsconfig.json were not updated.'
 
 pre-push:
   commands:

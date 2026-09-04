@@ -4,35 +4,21 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+import { groupsFor } from '../groups.mjs';
 
 // プロジェクトルートは EVENTS_DIR から遅延解決する（テストでスクラッチを指せるようにするため）。
 // スクリプト実在位置（process.argv[1]）からは解決しない — 実リポジトリを破壊しないため。
+// EVENTS_DIR 未設定時、このファイルは <root>/scripts/user/apply/files.mjs にあるので
+// 3階層上がプロジェクトルートそのもの（末尾に '..' を足して親を返さないこと）。
 export const PROJECT_ROOT = () => {
-  const eventsDir =
-    process.env.EVENTS_DIR ??
-    path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../..');
-  return path.resolve(eventsDir, '..');
+  if (process.env.EVENTS_DIR) return path.resolve(process.env.EVENTS_DIR, '..');
+  return path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 };
 
-// 同期単位。`files` があれば allowlist（そのファイルのみ）、なければディレクトリ丸ごと同期。
-// `excludes` は「同期対象外」で、削除からも保護される（node_modules 等）
-export const SYNC_UNITS = [
-  { label: 'harness', paths: ['.opencode/lib', '.opencode/plugin'] },
-  { label: 'agents', paths: ['.opencode/agent'] },
-  { label: 'skills', paths: ['.opencode/skills'] },
-  {
-    label: 'config',
-    paths: ['.opencode'],
-    files: ['tsconfig.json', 'package.json', '.gitignore'],
-  },
-  { label: 'scripts', paths: ['scripts'] },
-  {
-    label: 'events',
-    paths: ['events'],
-    excludes: ['log.jsonl', 'checkpoint.json', 'snapshots/'],
-  },
-  { label: 'docs', paths: ['.'], files: ['AGENTS.md', 'lefthook.yaml', '.gitattributes'] },
-];
+// 同期単位はグループ定義ファイル（../groups.mjs）が正本。apply が対象にするのは
+// tools に 'apply' を含むグループ。項目の意味は定義ファイルのコメントを参照
+export const SYNC_UNITS = groupsFor('apply');
 
 // ディレクトリ単位に適用する共通除外。lock は生成物なので運ばない
 export const COMMON_EXCLUDES = [
