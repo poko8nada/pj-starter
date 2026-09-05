@@ -239,6 +239,69 @@ describe('new.mjs の scaffold 複写', () => {
     expect(fs.existsSync(path.join(target, 'events', 'log.jsonl'))).toBe(false);
     expect(fs.existsSync(path.join(target, 'extra.txt'))).toBe(false);
   });
+  it('skills 群は機構を運び、workbench の製品データと lock は運ばない', () => {
+    const starter = makeFullStarter();
+    const script = path.join(starter, 'scripts', 'user', 'new.mjs');
+    const parent = makeParent();
+    const target = path.join(parent, 'proj');
+    const write = (rel, content) => {
+      const file = path.join(starter, rel);
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      fs.writeFileSync(file, content);
+    };
+    // 機構（種として運ばれる。theme.css は new の種に要る）
+    write('.opencode/skills/mockup/workbench/package.json', '{}\n');
+    write('.opencode/skills/mockup/workbench/theme.css', '/* seed theme */\n');
+    // 製品データと lock（運ばない）
+    write('.opencode/skills/mockup/workbench/lp-a.html', '<!-- screen -->\n');
+    write('.opencode/skills/mockup/workbench/annotations.jsonl', '{}\n');
+    write('.opencode/skills/mockup/workbench/dist/lp-a.html', '<!-- dist -->\n');
+    write('.opencode/skills/mockup/workbench/pnpm-lock.yaml', 'lockfileVersion: 9.0\n');
+
+    const result = runNew(
+      [
+        '--in',
+        parent,
+        'proj',
+        '--run',
+        '--skip-readme',
+        '--skip-git',
+        '--skip-install',
+        '--skip-events',
+        '--skip-build',
+      ],
+      {},
+      script,
+    );
+
+    expect(result.status).toBe(0);
+    expect(
+      fs.existsSync(
+        path.join(target, '.opencode', 'skills', 'mockup', 'workbench', 'package.json'),
+      ),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(target, '.opencode', 'skills', 'mockup', 'workbench', 'theme.css')),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(target, '.opencode', 'skills', 'mockup', 'workbench', 'lp-a.html')),
+    ).toBe(false);
+    expect(
+      fs.existsSync(
+        path.join(target, '.opencode', 'skills', 'mockup', 'workbench', 'annotations.jsonl'),
+      ),
+    ).toBe(false);
+    expect(
+      fs.existsSync(
+        path.join(target, '.opencode', 'skills', 'mockup', 'workbench', 'dist', 'lp-a.html'),
+      ),
+    ).toBe(false);
+    expect(
+      fs.existsSync(
+        path.join(target, '.opencode', 'skills', 'mockup', 'workbench', 'pnpm-lock.yaml'),
+      ),
+    ).toBe(false);
+  });
 });
 
 describe('new.mjs の仕上げ工程', () => {

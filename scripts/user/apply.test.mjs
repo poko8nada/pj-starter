@@ -220,6 +220,66 @@ describe('apply.mjs の一方向ミラー', () => {
     expect(exists(path.join(project, '.opencode', 'lib', 'extra.ts'))).toBe(false);
   });
 
+  it('workbench の製品データは削除・上書きされず、機構だけが写る', () => {
+    const project = makeProject();
+    const starter = makeStarter();
+    // starter の機構（更新として写る）
+    write(
+      path.join(starter, '.opencode', 'skills', 'mockup', 'workbench', 'package.json'),
+      '{"name":"mockup-workbench"}\n',
+    );
+    write(
+      path.join(starter, '.opencode', 'skills', 'mockup', 'workbench', 'vite.config.ts'),
+      '// starter vite config\n',
+    );
+    write(
+      path.join(starter, '.opencode', 'skills', 'mockup', 'workbench', 'theme.css'),
+      '/* starter theme */\n',
+    );
+    // project の製品データ（保持される）
+    write(
+      path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'lp-a.html'),
+      '<!-- project screen -->\n',
+    );
+    write(
+      path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'dist', 'lp-a.html'),
+      '<!-- project dist -->\n',
+    );
+    write(
+      path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'annotations.jsonl'),
+      '{"target":"hero"}\n',
+    );
+    write(
+      path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'theme.css'),
+      '/* project theme (decided look tokens) */\n',
+    );
+
+    const result = runApply(project, starter, ['--run']);
+
+    expect(result.status).toBe(0);
+    // 機構は写る
+    expect(
+      read(path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'package.json')),
+    ).toBe('{"name":"mockup-workbench"}\n');
+    expect(
+      exists(path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'vite.config.ts')),
+    ).toBe(true);
+    // 製品データは残る（削除も上書きもされない）
+    expect(
+      read(path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'lp-a.html')),
+    ).toBe('<!-- project screen -->\n');
+    expect(
+      read(path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'dist', 'lp-a.html')),
+    ).toBe('<!-- project dist -->\n');
+    expect(
+      read(path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'annotations.jsonl')),
+    ).toBe('{"target":"hero"}\n');
+    expect(
+      read(path.join(project, '.opencode', 'skills', 'mockup', 'workbench', 'theme.css')),
+    ).toBe('/* project theme (decided look tokens) */\n');
+    expect(result.stdout).not.toContain('削除: .opencode/skills/mockup/workbench/');
+  });
+
   it('スターターに無い単位ディレクトリはスキップされる', () => {
     const project = makeProject();
     const starter = makeStarter();

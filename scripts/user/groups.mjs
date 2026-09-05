@@ -12,7 +12,20 @@ export const GROUPS = [
     tools: ['apply', 'new'],
   },
   { id: 'agents', label: 'agents', paths: ['.opencode/agent'], tools: ['apply', 'new'] },
-  { id: 'skills', label: 'skills', paths: ['.opencode/skills'], tools: ['apply', 'new'] },
+  {
+    id: 'skills',
+    label: 'skills',
+    paths: ['.opencode/skills'],
+    tools: ['apply', 'new'],
+    // 製品由来は配布の複写・削除の対象外（starter は本来持たない。apply/new 共通）
+    excludes: [
+      'mockup/workbench/dist/',
+      'mockup/workbench/annotations.jsonl',
+      'mockup/workbench/*.html',
+    ],
+    // theme.css は new の種に要るため apply 時のみ免除する（決定済み look の上書き防止）
+    excludesApply: ['mockup/workbench/theme.css'],
+  },
   {
     id: 'config',
     label: 'config',

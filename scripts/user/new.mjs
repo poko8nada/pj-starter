@@ -94,14 +94,37 @@ export const checkTarget = (starterRoot, target, force) => {
 };
 
 // scaffold 複写。new タグのグループを起点から対象へ運ぶ（apply 内部は使わない）。
-// 除外判定はセグメント一致（apply/files.mjs と同じ約束の最小複製）
+// 除外判定。素形（スラッシュ無し）は任意深度のセグメント一致、
+// 単位相対（スラッシュ有り）は単位起点の相対パスで判定する（apply/files.mjs と同じ約束の最小複製。
+// 末尾 '/' は配下すべて、'*' は同一セグメント内のワイルドカード、素の相対パスはその1ファイル）
 const COMMON_SKIPS = ['node_modules/', '.DS_Store', 'package-lock.json', 'pnpm-lock.yaml'];
+
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const hasInnerSlash = (pattern) => pattern.replace(/\/$/, '').includes('/');
+
+const matchScoped = (rel, pattern) => {
+  if (pattern.endsWith('/')) {
+    const dir = pattern.slice(0, -1);
+    return rel === dir || rel.startsWith(`${dir}/`);
+  }
+  if (!pattern.includes('*')) return rel === pattern;
+  // '*' は '/' を跨がない
+  const source = pattern
+    .split('/')
+    .map((segment) => segment.split('*').map(escapeRegExp).join('[^/]*'))
+    .join('/');
+  return new RegExp(`^${source}$`).test(rel);
+};
 
 const isSkippedPath = (rel, extra = []) => {
   const segments = rel.split('/');
   return [...COMMON_SKIPS, ...extra].some((pattern) => {
-    if (pattern.endsWith('/')) return segments.includes(pattern.slice(0, -1));
-    return segments.includes(pattern);
+    if (!hasInnerSlash(pattern)) {
+      if (pattern.endsWith('/')) return segments.includes(pattern.slice(0, -1));
+      return segments.includes(pattern);
+    }
+    return matchScoped(rel, pattern);
   });
 };
 

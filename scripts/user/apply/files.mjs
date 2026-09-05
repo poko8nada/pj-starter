@@ -41,19 +41,43 @@ const stat = (file) => {
   }
 };
 
-// 除外判定。ディレクトリパターン（node_modules/ 等）は任意深度のセグメント接頭辞一致、
-// ファイルパターン（.DS_Store 等）は任意セグメントの basename 一致
+// 除外判定。パターンは2種:
+// - 素形（スラッシュ無し。node_modules/・.DS_Store 等）: 従来通り、任意深度のセグメント一致
+// - 単位相対（スラッシュ有り。mockup/workbench/dist/ 等）: 単位起点の相対パスで判定。
+//   末尾 '/' は配下すべて、'*' は同一セグメント内のワイルドカード、素の相対パスはその1ファイル
+// 単位相対の約束は new.mjs の isSkippedPath と共有する（両方を同時に変えること）
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const hasInnerSlash = (pattern) => pattern.replace(/\/$/, '').includes('/');
+
+const matchScoped = (relPath, pattern) => {
+  if (pattern.endsWith('/')) {
+    const dir = pattern.slice(0, -1);
+    return relPath === dir || relPath.startsWith(`${dir}/`);
+  }
+  if (!pattern.includes('*')) return relPath === pattern;
+  // '*' は '/' を跨がない（workbench 直下の画面のみ等、階層を限定するため）
+  const source = pattern
+    .split('/')
+    .map((segment) => segment.split('*').map(escapeRegExp).join('[^/]*'))
+    .join('/');
+  return new RegExp(`^${source}$`).test(relPath);
+};
+
 const isExcluded = (relPath, unitExcludes = []) => {
   const patterns = [...COMMON_EXCLUDES, ...unitExcludes];
   const segments = relPath.split('/');
   return patterns.some((pattern) => {
-    if (pattern.endsWith('/')) {
-      // ディレクトリパターン: いずれかのセグメント位置から一致（node_modules/ 等）
-      const dir = pattern.slice(0, -1);
-      return segments.includes(dir);
+    if (!hasInnerSlash(pattern)) {
+      if (pattern.endsWith('/')) {
+        // 素形ディレクトリパターン: いずれかのセグメント位置から一致（node_modules/ 等）
+        const dir = pattern.slice(0, -1);
+        return segments.includes(dir);
+      }
+      // 素形ファイルパターン: いずれかのセグメントと一致（.DS_Store 等）
+      return segments.includes(pattern);
     }
-    // basename パターン: いずれかのセグメントと一致（.DS_Store 等）
-    return segments.includes(pattern);
+    return matchScoped(relPath, pattern);
   });
 };
 
@@ -122,7 +146,8 @@ const applyUnit = (unit, starterRoot, run, changes) => {
       console.log(`skip (not found): ${unitPath}`);
       continue;
     }
-    const unitExcludes = unit.excludes ?? [];
+    // excludesApply は apply 時のみ足す（new の種に要るものはここで免除する。groups.mjs の注記参照）
+    const unitExcludes = [...(unit.excludes ?? []), ...(unit.excludesApply ?? [])];
     const srcFiles = walk(src, src, unitExcludes);
     const dstFiles = walk(dst, dst, unitExcludes);
 

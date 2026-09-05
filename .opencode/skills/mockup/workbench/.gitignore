@@ -1,0 +1,4 @@
+# This workbench is an independent skill unit.
+# 独立した技能単位のため、上位の自動生成 gitignore から追跡対象を守る (deepest rule wins).
+!package.json
+!.gitignore
