@@ -361,3 +361,7 @@
 {"ts":"2026-09-06T12:01:09.255+09:00","type":"set","key":"meta.scripts.event-lib.status","branch":"develop","value":{"stage":"commit","text":"順序定義と整形helperを追加"}}
 {"ts":"2026-09-06T12:01:09.255+09:00","type":"set","key":"meta.scripts.event-build.status","branch":"develop","value":{"stage":"commit","text":"整形つき出力と順序移行に変更"}}
 {"ts":"2026-09-06T12:01:09.255+09:00","type":"set","key":"meta.scripts.event-compact.status","branch":"develop","value":{"stage":"commit","text":"整形つき退避に変更"}}
+{"ts":"2026-09-06T12:01:16.450+09:00","type":"set","key":"meta.skills.refactor.status","branch":"feature-refactor-skill","value":{"stage":"ready","text":"WHY更新・追加と日本語補助の扱い改訂の計画が確定"}}
+{"ts":"2026-09-06T12:01:56.229+09:00","type":"set","key":"meta.skills.refactor.status","branch":"feature-refactor-skill","value":{"stage":"implement","text":"WHY三分ラベル・証拠階層・捏造禁止をSKILL.mdに実装済み"}}
+{"ts":"2026-09-06T12:03:43.174+09:00","type":"set","key":"meta.skills.refactor.status","branch":"feature-refactor-skill","value":{"stage":"commit","text":"WHY三分ラベル・証拠階層・捏造禁止を反映"}}
+{"ts":"2026-09-06T12:05:33.475+09:00","type":"set","key":"meta.skills.refactor.status","branch":"feature-refactor-skill","value":{"stage":"commit","text":"WHY三分ラベル・証拠階層・捏造禁止を反映し表の幅を圧縮"}}

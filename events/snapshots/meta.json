@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-06T12:01:09.289+09:00",
-  "asOf": "2026-09-06T12:01:09.255+09:00",
+  "generatedAt": "2026-09-06T12:08:21.547+09:00",
+  "asOf": "2026-09-06T12:05:33.475+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -255,9 +255,9 @@
         "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
         "status": {
           "stage": "commit",
-          "text": "探索をexplore委譲、理由ある重複ラベル、モジュール解決レンズをSKILL.mdに反映"
+          "text": "WHY三分ラベル・証拠階層・捏造禁止を反映し表の幅を圧縮"
         },
-        "updatedAt": "20260831"
+        "updatedAt": "20260906"
       },
       "visual": {
         "path": ".opencode/skills/visual/SKILL.md",
