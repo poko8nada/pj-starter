@@ -49,6 +49,16 @@ In addition to the label criteria below, have the subagent look for **module-res
 - **[all]** dynamic `import()`/`require()` root-path resolution: Node ESM does **not** resolve `tsconfig` `paths` — a `.mjs`/`.cjs` dynamic import using an alias typechecks but breaks at runtime. This is where moving files under a refactor silently breaks a `?t=` cache-busting import (`scripts/user/sync/meta.mjs` is the known example)
 - **[all]** broken relative paths and imports pointing at non-existent modules
 
+### WHY evidence hierarchy (for `why-stale` / `why-missing`)
+
+WHY must never be invented. Resolve it top-down and record which source was used:
+
+1. Snapshot definitions — product `trigger` / `result`, meta `purpose` (primary source)
+2. `git log` / `blame` on the touched lines
+3. Recent implementation chat in the current session (strongest right after implementation; gone in later single-shot runs)
+
+If none of the above yields evidence, do not write a WHY — present it as a candidate with its basis, or leave a `TODO(why):` marker for the user.
+
 ## Step 3: Label every candidate target
 
 Before changing anything, classify each candidate block/comment using the tables below. Do not touch anything until it has a label.
@@ -59,23 +69,30 @@ If labeling reveals that a component's **definition** (trigger/result/route or p
 
 ### Code labels
 
-| Label                     | Criteria                                                                                                                                                                               | Diff rule                                           |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| `duplicate`               | Same/near-same logic appears in 2+ places                                                                                                                                              | Must shrink (or stay flat)                          |
-| `duplicate-with-reason`   | Duplicate is intentional: each instance must function independently in its own context (e.g. subagent frontmatter, per-directory declarations). Consolidation would break independence | Out of scope — do not merge; keep each instance     |
-| `dead`                    | Statically unreachable / unreferenced                                                                                                                                                  | Must shrink                                         |
-| `equivalent-simplifiable` | Rewrite is provably semantically equivalent (e.g. `if x==true: return true else return false` → `return x`)                                                                            | Must shrink                                         |
-| `needs-restructure`       | Bloated responsibility, tight coupling, poor naming, missing error handling                                                                                                            | Free — behavior-preservation is the only constraint |
+| Label                     | Criteria                                            | Diff rule                |
+| ------------------------- | --------------------------------------------------- | ------------------------ |
+| `duplicate`               | Same/near-same logic in 2+ places                   | Must shrink (or flat)    |
+| `duplicate-with-reason`   | Intentional duplication *                           | Out of scope — keep each |
+| `dead`                    | Unreachable / unreferenced                          | Must shrink              |
+| `equivalent-simplifiable` | Provably equivalent rewrite **                      | Must shrink              |
+| `needs-restructure`       | Bloated, coupled, poorly named, or missing handling | Free — preserve behavior |
+
+\* Each instance must function independently in its own context (e.g. subagent frontmatter, per-directory declarations); consolidation would break independence.
+\** E.g. `if x==true: return true else return false` → `return x`.
 
 ### Doc labels
 
-| Label                         | Criteria                                                                 | Diff rule                                                 |
-| ----------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------- |
-| `redundant-with-code`         | Comment just restates what the code already says (e.g. `// increment i`) | Must shrink                                               |
-| `duplicated-across-locations` | Same note/warning copy-pasted in multiple places                         | Must shrink (consolidate to one place)                    |
-| `stale-or-incorrect`          | Contradicts current code                                                 | Free — accuracy is the only constraint                    |
-| `insufficient`                | Missing explanation the reader needs                                     | Free — never delete to satisfy a compaction goal          |
-| `why-explanation`             | Explains a design decision or rationale                                  | Out of scope — wording cleanup only, never delete content |
+| Label                         | Criteria                                        | Diff rule                     |
+| ----------------------------- | ----------------------------------------------- | ----------------------------- |
+| `redundant-with-code`         | Restates the code (e.g. `// increment i`) *     | Must shrink                   |
+| `duplicated-across-locations` | Same note copy-pasted in multiple places        | Must shrink (consolidate)     |
+| `stale-or-incorrect`          | Non-WHY content contradicts current code        | Free — accuracy only          |
+| `insufficient`                | Non-WHY explanation the reader needs is missing | Free — never delete           |
+| `why-accurate`                | WHY matches current evidence                    | Out of scope — wording only   |
+| `why-stale`                   | WHY contradicts current evidence                | Free — update to evidence     |
+| `why-missing`                 | Decision or complex logic lacks needed WHY      | Free — add only with evidence |
+
+\* Supplementary Japanese comments per `AGENTS.md` are never `redundant-with-code` — even restating ones aid Japanese readers.
 
 ## Step 4: Human review of labels (required)
 
@@ -84,7 +101,8 @@ Before applying any changes, present to the user:
 1. A list of all candidate locations with the label you assigned
 2. A one-line reason for each label
 3. The touched components (matched against snapshots) — or "none"
-4. Ask: "これらのラベル付けで進めてよいですか？ 修正したいラベルがあれば指示してください。"
+4. For every inferred WHY (`why-stale` / `why-missing`): the drafted text plus its evidence source (snapshot key, commit, or chat basis). Without evidence, present a `TODO(why):` marker or an open question instead — never a drafted explanation
+5. Ask: "これらのラベル付けで進めてよいですか？ 修正したいラベルがあれば指示してください。"
 
 Do not proceed to Step 5 until the user explicitly approves (or provides corrections).
 
@@ -98,12 +116,13 @@ Do not proceed to Step 5 until the user explicitly approves (or provides correct
 
 `duplicate-with-reason` is intentionally **excluded** from this pass — its whole point is that merging would break independence. Report it as out-of-scope in the summary, never fold it into compaction.
 
-**Restructuring / correction pass** (labels: `needs-restructure`, `stale-or-incorrect`, `insufficient`, `why-explanation`)
+**Restructuring / correction pass** (labels: `needs-restructure`, `stale-or-incorrect`, `insufficient`, `why-stale`, `why-missing`, `why-accurate`)
 
 - Diff direction is unconstrained. Do not evaluate these changes by line count.
 - Code: judge by duplication rate, cyclomatic complexity, and nesting depth — not line count.
 - Docs: judge by accuracy and alignment with current code — not line count.
-- Never delete a `why-explanation` or `insufficient` item to hit a length target.
+- Never delete a `why-accurate`, `why-missing`, or `insufficient` item to hit a length target.
+- Never invent a WHY: every `why-stale` / `why-missing` change cites its evidence source from the hierarchy above. Without evidence, leave a `TODO(why):` or an open question instead of writing the explanation.
 
 ## Step 6: Summarize
 
@@ -111,7 +130,7 @@ When presenting the result, report per label:
 
 - What was compacted (with line delta)
 - What was restructured/corrected (with a one-line reason, not a line delta)
-- What was `duplicate-with-reason` (kept as-is, with the reason)
+- What was `duplicate-with-reason` or `why-accurate` (kept as-is, with the reason)
 
 This keeps the "diff shrank" claim honest — it only applies to the subset where it was supposed to apply.
 
