@@ -9,21 +9,23 @@ import {
   jstNow,
   normalizeTrees,
   SNAPSHOTS_DIR,
-  stableStringify,
+  sortTrees,
 } from './lib.mjs';
 
-const { trees, asOf, events } = foldAll();
-normalizeTrees(trees);
-injectUpdatedAt(trees, events);
+const { trees: folded, asOf, events } = foldAll();
+normalizeTrees(folded);
+injectUpdatedAt(folded, events);
+// 書き出し整形：product/meta それぞれの定義順に揃える（配列とlog行順は対象外）
+const trees = sortTrees(folded);
 fs.mkdirSync(SNAPSHOTS_DIR(), { recursive: true });
 
-// 生成物を書き出す。既存内容と同一なら何もしない
+// 生成物を書き出す。整形済み内容と同一なら何もしない（順序差も移行のため書き直す）
 const writeSnapshot = (name, content) => {
   const file = path.join(SNAPSHOTS_DIR(), `${name}.json`);
   if (fs.existsSync(file)) {
     try {
       const current = JSON.parse(fs.readFileSync(file, 'utf8'));
-      if (stableStringify(current.content) === stableStringify(content)) return false;
+      if (JSON.stringify(current.content) === JSON.stringify(content)) return false;
     } catch (error) {
       if (!(error instanceof SyntaxError)) throw error;
     }

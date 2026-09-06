@@ -1,5 +1,6 @@
 // 状態（ログ / チェックポイント）の読み書き。パスは paths の遅延関数で解決する
 import fs from 'node:fs';
+import { sortTrees } from './derive.mjs';
 import { CHECKPOINT_PATH, LOG_PATH } from './paths.mjs';
 import { fail, jstNow } from './util.mjs';
 
@@ -51,9 +52,11 @@ export const stripHistory = (value) => {
 };
 
 export const writeCheckpoint = (trees, compactedAt = jstNow()) => {
+  // 呼び出し側が未整形でも合算の見た目になるよう、ここで最終整形する
+  const ordered = sortTrees(trees);
   fs.writeFileSync(
     CHECKPOINT_PATH(),
-    `${JSON.stringify({ compactedAt, asOf: null, trees }, null, 2)}\n`,
+    `${JSON.stringify({ compactedAt, asOf: null, trees: ordered }, null, 2)}\n`,
   );
 };
 
