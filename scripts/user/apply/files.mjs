@@ -4,35 +4,21 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+import { groupsFor } from '../groups.mjs';
 
 // プロジェクトルートは EVENTS_DIR から遅延解決する（テストでスクラッチを指せるようにするため）。
 // スクリプト実在位置（process.argv[1]）からは解決しない — 実リポジトリを破壊しないため。
+// EVENTS_DIR 未設定時、このファイルは <root>/scripts/user/apply/files.mjs にあるので
+// 3階層上がプロジェクトルートそのもの（末尾に '..' を足して親を返さないこと）。
 export const PROJECT_ROOT = () => {
-  const eventsDir =
-    process.env.EVENTS_DIR ??
-    path.resolve(path.dirname(new URL(import.meta.url).pathname), '../../..');
-  return path.resolve(eventsDir, '..');
+  if (process.env.EVENTS_DIR) return path.resolve(process.env.EVENTS_DIR, '..');
+  return path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 };
 
-// 同期単位。`files` があれば allowlist（そのファイルのみ）、なければディレクトリ丸ごと同期。
-// `excludes` は「同期対象外」で、削除からも保護される（node_modules 等）
-export const SYNC_UNITS = [
-  { label: 'harness', paths: ['.opencode/lib', '.opencode/plugin'] },
-  { label: 'agents', paths: ['.opencode/agent'] },
-  { label: 'skills', paths: ['.opencode/skills'] },
-  {
-    label: 'config',
-    paths: ['.opencode'],
-    files: ['tsconfig.json', 'package.json', '.gitignore'],
-  },
-  { label: 'scripts', paths: ['scripts'] },
-  {
-    label: 'events',
-    paths: ['events'],
-    excludes: ['log.jsonl', 'checkpoint.json', 'snapshots/'],
-  },
-  { label: 'docs', paths: ['.'], files: ['AGENTS.md', 'lefthook.yaml', '.gitattributes'] },
-];
+// 同期単位はグループ定義ファイル（../groups.mjs）が正本。apply が対象にするのは
+// tools に 'apply' を含むグループ。項目の意味は定義ファイルのコメントを参照
+export const SYNC_UNITS = groupsFor('apply');
 
 // ディレクトリ単位に適用する共通除外。lock は生成物なので運ばない
 export const COMMON_EXCLUDES = [
@@ -55,19 +41,43 @@ const stat = (file) => {
   }
 };
 
-// 除外判定。ディレクトリパターン（node_modules/ 等）は任意深度のセグメント接頭辞一致、
-// ファイルパターン（.DS_Store 等）は任意セグメントの basename 一致
+// 除外判定。パターンは2種:
+// - 素形（スラッシュ無し。node_modules/・.DS_Store 等）: 従来通り、任意深度のセグメント一致
+// - 単位相対（スラッシュ有り。mockup/workbench/dist/ 等）: 単位起点の相対パスで判定。
+//   末尾 '/' は配下すべて、'*' は同一セグメント内のワイルドカード、素の相対パスはその1ファイル
+// 単位相対の約束は new.mjs の isSkippedPath と共有する（両方を同時に変えること）
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const hasInnerSlash = (pattern) => pattern.replace(/\/$/, '').includes('/');
+
+const matchScoped = (relPath, pattern) => {
+  if (pattern.endsWith('/')) {
+    const dir = pattern.slice(0, -1);
+    return relPath === dir || relPath.startsWith(`${dir}/`);
+  }
+  if (!pattern.includes('*')) return relPath === pattern;
+  // '*' は '/' を跨がない（workbench 直下の画面のみ等、階層を限定するため）
+  const source = pattern
+    .split('/')
+    .map((segment) => segment.split('*').map(escapeRegExp).join('[^/]*'))
+    .join('/');
+  return new RegExp(`^${source}$`).test(relPath);
+};
+
 const isExcluded = (relPath, unitExcludes = []) => {
   const patterns = [...COMMON_EXCLUDES, ...unitExcludes];
   const segments = relPath.split('/');
   return patterns.some((pattern) => {
-    if (pattern.endsWith('/')) {
-      // ディレクトリパターン: いずれかのセグメント位置から一致（node_modules/ 等）
-      const dir = pattern.slice(0, -1);
-      return segments.includes(dir);
+    if (!hasInnerSlash(pattern)) {
+      if (pattern.endsWith('/')) {
+        // 素形ディレクトリパターン: いずれかのセグメント位置から一致（node_modules/ 等）
+        const dir = pattern.slice(0, -1);
+        return segments.includes(dir);
+      }
+      // 素形ファイルパターン: いずれかのセグメントと一致（.DS_Store 等）
+      return segments.includes(pattern);
     }
-    // basename パターン: いずれかのセグメントと一致（.DS_Store 等）
-    return segments.includes(pattern);
+    return matchScoped(relPath, pattern);
   });
 };
 
@@ -136,7 +146,8 @@ const applyUnit = (unit, starterRoot, run, changes) => {
       console.log(`skip (not found): ${unitPath}`);
       continue;
     }
-    const unitExcludes = unit.excludes ?? [];
+    // excludesApply は apply 時のみ足す（new の種に要るものはここで免除する。groups.mjs の注記参照）
+    const unitExcludes = [...(unit.excludes ?? []), ...(unit.excludesApply ?? [])];
     const srcFiles = walk(src, src, unitExcludes);
     const dstFiles = walk(dst, dst, unitExcludes);
 

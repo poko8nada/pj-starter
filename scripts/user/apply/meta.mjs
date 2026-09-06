@@ -97,56 +97,7 @@ const build = (root, eventsDir) => {
   if (result.status !== 0) fail('build が失敗しました');
 };
 
-const DEFAULT_NAME = 'プロジェクト名が入ります';
-const WHAT_TEXT = '今からプロジェクトを作り始める段階です';
-
-// --init 用の初期化。checkpoint を product.stack + stripped meta に書き換え、ログを空にして name/what で再開し、README を削除する
-const initProject = (run, trees, stripped, eventsDir) => {
-  const stack = trees.product?.stack ?? {};
-  const stackKeys = Object.keys(stack).length;
-  const unitCount = Object.values(stripped).reduce(
-    (sum, section) => sum + Object.keys(section).length,
-    0,
-  );
-
-  const readmeFiles = ['README.md', 'README.ja.md'].map((file) => path.join(PROJECT_ROOT(), file));
-  const logPath = lib.LOG_PATH();
-  const logLines = fs.existsSync(logPath)
-    ? fs
-        .readFileSync(logPath, 'utf8')
-        .split('\n')
-        .filter((line) => line.trim() !== '').length
-    : 0;
-
-  console.log(
-    `削除: ${path.relative(PROJECT_ROOT(), lib.CHECKPOINT_PATH())} / README.md / README.ja.md`,
-  );
-  console.log(`log: ${logLines} 行を初期化し、name/what の 2 イベントをアペンド`);
-  console.log(`checkpoint 種まき: stack ${stackKeys} キー / meta ${unitCount} unit`);
-  console.log(`名前: ${DEFAULT_NAME}`);
-  console.log('最後に build でスナップショットを再生成');
-
-  if (!run) {
-    console.log('[dry-run] --run で実コピーと注入');
-    return;
-  }
-
-  for (const file of [lib.CHECKPOINT_PATH(), ...readmeFiles]) {
-    if (fs.existsSync(file)) fs.rmSync(file);
-  }
-  fs.writeFileSync(logPath, '');
-  lib.writeCheckpoint({ product: { stack: lib.stripHistory(stack) }, meta: stripped });
-  const ts = lib.jstNow();
-  const events = [
-    lib.buildEvent({ type: 'set', key: 'product.name.value', value: DEFAULT_NAME }, ts),
-    lib.buildEvent({ type: 'set', key: 'product.what.value', value: WHAT_TEXT }, ts),
-  ];
-  fs.appendFileSync(logPath, `${events.map((event) => JSON.stringify(event)).join('\n')}\n`);
-  build(PROJECT_ROOT(), eventsDir);
-  console.log('init 完了');
-};
-
-export const applyMeta = async (starterRoot, run, init) => {
+export const applyMeta = async (starterRoot, run) => {
   const projectEventsDir = path.join(PROJECT_ROOT(), 'events');
   const starterEventsDir = path.join(starterRoot, 'events');
   const projectLogPath = path.join(projectEventsDir, 'log.jsonl');
@@ -173,11 +124,6 @@ export const applyMeta = async (starterRoot, run, init) => {
       0,
     );
     console.log(`[meta] スターターのコミット済み在庫 ${unitCount} unit で置換`);
-
-    if (init) {
-      initProject(run, project.trees, stripped, projectEventsDir);
-      return;
-    }
 
     const candidates = readCandidates(projectLogPath);
     const removed = stripProjectLog(projectLogPath, candidates, run);

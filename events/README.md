@@ -100,6 +100,7 @@ Recording follows one of three paths, depending on what was agreed:
 
 1. **Plain value changes** — `product.what`, stack entries, notes on fact sections. Append directly; no skill needed.
 2. **Structural registrations** — new features, new meta components, splits, definition revisions. The `feature` skill records them with complete definitions; new entries enter as `planned`.
+3. **Parallel nurture** — facts surfaced while implementing (stack additions, look decisions, deploy targets). Append them in the same turn as the code change, alongside the related status events.
    In every path, stack / roadmap changes surfaced by the discussion are appended together with their related events. Appends go through `append-build.mjs` (the wrapper), which runs the build after a successful append so the log's integrity is verified at every write. After the turn ends, the idle hook runs the compaction when the log crosses its line threshold.
 
 ## Fresh-copy state and the starter boundary
@@ -113,7 +114,7 @@ What agents must be able to read from a fresh copy's state:
 - The log is the truth for everything that happens inside the project; the checkpoint additionally carries the shipped baseline seeded at initialization
 - Pre-copy history lives only in the starter's git
 
-Usage of the tools is documented in `scripts/user/README.md` for the operator.
+Usage of the tools is documented in `scripts/user/APPLY.md` (`NEW.md` for bootstrapping, starter only) for the operator.
 
 ## Harness independence
 

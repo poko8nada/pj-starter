@@ -9,7 +9,7 @@ Close out one work unit: append the agreed events, build, then commit everything
 
 ## Commit-failure handling
 
-Commit failure points: pre-commit hooks (lint / format / typecheck / sync-config-snapshots). When a commit is rejected:
+Commit failure points: pre-commit hooks (lint / format / typecheck). When a commit is rejected:
 
 1. The commit is NOT created; the staged changes remain.
 2. Decide which scenario applies:

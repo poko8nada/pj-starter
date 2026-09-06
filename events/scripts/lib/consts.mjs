@@ -17,6 +17,35 @@ export const PRODUCT_SECTIONS = new Set([
 ]);
 export const FACT_SECTIONS = new Set(['name', 'what', 'stack', 'look', 'roadmap', 'deploy']);
 export const META_SECTIONS = new Set(['harness', 'agents', 'skills', 'docs', 'scripts']);
+
+// 表示順の正本（schema.md の表順を写す）。書き出し整形のみに使い、畳み込みや検証の意味論は変えない
+// 未知キーは末尾にアルファベット順で足す。配列の中身は一切並べ替えない
+export const PRODUCT_ORDER = ['name', 'what', 'stack', 'look', 'features', 'roadmap', 'deploy'];
+export const META_ORDER = ['harness', 'agents', 'skills', 'docs', 'scripts'];
+// 下位層の順序（骨格は任意順、中身は自動整列のハイブリッド）
+export const STACK_ORDER = [
+  'runtime',
+  'language',
+  'framework',
+  'frontend',
+  'backend',
+  'data',
+  'testing',
+  'build',
+  'observability',
+  'content',
+  'libraries',
+  'helpers',
+  'status',
+  'updatedAt',
+];
+export const FACT_LEAF_ORDER = ['value', 'status', 'updatedAt'];
+export const LOOK_ORDER = ['tone', 'theme', 'mockups', 'status', 'updatedAt'];
+export const FEATURE_LEAF_ORDER = ['trigger', 'result', 'route', 'status', 'updatedAt'];
+export const ROADMAP_ORDER = ['mvp', 'v1', 'status', 'updatedAt'];
+export const DEPLOY_ORDER = ['target', 'method', 'pipeline', 'environments', 'status', 'updatedAt'];
+export const META_COMPONENT_ORDER = ['path', 'purpose', 'status', 'updatedAt'];
+export const STATUS_ORDER = ['stage', 'text'];
 export const EVENT_TYPES = new Set(['set', 'del']);
 export const STAGES = new Set(['planned', 'ready', 'implement', 'commit']);
 
