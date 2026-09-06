@@ -27,6 +27,8 @@ Decide product or meta and pick one or more related target keys in that same dom
 
 Output: domain + target keys, one line each.
 
+- Then check Product context (one glance, never blocking): read `product.name` / `what` / `stack` / `look` / `features` / `roadmap` / `deploy` from snapshots and note missing or drifted sections. Per section decide to fill now, defer with a reason, or nurture in parallel with implementation.
+
 ### 2. Report
 
 Goal: agree on what the current code tries to do. No design decisions here.
@@ -45,6 +47,7 @@ Goal: agree on what the current code tries to do. No design decisions here.
   - `<path>`: <one-line role>
 - Intent: <what the code tries to do, structurally>
 - Conventions: <found patterns, or `none`>
+- Product context: <per fact section — present / missing / drifted, and fill-now / defer-with-reason / nurture-in-parallel>
 ```
 
 The approved report is the premise for step 3. Files outside it stay untouched unless the plan justifies the addition and the report is updated first.

@@ -30,3 +30,4 @@ This skill can be triggered at any point in a workflow by user. Always identify 
   - **Steps** — the steps executed in this flow
   - **Done** — the work units completed
   - **State** — the resulting state (e.g. commit result, snapshot status)
+  - **Fact return** — facts returned to snapshots in parallel (e.g. stack additions), or `none`

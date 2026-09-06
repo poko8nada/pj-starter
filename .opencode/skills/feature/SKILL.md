@@ -23,6 +23,7 @@ When a discussion settles on something new:
    - Meta: `{purpose}` (+ `path` once it exists)
 3. **Size check** — one working session must carry it `ready → commit`. If obviously larger, propose a split instead (see Splitting).
 4. **Append** — one invocation carries both sets: `set <key> '<full definition>'` and `set <key>.status '{"stage":"planned","text":"未着手"}'`. The explicit assertion is the canonical route in both namespaces; rebuild's injection is only a product-side backstop.
+5. **Co-append related facts** — when the slice implies fact updates (`roadmap` membership, `stack` entries), append them in the same invocation; when none apply, say `none` in chat.
 
 ## Splitting
 
