@@ -8,11 +8,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { CHECKPOINT_PATH, foldAll, injectUpdatedAt, jstNow, LOG_PATH } from './lib.mjs';
+import { CHECKPOINT_PATH, foldAll, injectUpdatedAt, jstNow, LOG_PATH, sortTrees } from './lib.mjs';
 
 const main = () => {
-  const { trees, asOf, events } = foldAll();
-  injectUpdatedAt(trees, events);
+  const { trees: folded, asOf, events } = foldAll();
+  injectUpdatedAt(folded, events);
+  // 合算の見た目：product/meta それぞれの定義順に揃えて退避する
+  const trees = sortTrees(folded);
   fs.writeFileSync(
     CHECKPOINT_PATH(),
     `${JSON.stringify({ compactedAt: jstNow(), asOf, trees }, null, 2)}\n`,

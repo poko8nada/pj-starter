@@ -20,6 +20,7 @@ import {
   parseCheckpoint,
   setPath,
   SNAPSHOTS_DIR,
+  sortTrees,
   stableStringify,
   stripHistory,
   writeCheckpoint,
@@ -794,5 +795,77 @@ describe('findUnresolved', () => {
       meta: { harness: { x: { purpose: 'p' } } },
     };
     expect(findUnresolved(trees)).toEqual([]);
+  });
+});
+
+describe('sortTrees', () => {
+  it('orders product sections by the schema order', () => {
+    const ordered = sortTrees({
+      product: { look: {}, stack: {}, name: {}, what: {} },
+      meta: {},
+    });
+    expect(Object.keys(ordered.product)).toEqual(['name', 'what', 'stack', 'look']);
+  });
+
+  it('orders meta sections by the schema order', () => {
+    const ordered = sortTrees({
+      product: {},
+      meta: { scripts: {}, docs: {}, harness: {}, agents: {}, skills: {} },
+    });
+    expect(Object.keys(ordered.meta)).toEqual(['harness', 'agents', 'skills', 'docs', 'scripts']);
+  });
+
+  it('puts unknown keys last in alphabetical order', () => {
+    const ordered = sortTrees({
+      product: { custom: { value: 'x' }, name: { value: 'n' } },
+      meta: {},
+    });
+    expect(Object.keys(ordered.product)).toEqual(['name', 'custom']);
+  });
+
+  it('keeps arrays untouched while ordering feature leaves', () => {
+    const ordered = sortTrees({
+      product: {
+        features: {
+          b: { updatedAt: '20260906', route: ['z', 'a'], result: 'r', trigger: 't' },
+          a: { trigger: 't', result: 'r', route: ['mvp'] },
+        },
+      },
+      meta: {},
+    });
+    expect(Object.keys(ordered.product.features)).toEqual(['a', 'b']);
+    expect(Object.keys(ordered.product.features.b)).toEqual([
+      'trigger',
+      'result',
+      'route',
+      'updatedAt',
+    ]);
+    expect(ordered.product.features.b.route).toEqual(['z', 'a']);
+  });
+
+  it('orders meta components as path/purpose/status/updatedAt', () => {
+    const ordered = sortTrees({
+      product: {},
+      meta: {
+        skills: {
+          b: {
+            updatedAt: '20260906',
+            status: { text: 't', stage: 'commit' },
+            purpose: 'p',
+            path: 'x',
+          },
+          a: { purpose: 'p', path: 'x' },
+        },
+      },
+    });
+    expect(Object.keys(ordered.meta.skills)).toEqual(['a', 'b']);
+    expect(Object.keys(ordered.meta.skills.b)).toEqual(['path', 'purpose', 'status', 'updatedAt']);
+    expect(Object.keys(ordered.meta.skills.b.status)).toEqual(['stage', 'text']);
+  });
+
+  it('does not mutate the input', () => {
+    const input = { product: { what: {}, name: {} }, meta: {} };
+    sortTrees(input);
+    expect(Object.keys(input.product)).toEqual(['what', 'name']);
   });
 });

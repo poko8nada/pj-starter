@@ -338,3 +338,26 @@
 {"ts":"2026-09-06T11:47:20.260+09:00","type":"set","key":"meta.docs.events-readme.status","branch":"develop","value":{"stage":"commit","text":"並行育成パスを追記"}}
 {"ts":"2026-09-06T11:47:20.260+09:00","type":"set","key":"meta.skills.feature.status","branch":"develop","value":{"stage":"commit","text":"fact同時appendを明記"}}
 {"ts":"2026-09-06T11:47:20.260+09:00","type":"set","key":"meta.skills.workflow.status","branch":"develop","value":{"stage":"commit","text":"closing digestにFact還元を追加"}}
+{"ts":"2026-09-06T11:55:42.509+09:00","type":"set","key":"meta.scripts.event-lib.status","branch":"develop","value":{"stage":"ready","text":"順序定義と整形helperの実装計画が確定"}}
+{"ts":"2026-09-06T11:55:42.509+09:00","type":"set","key":"meta.scripts.event-build.status","branch":"develop","value":{"stage":"ready","text":"整形つきスナップショット出力の計画が確定"}}
+{"ts":"2026-09-06T11:55:42.509+09:00","type":"set","key":"meta.scripts.event-compact.status","branch":"develop","value":{"stage":"ready","text":"整形つき退避の計画が確定"}}
+{"ts":"2026-09-06T11:55:56.430+09:00","type":"set","key":"log.try.66b4f92a","value":{"tool":"read","gap":0,"targets":["events/scripts/build.mjs","events/scripts/compact.mjs","events/scripts/lib.test.mjs"]}}
+{"ts":"2026-09-06T11:56:00.253+09:00","type":"set","key":"meta.scripts.event-lib.status","branch":"develop","value":{"stage":"implement","text":"順序定義と整形helperを実装中"}}
+{"ts":"2026-09-06T11:56:00.253+09:00","type":"set","key":"meta.scripts.event-build.status","branch":"develop","value":{"stage":"implement","text":"整形つき出力を実装中"}}
+{"ts":"2026-09-06T11:56:00.253+09:00","type":"set","key":"meta.scripts.event-compact.status","branch":"develop","value":{"stage":"implement","text":"整形つき退避を実装中"}}
+{"ts":"2026-09-06T11:56:36.715+09:00","type":"set","key":"log.try.41a8ae67","value":{"tool":"edit","gap":6864,"targets":["events/scripts/lib/consts.mjs","events/scripts/lib/derive.mjs","events/scripts/lib/derive.mjs","events/scripts/lib/derive.mjs","events/scripts/build.mjs","events/scripts/lib/state.mjs","events/scripts/lib/state.mjs"]}}
+{"ts":"2026-09-06T11:56:39.064+09:00","type":"set","key":"log.try.a4fa8c17","value":{"tool":"read","gap":2349,"targets":["events/scripts/lib/state.mjs"]}}
+{"ts":"2026-09-06T11:56:53.383+09:00","type":"set","key":"log.try.e986ec86","value":{"tool":"edit","gap":2789,"targets":["events/scripts/lib/state.mjs","events/scripts/lib/state.mjs","events/scripts/compact.mjs","events/scripts/lib.test.mjs"]}}
+{"ts":"2026-09-06T11:56:58.248+09:00","type":"set","key":"log.try.88f5904e","value":{"tool":"read","gap":4865,"targets":["events/scripts/lib.test.mjs"]}}
+{"ts":"2026-09-06T11:57:03.043+09:00","type":"set","key":"log.try.e3ecd4ef","value":{"tool":"edit","gap":4795,"targets":["events/scripts/lib.test.mjs"]}}
+{"ts":"2026-09-06T11:57:21.370+09:00","type":"set","key":"log.try.8ac3dd83","value":{"tool":"bash","gap":2755,"targets":["pnpm","pnpm","git","git","pnpm"]}}
+{"ts":"2026-09-06T11:57:25.256+09:00","type":"set","key":"log.try.f7e64784","value":{"tool":"read","gap":3886,"targets":["events/scripts/compact.mjs"]}}
+{"ts":"2026-09-06T11:57:28.463+09:00","type":"set","key":"log.try.76c6e242","value":{"tool":"edit","gap":3207,"targets":["events/scripts/compact.mjs"]}}
+{"ts":"2026-09-06T11:57:31.993+09:00","type":"set","key":"log.try.3edad3b6","value":{"tool":"bash","gap":3530,"targets":["node"]}}
+{"ts":"2026-09-06T11:57:50.142+09:00","type":"set","key":"log.try.07d355a2","value":{"tool":"read","gap":18149,"targets":["events/scripts/build.mjs"]}}
+{"ts":"2026-09-06T11:57:55.909+09:00","type":"set","key":"log.try.f1c773c7","value":{"tool":"edit","gap":2459,"targets":["events/scripts/build.mjs","events/scripts/build.mjs"]}}
+{"ts":"2026-09-06T11:58:38.402+09:00","type":"set","key":"log.try.e3cb5dae","value":{"tool":"bash","gap":2883,"targets":["node","node","pnpm","git","git","git","git","grep"]}}
+{"ts":"2026-09-06T12:00:45.009+09:00","type":"set","key":"log.try.4394b35f","value":{"tool":"task","gap":4465,"targets":["auditor","auditor","auditor"]}}
+{"ts":"2026-09-06T12:01:09.255+09:00","type":"set","key":"meta.scripts.event-lib.status","branch":"develop","value":{"stage":"commit","text":"順序定義と整形helperを追加"}}
+{"ts":"2026-09-06T12:01:09.255+09:00","type":"set","key":"meta.scripts.event-build.status","branch":"develop","value":{"stage":"commit","text":"整形つき出力と順序移行に変更"}}
+{"ts":"2026-09-06T12:01:09.255+09:00","type":"set","key":"meta.scripts.event-compact.status","branch":"develop","value":{"stage":"commit","text":"整形つき退避に変更"}}
