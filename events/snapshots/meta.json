@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-07T11:25:22.720+09:00",
-  "asOf": "2026-09-07T11:25:22.692+09:00",
+  "generatedAt": "2026-09-07T11:42:00.666+09:00",
+  "asOf": "2026-09-07T11:42:00.635+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -136,9 +136,9 @@
         "purpose": "コミット前レビューを担う専任サブエージェント",
         "status": {
           "stage": "commit",
-          "text": "test観点をagendaテスト判定表に固定し、re-reviewモードと初回出し切りを明記"
+          "text": "条件付きa11y観点を追加"
         },
-        "updatedAt": "20260902"
+        "updatedAt": "20260907"
       },
       "spike-verifier": {
         "path": ".opencode/agent/spike-verifier.md",
@@ -174,9 +174,9 @@
         "purpose": "コミット前の変更をコードレビューする",
         "status": {
           "stage": "commit",
-          "text": "差分受け渡しをファイル経由に明示化"
+          "text": "条件付きa11y観点の表記に更新"
         },
-        "updatedAt": "20260904"
+        "updatedAt": "20260907"
       },
       "commit": {
         "path": ".opencode/skills/commit/SKILL.md",

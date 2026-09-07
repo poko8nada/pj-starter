@@ -384,3 +384,12 @@
 {"ts":"2026-09-07T11:25:19.609+09:00","type":"set","key":"log.try.e62dfd47","value":{"tool":"skill","gap":9398,"targets":["commit"]}}
 {"ts":"2026-09-07T11:25:22.692+09:00","type":"set","key":"meta.skills.agenda.status","branch":"develop","value":{"stage":"commit","text":"Reportを慣習と負債起点に改訂"}}
 {"ts":"2026-09-07T11:25:22.692+09:00","type":"set","key":"meta.agents.agenda-reviewer.status","branch":"develop","value":{"stage":"commit","text":"Input・Checksを新様式に改訂"}}
+{"ts":"2026-09-07T11:39:51.212+09:00","type":"set","key":"meta.skills.audit.status","branch":"develop","value":{"stage":"ready","text":"条件付きa11y観点の追加計画が確定。実装待ち"}}
+{"ts":"2026-09-07T11:39:51.212+09:00","type":"set","key":"meta.agents.auditor.status","branch":"develop","value":{"stage":"ready","text":"条件付きa11y観点の追加計画が確定。実装待ち"}}
+{"ts":"2026-09-07T11:40:14.126+09:00","type":"set","key":"log.try.f2a809ad","value":{"tool":"edit","gap":0,"targets":[".opencode/agent/auditor.md",".opencode/agent/auditor.md",".opencode/agent/auditor.md",".opencode/agent/auditor.md",".opencode/skills/audit/SKILL.md",".opencode/skills/audit/SKILL.md"]}}
+{"ts":"2026-09-07T11:40:17.762+09:00","type":"set","key":"meta.skills.audit.status","branch":"develop","value":{"stage":"implement","text":"条件付きa11y観点の表記を適用"}}
+{"ts":"2026-09-07T11:40:17.762+09:00","type":"set","key":"meta.agents.auditor.status","branch":"develop","value":{"stage":"implement","text":"条件付きa11y観点を適用"}}
+{"ts":"2026-09-07T11:40:22.091+09:00","type":"set","key":"log.try.3fdee230","value":{"tool":"bash","gap":5802,"targets":["git","git"]}}
+{"ts":"2026-09-07T11:40:25.207+09:00","type":"set","key":"log.try.6ab99c19","value":{"tool":"task","gap":3107,"targets":["auditor","auditor"]}}
+{"ts":"2026-09-07T11:42:00.635+09:00","type":"set","key":"meta.skills.audit.status","branch":"develop","value":{"stage":"commit","text":"条件付きa11y観点の表記に更新"}}
+{"ts":"2026-09-07T11:42:00.635+09:00","type":"set","key":"meta.agents.auditor.status","branch":"develop","value":{"stage":"commit","text":"条件付きa11y観点を追加"}}
