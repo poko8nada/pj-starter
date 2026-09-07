@@ -37,7 +37,7 @@ Infer both from the request (e.g. "auth をリファクタ" → code + product; 
 Delegate the search to the built-in `explore` subagent — do not walk the tree yourself. This keeps the main thread on judgment, not navigation.
 
 - Give it the **domain, mode, and the search lens** below as its scan instructions
-- Request a candidate list with **`file:line` and a one-line reason** per candidate
+- Request candidates as sets: each candidate block with its callers and the tests asserting it, every location with **`file:line` and a one-line reason**
 - Set thoroughness by scope: whole-domain sweep → `very thorough`; a clearly bounded area → `medium`
 - The subagent returns **candidates, not labels** — labeling is a judgment task and stays here (Step 3)
 
@@ -48,6 +48,8 @@ In addition to the label criteria below, have the subagent look for **module-res
 - **[product]** import alias use: `tsconfig` `paths` declarations and whether imports honor them
 - **[all]** dynamic `import()`/`require()` root-path resolution: Node ESM does **not** resolve `tsconfig` `paths` — a `.mjs`/`.cjs` dynamic import using an alias typechecks but breaks at runtime. This is where moving files under a refactor silently breaks a `?t=` cache-busting import (`scripts/user/sync/meta.mjs` is the known example)
 - **[all]** broken relative paths and imports pointing at non-existent modules
+- **[all]** receiver closure: for each candidate, its callers (importers included), the readers and writers of artifacts it touches (spawned paths, snapshot / checkpoint shapes), and the tests asserting those shapes
+- **[all]** contract changes: alterations to a shared shape (snapshot projection, checkpoint trees, lib API) whose consumers and tests must change together
 
 ### WHY evidence hierarchy (for `why-stale` / `why-missing`)
 
@@ -63,19 +65,20 @@ If none of the above yields evidence, do not write a WHY — present it as a can
 
 Before changing anything, classify each candidate block/comment using the tables below. Do not touch anything until it has a label.
 
-While labeling, also identify the **touched components**: match the candidate locations against component `path`s in the declared domain's snapshot — `events/snapshots/product.json` for product, `events/snapshots/meta.json` for meta. Locations matching no component are raw code — they have no status to assert. Candidates mapping to the other domain are still handled (the domain is a consultation default, not a hard gate).
+While labeling, also identify the **touched components**: match the candidate locations plus their callers and tests against component `path`s in the declared domain's snapshot — `events/snapshots/product.json` for product, `events/snapshots/meta.json` for meta. Locations matching no component are raw code — they have no status to assert. Candidates mapping to the other domain are still handled (the domain is a consultation default, not a hard gate).
 
 If labeling reveals that a component's **definition** (trigger/result/route or purpose) has drifted from reality, do not refactor around it — route to the feature skill for a definition revision, then restart.
 
 ### Code labels
 
-| Label                     | Criteria                                            | Diff rule                |
-| ------------------------- | --------------------------------------------------- | ------------------------ |
-| `duplicate`               | Same/near-same logic in 2+ places                   | Must shrink (or flat)    |
-| `duplicate-with-reason`   | Intentional duplication *                           | Out of scope — keep each |
-| `dead`                    | Unreachable / unreferenced                          | Must shrink              |
-| `equivalent-simplifiable` | Provably equivalent rewrite **                      | Must shrink              |
-| `needs-restructure`       | Bloated, coupled, poorly named, or missing handling | Free — preserve behavior |
+| Label                     | Criteria                                                | Diff rule                           |
+| ------------------------- | ------------------------------------------------------- | ----------------------------------- |
+| `duplicate`               | Same/near-same logic in 2+ places                       | Must shrink (or flat)               |
+| `duplicate-with-reason`   | Intentional duplication *                               | Out of scope — keep each            |
+| `dead`                    | Unreachable / unreferenced                              | Must shrink                         |
+| `equivalent-simplifiable` | Provably equivalent rewrite **                          | Must shrink                         |
+| `needs-restructure`       | Bloated, coupled, poorly named, or missing handling     | Free — preserve behavior            |
+| `contract-change`         | Alters a shared shape (snapshot / checkpoint / lib API) | Free — consumers + tests ride along |
 
 \* Each instance must function independently in its own context (e.g. subagent frontmatter, per-directory declarations); consolidation would break independence.
 \** E.g. `if x==true: return true else return false` → `return x`.
@@ -116,7 +119,7 @@ Do not proceed to Step 5 until the user explicitly approves (or provides correct
 
 `duplicate-with-reason` is intentionally **excluded** from this pass — its whole point is that merging would break independence. Report it as out-of-scope in the summary, never fold it into compaction.
 
-**Restructuring / correction pass** (labels: `needs-restructure`, `stale-or-incorrect`, `insufficient`, `why-stale`, `why-missing`, `why-accurate`)
+**Restructuring / correction pass** (labels: `needs-restructure`, `contract-change`, `stale-or-incorrect`, `insufficient`, `why-stale`, `why-missing`, `why-accurate`)
 
 - Diff direction is unconstrained. Do not evaluate these changes by line count.
 - Code: judge by duplication rate, cyclomatic complexity, and nesting depth — not line count.

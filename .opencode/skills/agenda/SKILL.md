@@ -33,7 +33,7 @@ Output: domain + target keys, one line each.
 
 Goal: agree on the current inventory. No design decisions here.
 
-1. Read the files touching all targets (their union). Keep the list minimal: the target files themselves, their callers, same-directory siblings, and shared types / tests only as needed.
+1. Read the files touching all targets (their union). Close the list over receivers: the target files themselves, their callers, the readers and writers of every artifact they touch (spawned script paths, snapshot / checkpoint shapes), and the tests asserting those shapes, plus same-directory siblings and shared types only as needed. Every neighbor left out needs a boundary reason in the report.
 2. Write the report in chat in the format below and wait for user approval. If rejected, revise and repeat.
 3. Spawn `agenda-reviewer` in `report` mode (facts only — narrow check). Fold every finding (fix or defer with a reason, never silently drop), present report + findings to the user, and iterate until explicit agreement on reality.
 

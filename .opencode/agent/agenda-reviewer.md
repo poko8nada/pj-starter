@@ -23,7 +23,7 @@ The main agent passes you:
 - For `report`: the report (Targets / Files / Behavior / Conventions / Debt / Product context)
 - For `plan`: the plan (Targets / Files with keep-or-rebuild / Orders) plus the approved report
 
-Read only the files listed in the report or plan. Do not read outside them. Do not run git commands.
+Read only the files listed in the report or plan. Do not read outside them. Do not run git commands. Naming a missing file as a finding is allowed; reading it is not.
 
 ## Checks (one per mode, nothing else)
 
