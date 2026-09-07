@@ -1,6 +1,6 @@
 ---
 name: agenda
-description: Turn an implementation decision into an agreed plan, then record it. Use when the user decides to build something (実装しよう / 作ろう), says "agenda", or asks to plan work (作業単位). Reads current code, agrees on a report of intent, plans keep-vs-rebuild orders from that report, reviews twice with narrow checks, and records ready on agreement.
+description: Turn an implementation decision into an agreed plan, then record it. Use when the user decides to build something (実装しよう / 作ろう), says "agenda", or asks to plan work (作業単位). Reads current code, agrees on a report of conventions and debt, plans keep-vs-rebuild orders from that report, reviews twice with narrow checks, and records ready on agreement.
 ---
 
 # Agenda
@@ -31,7 +31,7 @@ Output: domain + target keys, one line each.
 
 ### 2. Report
 
-Goal: agree on what the current code tries to do. No design decisions here.
+Goal: agree on the current inventory. No design decisions here.
 
 1. Read the files touching all targets (their union). Keep the list minimal: the target files themselves, their callers, same-directory siblings, and shared types / tests only as needed.
 2. Write the report in chat in the format below and wait for user approval. If rejected, revise and repeat.
@@ -45,19 +45,22 @@ Goal: agree on what the current code tries to do. No design decisions here.
   - `product.features.auth-session` (or meta keys)
 - Files:
   - `<path>`: <one-line role>
-- Intent: <what the code tries to do, structurally>
-- Conventions: <found patterns, or `none`>
+- Behavior: <what the code currently does, traceable to the trigger → result path (product) or the purpose path (meta), 1-2 lines, no abstract intent>
+- Conventions: <upheld patterns + violations, each with `file:line` evidence, or `none`>
+- Debt: <future tech-debt candidates with impact, each with `file:line` evidence, or `none`>
 - Product context: <per fact section — present / missing / drifted, and fill-now / defer-with-reason / nurture-in-parallel>
 ```
+
+Evidence rule: every Conventions / Debt entry cites `file:line`. No speculation beyond the code.
 
 The approved report is the premise for step 3. Files outside it stay untouched unless the plan justifies the addition and the report is updated first.
 
 ### 3. Plan
 
-Goal: decide what rides on the intent and what breaks it, as concrete orders.
+Goal: decide what rides on the conventions and what must break for the debt, as concrete orders.
 
-1. For each file in the approved report, mark `keep` (ride on the intent) or `rebuild` (break it, with why).
-2. Write minimal orders in the format below. Each order is independently verifiable; `Depends on` references earlier numbers only.
+1. For each file in the approved report, mark `keep` (rides on the conventions, adds no debt) or `rebuild` (must break to address a Debt item, citing which one).
+2. Write minimal orders in the format below. Each order is independently verifiable; `Depends on` references earlier numbers only. Every `rebuild` traces to a Debt item and every `keep` rides on a stated Convention. A Debt item with no order needs a defer-with-reason recorded in `## Debt`, never a silent drop. Creation orders with no existing code ride on the snapshot definition (trigger / result / route or purpose) with Conventions / Debt as `none (with reason)`.
 3. Spawn `agenda-reviewer` in `plan` mode (consistency only — narrow check). Fold every finding the same way, present plan + findings to the user, and iterate until explicit agreement.
 
 ```markdown
@@ -72,8 +75,13 @@ Domain: <product | meta>
 
 ## Files
 
-- `<path>` — keep: <why it can stay>
-- `<path>` — rebuild: <why it must change>
+- `<path>` — keep: <which convention it rides on>
+- `<path>` — rebuild: <which Debt item it addresses>
+
+## Debt
+
+- `<Debt item>` → order `<n>` or deferred: <reason>
+- (repeat per Debt item, or `none`)
 
 ## Orders
 
@@ -87,7 +95,7 @@ Domain: <product | meta>
 - Tests:
   - <test file and scope, or `none (with reason)`>
 - Check:
-  - <command or behavior proving trigger → result>
+  - <command or behavior proving trigger → result (product) or purpose fulfillment (meta)>
 ```
 
 Test policy: UI / markup → none. Pure functions (fold, validators, formatters) → unit tests for happy path and error paths. Boundaries (CLI, shell, I/O) → boundary tests including failure modes. Keep the minimum set that catches regressions. Tests live next to their source as `*.test.ts` and run via `pnpm test:run`.
@@ -107,3 +115,4 @@ Multiple targets can share one invocation (one shared ts). No manual build: the 
 - Never implement inside agenda.
 - Deliberations stay in chat; only the `ready` status is recorded.
 - Never silently drop a reviewer finding.
+- Never silently drop a Debt item.
