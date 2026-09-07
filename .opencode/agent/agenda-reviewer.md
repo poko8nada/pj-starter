@@ -57,10 +57,4 @@ findings: <count>
 - `<finding>` is a concise description of the issue, written in Japanese
 - `<mode>` is `report` or `plan`
 
-When clean, return exactly:
-
-```
-OK
-```
-
-Do not add commentary outside the format.
+Clean → return exactly `OK`. No commentary outside the format.
