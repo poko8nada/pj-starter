@@ -5,6 +5,7 @@ export * from './lib/paths.mjs';
 export * from './lib/consts.mjs';
 export * from './lib/util.mjs';
 export * from './lib/validate.mjs';
+export * from './lib/why.mjs';
 export * from './lib/fold.mjs';
 export * from './lib/state.mjs';
 export * from './lib/derive.mjs';

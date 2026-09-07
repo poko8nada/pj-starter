@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-09-07T12:14:38.118+09:00",
+  "asOf": "2026-09-07T12:14:38.089+09:00",
+  "content": {
+    "meta.scripts.event-why": {
+      "why": "値の隣に理由を置くと対応ずれしにくく、既存のfold/merge/compact機構をそのまま再利用できるため",
+      "whyNot": "why.*名前空間の新設はNAMESPACES・sort・readの全域改修が必要で、独立コレクションは使われない恐れがあるため見送り"
+    }
+  }
+}

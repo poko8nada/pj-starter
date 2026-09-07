@@ -108,7 +108,7 @@ On consensus, assert one status per target:
 
 `node events/scripts/append-build.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`
 
-Multiple targets can share one invocation (one shared ts). No manual build: the idle hook syncs snapshots after the turn ends.
+Multiple targets can share one invocation (one shared ts). When the agreed work changes important state, co-append the sibling `.why` in the same invocation (see the feature skill step 6). No manual build: the idle hook syncs snapshots after the turn ends.
 
 ## Rules
 

@@ -45,6 +45,7 @@ export const FEATURE_LEAF_ORDER = ['trigger', 'result', 'route', 'status', 'upda
 export const ROADMAP_ORDER = ['mvp', 'v1', 'status', 'updatedAt'];
 export const DEPLOY_ORDER = ['target', 'method', 'pipeline', 'environments', 'status', 'updatedAt'];
 export const META_COMPONENT_ORDER = ['path', 'purpose', 'status', 'updatedAt'];
+export const WHY_LEAF_ORDER = ['why', 'whyNot'];
 export const STATUS_ORDER = ['stage', 'text'];
 export const EVENT_TYPES = new Set(['set', 'del']);
 export const STAGES = new Set(['planned', 'ready', 'implement', 'commit']);

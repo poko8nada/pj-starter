@@ -20,7 +20,8 @@ events/
   checkpoint.json      # Base state: compaction result or reset-seeded baseline (generated, git-tracked)
   snapshots/           # The current state lives here (generated — never hand-authored)
     product.json       # Folded product.* state
-    meta.json          # Folded meta.* state (written when folded meta state is non-empty)
+    meta.json          # Folded meta.* state (written when folded meta.* state is non-empty)
+    why.json           # Folded .why projection (written when any .why exists)
 ```
 
 Snapshot freshness is maintained automatically: every append goes through `append-build.mjs`, which runs `build.mjs` after a successful append, and the harness's `session-idle` hook runs `compact.mjs` when the log crosses the threshold in `.opencode/lib/event-compact/threshold.ts`.
@@ -89,9 +90,20 @@ Lifecycle facts (`ready` / `implement` / `commit`) are not special types — the
 
 A node becomes _managed_ by writing its `status`; managed nodes receive `updatedAt` (YYYYMMDD) at rebuild. The canonical registration route asserts the whole initial status (`{"stage":"planned","text":"未着手"}`) together with the definition, in both namespaces. As a backstop, rebuild guards product feature slices even when their status was never asserted (see [spec/machinery.md](./spec/machinery.md)); every other node without status stays raw forever — including meta components, whose raw form represents the shipped harness baseline.
 
+### Why and why-not (`.why` leaves and `why.json`)
+
+Reasons live next to the state they explain, and are projected into one cross-namespace view:
+
+- `.why` may be written at exactly the same positions as `.status` (fact-section roots, work units) — anything deeper or partial (`.why.why`) is rejected
+- Value shape is exactly `{why}` with optional `whyNot`; both are non-empty strings when present. `why` states the reason, `whyNot` records the discarded alternative
+- `.why` folds into the trees like any other key (so the checkpoint preserves it), but it is excluded from `product.json` / `meta.json`. The build projects all `.why` leaves into `snapshots/why.json`, keyed by target path (`product.stack`, `meta.skills.agenda`), written when non-empty
+- One node carries one current `why` (last-write-wins, asserted whole); history lives in the log and git. Deleting a node drops its `.why` with it; `del` on the `.why` leaf alone drops only the reason
+- Read the projection via `node events/scripts/read.mjs --name why`
+
 ### Validation enforced on append
 
 - `.status` may only be written at fact-section roots or work units — anything deeper (`product.stack.build.status`) or partial (`.status.stage`, `.status.text`) is rejected
+- `.why` follows the same location rule and requires exactly `{why}` with optional `whyNot` (non-empty strings, asserted whole)
 - Work-unit status requires exactly `{stage, text}` with `stage` in the vocabulary; fact-section status requires exactly `{text}`
 
 ## Operation flow

@@ -272,3 +272,30 @@ The append path enforces the integrity rule: any meta node carrying `status` mus
 - Library internals are reachable through the entry's `path`; do not enumerate them
 
 The live inventory is always readable from `events/snapshots/meta.json`; this document deliberately does not duplicate it.
+
+## why
+
+Reasons span both namespaces: a `.why` leaf sits next to the state it explains, at the same positions as `status` (fact-section roots, work units). Its shape is two fields:
+
+```json
+{
+  "why": "pnpm の方が CI のインストールが速い",
+  "whyNot": "npm はロックファイルの解決が遅いため見送り"
+}
+```
+
+- `why` — the reason for the current value or definition. Required, non-empty string
+- `whyNot` — the discarded alternative and why it lost. Optional, non-empty string when present
+- No lifecycle: a `.why` leaf carries no `stage` and receives no `updatedAt`. One node holds one current reason (last-write-wins, asserted whole); freshness of the whole projection is tracked by the snapshot's `asOf`
+- Projection: the build excludes `.why` from `product.json` / `meta.json` and collects it into `why.json`, keyed by target path:
+
+```json
+{
+  "product.stack": {
+    "why": "pnpm の方が CI のインストールが速い",
+    "whyNot": "npm はロックファイルの解決が遅いため見送り"
+  }
+}
+```
+
+Write a `.why` together with the value or definition it explains, in the same append invocation, on important decisions (new work units, `stack` / `roadmap` / `look` changes). Trivial edits need no reason. The live projection is always readable from `events/snapshots/why.json`.

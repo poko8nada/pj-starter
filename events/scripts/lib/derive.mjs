@@ -13,6 +13,7 @@ import {
   STATUS_ORDER,
   UNRESOLVED_STAGES,
 } from './consts.mjs';
+import { projectWhy, stripWhy } from './why.mjs';
 
 const sortValue = (value) => {
   if (Array.isArray(value)) return value.map(sortValue);
@@ -193,6 +194,13 @@ const sortMeta = (meta) => {
 export const sortTrees = (trees) => ({
   product: sortProduct(trees?.product),
   meta: sortMeta(trees?.meta),
+});
+
+// スナップショット書き出しの見た目：`.why` は product/meta から除外し、`why.json` 向けに投影する
+export const deriveSnapshots = (trees) => ({
+  product: sortProduct(stripWhy(trees?.product)),
+  meta: sortMeta(stripWhy(trees?.meta)),
+  why: projectWhy(trees),
 });
 
 // 未確定コンポーネント（作業単位）の抽出。status.stage が ready/implement のままのものを全名前空間（product/meta）から取り出す。コミット時の未確定フォローアップに使う。

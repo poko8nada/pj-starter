@@ -10,6 +10,7 @@ import {
   buildEvent,
   CHECKPOINT_PATH,
   deletePath,
+  deriveSnapshots,
   EventError,
   EVENTS_DIR,
   findUnresolved,
@@ -18,11 +19,13 @@ import {
   LOG_PATH,
   normalizeTrees,
   parseCheckpoint,
+  projectWhy,
   setPath,
   SNAPSHOTS_DIR,
   sortTrees,
   stableStringify,
   stripHistory,
+  stripWhy,
   writeCheckpoint,
 } from './lib.mjs';
 
@@ -195,6 +198,116 @@ describe('status value validation', () => {
     expect(() =>
       buildEvent({ type: 'set', key: 'product.name.status', value: { text: '' } }),
     ).toThrow(/non-empty string/);
+  });
+});
+
+describe('why key validation', () => {
+  it('accepts a fact-section why path', () => {
+    expect(() =>
+      buildEvent({ type: 'set', key: 'product.stack.why', value: { why: 'pnpm が速い' } }),
+    ).not.toThrow();
+  });
+
+  it('accepts work-unit why paths for both namespaces', () => {
+    const value = { why: '分割が一貫する', whyNot: '単体は大きすぎる' };
+    expect(() =>
+      buildEvent({ type: 'set', key: 'product.features.auth.why', value }),
+    ).not.toThrow();
+    expect(() => buildEvent({ type: 'set', key: 'meta.skills.agenda.why', value })).not.toThrow();
+  });
+
+  it('rejects why on collection containers, meta sections, and deeper paths', () => {
+    expect(() =>
+      buildEvent({ type: 'set', key: 'product.features.why', value: { why: 'x' } }),
+    ).toThrow(/only allowed/);
+    expect(() => buildEvent({ type: 'set', key: 'meta.harness.why', value: { why: 'x' } })).toThrow(
+      /only allowed/,
+    );
+    expect(() =>
+      buildEvent({ type: 'set', key: 'product.stack.build.why', value: { why: 'x' } }),
+    ).toThrow(/only allowed/);
+  });
+
+  it('rejects partial writes below why', () => {
+    expect(() => buildEvent({ type: 'set', key: 'product.stack.why.why', value: 'x' })).toThrow(
+      /asserted whole/,
+    );
+  });
+
+  it('allows deleting a whole why', () => {
+    expect(() => buildEvent({ type: 'del', key: 'product.stack.why' })).not.toThrow();
+  });
+});
+
+describe('why value validation', () => {
+  it('accepts {why} with optional whyNot', () => {
+    expect(() =>
+      buildEvent({ type: 'set', key: 'product.stack.why', value: { why: '速い' } }),
+    ).not.toThrow();
+    expect(() =>
+      buildEvent({
+        type: 'set',
+        key: 'product.stack.why',
+        value: { why: '速い', whyNot: 'npm は遅い' },
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects missing, empty, or extra fields', () => {
+    expect(() =>
+      buildEvent({ type: 'set', key: 'product.stack.why', value: { whyNot: 'x' } }),
+    ).toThrow(/exactly \{why\}/);
+    expect(() => buildEvent({ type: 'set', key: 'product.stack.why', value: { why: '' } })).toThrow(
+      /non-empty string/,
+    );
+    expect(() =>
+      buildEvent({ type: 'set', key: 'product.stack.why', value: { why: 'x', whyNot: '' } }),
+    ).toThrow(/non-empty string/);
+    expect(() =>
+      buildEvent({ type: 'set', key: 'product.stack.why', value: { why: 'x', extra: 1 } }),
+    ).toThrow(/exactly \{why\}/);
+    expect(() => buildEvent({ type: 'set', key: 'product.stack.why', value: '速い' })).toThrow(
+      /must be an object/,
+    );
+  });
+});
+
+describe('projectWhy and stripWhy', () => {
+  it('projects why leaves keyed by target path in sorted order', () => {
+    const trees = {
+      product: {
+        stack: { runtime: 'node', why: { why: '速い', whyNot: 'npm は遅い' } },
+        features: { auth: { trigger: 't', why: { why: '分割' } } },
+      },
+      meta: { skills: { agenda: { purpose: 'p', why: { why: '記録' } } } },
+    };
+    expect(projectWhy(trees)).toEqual({
+      'meta.skills.agenda': { why: '記録' },
+      'product.features.auth': { why: '分割' },
+      'product.stack': { why: '速い', whyNot: 'npm は遅い' },
+    });
+  });
+
+  it('returns an empty projection when nothing carries why', () => {
+    expect(projectWhy({ product: { stack: {} }, meta: {} })).toEqual({});
+  });
+
+  it('strips why leaves without touching siblings', () => {
+    const value = { stack: { runtime: 'node', why: { why: '速い' } } };
+    expect(stripWhy(value)).toEqual({ stack: { runtime: 'node' } });
+    expect(value.stack.why).toEqual({ why: '速い' });
+  });
+});
+
+describe('deriveSnapshots', () => {
+  it('excludes why from product/meta and projects it separately', () => {
+    const trees = {
+      product: { stack: { runtime: 'node', why: { why: '速い' } } },
+      meta: {},
+    };
+    const snapshots = deriveSnapshots(trees);
+    expect(snapshots.product).toEqual({ stack: { runtime: 'node' } });
+    expect(snapshots.why).toEqual({ 'product.stack': { why: '速い' } });
   });
 });
 

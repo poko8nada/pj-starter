@@ -83,4 +83,34 @@ describe('append-build', () => {
     expect(log).toContain('"branch":"feature/test"');
     fs.rmSync(root, { recursive: true, force: true });
   });
+
+  it('writes why.json from .why keys while excluding them from product snapshots', () => {
+    const { root, eventsDir } = makeScratch();
+    const result = runWrapper(eventsDir, [
+      '--set',
+      'product.stack.runtime',
+      '"node"',
+      '--set',
+      'product.stack.why',
+      '{"why":"速い"}',
+    ]);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('why: updated');
+    const product = JSON.parse(
+      fs.readFileSync(path.join(eventsDir, 'snapshots', 'product.json'), 'utf8'),
+    );
+    expect(product.content.stack.why).toBeUndefined();
+    const why = JSON.parse(fs.readFileSync(path.join(eventsDir, 'snapshots', 'why.json'), 'utf8'));
+    expect(why.content).toEqual({ 'product.stack': { why: '速い' } });
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('rejects invalid why values without writing anything', () => {
+    const { root, eventsDir } = makeScratch();
+    const result = runWrapper(eventsDir, ['--set', 'product.stack.why', '{"whyNot":"x"}']);
+    expect(result.status).not.toBe(0);
+    expect(fs.existsSync(path.join(eventsDir, 'log.jsonl'))).toBe(false);
+    expect(fs.existsSync(path.join(eventsDir, 'snapshots', 'why.json'))).toBe(false);
+    fs.rmSync(root, { recursive: true, force: true });
+  });
 });

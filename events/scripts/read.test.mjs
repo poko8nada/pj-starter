@@ -75,4 +75,16 @@ describe('read.mjs --name (legacy behavior)', () => {
     const { stdout } = runRead(['--name', 'product']);
     expect(JSON.parse(stdout)).toEqual({ name: { value: 'X' } });
   });
+
+  it('outputs projected why content as JSON', () => {
+    writeSnapshot('why', { 'product.stack': { why: '速い' } });
+    const { stdout, status } = runRead(['--name', 'why']);
+    expect(status).toBe(0);
+    expect(JSON.parse(stdout)).toEqual({ 'product.stack': { why: '速い' } });
+  });
+
+  it('prints null when the why snapshot is missing', () => {
+    const { stdout } = runRead(['--name', 'why']);
+    expect(stdout).toBe('null');
+  });
 });
