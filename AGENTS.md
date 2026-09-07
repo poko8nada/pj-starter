@@ -16,15 +16,15 @@
 
 ## Language
 
-- **Think in English, but output in Japanese.**
-- Do not arbitrarily coin new terms. Acceptable to use katakana for programming terms.
+- **Do not arbitrarily coin new terms. Acceptable to use "katakana" for programming terms.**
+- Think in English, but output in Japanese.
 - Avoid `ask or question tools`. Offer your understanding based on your inferences first.
 - Write user-facing docs in Japanese and agent-facing docs in English.
 
 ## Solutions
 
-- **Do NOT simply solve the problems right in front of you.**
-- Envision the ideal state, and do not hesitate to make major changes.
+- **Envision the ideal state, and do not hesitate to make major changes.**
+- So, do NOT simply solve the problems right in front of you.
 - Keep universal and general-purpose approaches in mind.
 
 ## Implementation
