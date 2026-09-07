@@ -80,6 +80,12 @@ const makeFullStarter = () => {
       {
         ts: '2026-09-01T00:00:00.000+09:00',
         type: 'set',
+        key: 'meta.skills.agenda.why.20260901T000000000',
+        value: { why: '起点側の理由' },
+      },
+      {
+        ts: '2026-09-01T00:00:00.000+09:00',
+        type: 'set',
         key: 'meta.skills.recon',
         value: { path: '.opencode/skills/recon/SKILL.md', purpose: '実装前調査' },
       },
@@ -332,6 +338,8 @@ describe('new.mjs の仕上げ工程', () => {
       path: '.opencode/skills/agenda/SKILL.md',
       purpose: '作業単位を確定する',
     });
+    // スターター境界：複写前の why 系譜は持ち出さない
+    expect(checkpoint.trees.meta.skills.agenda.why).toBeUndefined();
     // 非コミット（implement）の在庫は種まきに含まれない
     expect(checkpoint.trees.meta.skills.recon).toBeUndefined();
     // build でスナップショット再生成

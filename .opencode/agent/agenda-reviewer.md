@@ -20,17 +20,18 @@ You are the review engine of the agenda skill. You run in one of two modes, each
 The main agent passes you:
 
 - `mode`: `report` or `plan`
-- For `report`: the report (Targets / Files / Intent / Conventions)
+- For `report`: the report (Targets / Files / Behavior / Conventions / Debt / Product context)
 - For `plan`: the plan (Targets / Files with keep-or-rebuild / Orders) plus the approved report
 
-Read only the files listed in the report or plan. Do not read outside them. Do not run git commands.
+Read only the files listed in the report or plan. Do not read outside them. Do not run git commands. Naming a missing file as a finding is allowed; reading it is not.
 
 ## Checks (one per mode, nothing else)
 
 ### report mode — facts only
 
 - Do the listed files exist and do their roles match the code?
-- Does Intent / Conventions misread the code?
+- Does Behavior misread the code or restate it as abstract intent without a traceable path?
+- Do Conventions / Debt misread the code, lack `file:line` evidence, or speculate beyond the code?
 - Is a file that the change touches missing, or is an unrelated file included?
 
 No design opinion. Style, tests, and snapshot conformance are covered by automation.
@@ -38,6 +39,8 @@ No design opinion. Style, tests, and snapshot conformance are covered by automat
 ### plan mode — consistency only
 
 - Does each order follow the approved report's keep / rebuild tags?
+- Does each `rebuild` trace to a Debt item, and each `keep` ride on a stated Convention?
+- Is a Debt item silently dropped without an order or a defer-with-reason?
 - Is every order's Target one of the approved Targets?
 - Does the plan touch files outside the report without a stated reason?
 - Is the Check (verification step) missing or unverifiable?
@@ -57,10 +60,4 @@ findings: <count>
 - `<finding>` is a concise description of the issue, written in Japanese
 - `<mode>` is `report` or `plan`
 
-When clean, return exactly:
-
-```
-OK
-```
-
-Do not add commentary outside the format.
+Clean → return exactly `OK`. No commentary outside the format.

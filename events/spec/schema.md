@@ -272,3 +272,31 @@ The append path enforces the integrity rule: any meta node carrying `status` mus
 - Library internals are reachable through the entry's `path`; do not enumerate them
 
 The live inventory is always readable from `events/snapshots/meta.json`; this document deliberately does not duplicate it.
+
+## why
+
+Reasons span both namespaces and accumulate over time: next to the state it explains, at the same positions as `status` (fact-section roots, work units), each target holds timestamped entries. Writers only supply reason strings:
+
+```bash
+node events/scripts/append-build.mjs \
+  --set product.stack.why 'pnpm の方が CI のインストールが速い' \
+  --set product.stack.whyNot 'npm はロックファイルの解決が遅いため見送り'
+```
+
+- `why` — the reason for the current value or definition. Required, non-empty string
+- `whyNot` — the discarded alternative and why it lost. Optional, same invocation only, non-empty string when present
+- No lifecycle: entries carry no `stage` and receive no `updatedAt`. Each append adds one entry (`<target>.why.<YYYYMMDDTHHmmssSSS>`); dictionary order equals chronological order, and the latest entry per target is its current reason. Freshness of the whole projection is tracked by the snapshot's `asOf`
+- Projection: the build excludes `why` from `product.json` / `meta.json` and collects it into `why.json`, keyed by target path:
+
+```json
+{
+  "product.stack": {
+    "20260908T120000123": {
+      "why": "pnpm の方が CI のインストールが速い",
+      "whyNot": "npm はロックファイルの解決が遅いため見送り"
+    }
+  }
+}
+```
+
+Write a `.why` together with the value or definition it explains, in the same append invocation, on important decisions (new work units, `stack` / `roadmap` / `look` changes). Trivial edits need no reason. The live projection is always readable from `events/snapshots/why.json`.

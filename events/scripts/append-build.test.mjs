@@ -83,4 +83,76 @@ describe('append-build', () => {
     expect(log).toContain('"branch":"feature/test"');
     fs.rmSync(root, { recursive: true, force: true });
   });
+
+  it('expands short-form why sets into timestamped entries in why.json', () => {
+    const { root, eventsDir } = makeScratch();
+    const result = runWrapper(eventsDir, [
+      '--set',
+      'product.stack.runtime',
+      '"node"',
+      '--set',
+      'product.stack.why',
+      '速い',
+      '--set',
+      'product.stack.whyNot',
+      'npm は遅い',
+    ]);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('why: updated');
+    const product = JSON.parse(
+      fs.readFileSync(path.join(eventsDir, 'snapshots', 'product.json'), 'utf8'),
+    );
+    expect(product.content.stack.why).toBeUndefined();
+    const why = JSON.parse(fs.readFileSync(path.join(eventsDir, 'snapshots', 'why.json'), 'utf8'));
+    const ids = Object.keys(why.content['product.stack']);
+    expect(ids).toHaveLength(1);
+    expect(ids[0]).toMatch(/^\d{8}T\d{9}$/);
+    expect(why.content['product.stack'][ids[0]]).toEqual({ why: '速い', whyNot: 'npm は遅い' });
+    const log = fs.readFileSync(path.join(eventsDir, 'log.jsonl'), 'utf8');
+    expect(log).toContain(`product.stack.why.${ids[0]}`);
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('accumulates entries across invocations instead of overwriting', () => {
+    const { root, eventsDir } = makeScratch();
+    expect(runWrapper(eventsDir, ['--set', 'product.stack.why', '一件目']).status).toBe(0);
+    expect(runWrapper(eventsDir, ['--set', 'product.stack.why', '二件目']).status).toBe(0);
+    const why = JSON.parse(fs.readFileSync(path.join(eventsDir, 'snapshots', 'why.json'), 'utf8'));
+    const entries = Object.values(why.content['product.stack']);
+    expect(entries).toHaveLength(2);
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('rejects lone whyNot and object-form why without writing anything', () => {
+    const { root, eventsDir } = makeScratch();
+    const lone = runWrapper(eventsDir, ['--set', 'product.stack.whyNot', 'x']);
+    expect(lone.status).not.toBe(0);
+    expect(lone.stderr).toContain('whyNot without why');
+    const object = runWrapper(eventsDir, ['--set', 'product.stack.why', '{"why":"x"}']);
+    expect(object.status).not.toBe(0);
+    expect(fs.existsSync(path.join(eventsDir, 'log.jsonl'))).toBe(false);
+    expect(fs.existsSync(path.join(eventsDir, 'snapshots', 'why.json'))).toBe(false);
+    fs.rmSync(root, { recursive: true, force: true });
+  });
+
+  it('expands short-form why sets via --file batches too', () => {
+    const { root, eventsDir } = makeScratch();
+    const draft = path.join(root, 'draft.jsonl');
+    fs.writeFileSync(
+      draft,
+      [
+        { type: 'set', key: 'product.stack.why', value: '速い' },
+        { type: 'set', key: 'product.stack.whyNot', value: 'npm は遅い' },
+      ]
+        .map((line) => `${JSON.stringify(line)}\n`)
+        .join(''),
+    );
+    const result = runWrapper(eventsDir, ['--file', draft]);
+    expect(result.status).toBe(0);
+    const why = JSON.parse(fs.readFileSync(path.join(eventsDir, 'snapshots', 'why.json'), 'utf8'));
+    const ids = Object.keys(why.content['product.stack']);
+    expect(ids).toHaveLength(1);
+    expect(why.content['product.stack'][ids[0]]).toEqual({ why: '速い', whyNot: 'npm は遅い' });
+    fs.rmSync(root, { recursive: true, force: true });
+  });
 });

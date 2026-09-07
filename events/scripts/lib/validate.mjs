@@ -10,6 +10,15 @@ import {
   PRODUCT_SECTIONS,
   STAGES,
 } from './consts.mjs';
+import {
+  assertWhyEntryLocation,
+  assertWhyLocation,
+  assertWhyShortValue,
+  assertWhyValue,
+} from './why.mjs';
+
+// `.why.<ID>` エントリキー（末尾がドットなし ID のもの）。深い部分書き込みは対象外
+const isWhyEntryKey = (key) => /\.why\.[^.]+$/.test(key);
 
 // .status の書ける位置は「事実セクションのルート」か「作業単位（第3セグメント）」のみ。
 // それ以外の位置・深さはここで拒否する
@@ -25,10 +34,16 @@ const assertStatusLocation = (key) => {
   }
 };
 
-// キーは「名前空間.区画. ...」のドットパス。status の部分書き込み（.status.stage 等）は常に拒否し、status は丸ごと主張させる
+// キーは「名前空間.区画. ...」のドットパス。status / why の部分書き込み（.status.stage 等）は常に拒否し、丸ごと主張させる
 export const validateKey = (key) => {
   if (!key) throw new EventError('key is required');
   if (key.includes('.status.')) throw new EventError(`status must be asserted whole: ${key}`);
+  if (key.includes('.whyNot.')) throw new EventError(`whyNot must be asserted whole: ${key}`);
+  if (isWhyEntryKey(key)) {
+    assertWhyEntryLocation(key);
+  } else {
+    if (key.includes('.why.')) throw new EventError(`why must be asserted whole: ${key}`);
+  }
   const [ns, section] = key.split('.');
   if (!Object.hasOwn(NAMESPACES, ns)) throw new EventError(`unknown namespace: ${ns}`);
   if (ns === 'product' && !PRODUCT_SECTIONS.has(section)) {
@@ -46,6 +61,7 @@ export const validateKey = (key) => {
     }
   }
   if (key.endsWith('.status')) assertStatusLocation(key);
+  if (key.endsWith('.why') || key.endsWith('.whyNot')) assertWhyLocation(key);
 };
 
 const assertStatusValue = (key, value) => {
@@ -113,6 +129,11 @@ export const buildEvent = (draft, ts = jstNow()) => {
   if (draft.type === 'set') {
     if (draft.value === undefined) throw new EventError('value is required for set');
     if (draft.key.endsWith('.status')) assertStatusValue(draft.key, draft.value);
+    if (draft.key.endsWith('.why') || draft.key.endsWith('.whyNot')) {
+      assertWhyShortValue(draft.key, draft.value);
+    } else if (isWhyEntryKey(draft.key)) {
+      assertWhyValue(draft.key, draft.value);
+    }
     if (draft.key.startsWith('log.')) assertLogValue(draft.key, draft.value);
     event.value = draft.value;
   }

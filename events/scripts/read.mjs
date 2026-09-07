@@ -6,7 +6,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fail, findUnresolved, parseArgs, SNAPSHOTS_DIR } from './lib.mjs';
 
-const NAMED = new Set(['product', 'meta']);
+const NAMED = new Set(['product', 'meta', 'why']);
 
 const loadContent = (name) => {
   const file = path.join(SNAPSHOTS_DIR(), `${name}.json`);
@@ -27,7 +27,7 @@ const main = () => {
   const unresolved = raw.includes('--unresolved');
   const args = parseArgs(raw.filter((arg) => arg !== '--unresolved'));
   const name = args.name;
-  if (!name) fail('--name product|meta is required');
+  if (!name) fail('--name product|meta|why is required');
   if (!NAMED.has(name)) fail(`--name must be one of ${[...NAMED].join('/')}`);
 
   if (unresolved) {

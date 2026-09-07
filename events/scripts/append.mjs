@@ -1,4 +1,5 @@
 // イベントを追記する。1回の呼び出しで複数操作（--set / --del の繰り返し）とバッチ（--file）に対応する。全操作を検証してから一括追記し、1行でも不正なら何も書かない。同一呼び出し内のイベントは同一tsを持つ。
+// 短形式の why/whyNot 指定は検証前にエントリ単位キーへ展開する（同一 invocation の対は1エントリに束ねる）。
 // 追記前に仮畳み込み（checkpoint + 既存ログ + 新イベント）で meta 整合性を検証し、違反があれば何も書かずに失敗する（原子性の確保）。
 // 順序はファイル並び順そのものであり、付番処理は存在しない
 import { execSync } from 'node:child_process';
@@ -9,6 +10,7 @@ import {
   auditMetaIntegrity,
   buildEvent,
   EventError,
+  expandWhyOps,
   fail,
   jstNow,
   loadBase,
@@ -78,19 +80,16 @@ const main = () => {
     fail('no operations: use --set <key> <value>, --del <key> or --file <path>');
   }
 
-  // 同一呼び出しは同一時刻。検証を全件通してから追記する
+  // 同一呼び出しは同一時刻。短形式の why を展開してから全件検証し、検証を全件通してから追記する
   const ts = jstNow();
-  const drafts = fileOp ? readDrafts(fileOp.path) : ops;
-  const events = drafts.map((draft) =>
-    fileOp
-      ? buildEvent(draft, ts)
-      : buildEvent(
-          draft.op === 'set'
-            ? { type: 'set', key: draft.key, value: parseValue(draft.raw) }
-            : { type: 'del', key: draft.key },
-          ts,
-        ),
-  );
+  const drafts = fileOp
+    ? readDrafts(fileOp.path)
+    : ops.map((op) =>
+        op.op === 'set'
+          ? { type: 'set', key: op.key, value: parseValue(op.raw) }
+          : { type: 'del', key: op.key },
+      );
+  const events = expandWhyOps(drafts, ts).map((draft) => buildEvent(draft, ts));
   if (events.length === 0) {
     console.log('no events');
     return;

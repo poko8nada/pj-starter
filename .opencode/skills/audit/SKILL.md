@@ -9,12 +9,12 @@ Pre-commit code review. The main agent handles scope and aggregation; the audito
 
 ## Responsibilities
 
-|        | Main agent (YOU)                | auditor                           |
-| ------ | ------------------------------- | --------------------------------- |
-| Scope  | Get the diff, split into chunks | Receive the chunk only            |
-| Review | Never                           | 3 viewpoints (logic / test / doc) |
-| Fix    | Never (present findings only)   | Never                             |
-| Output | Aggregate and present findings  | Return findings in a fixed format |
+|        | Main agent (YOU)                | auditor                                                        |
+| ------ | ------------------------------- | -------------------------------------------------------------- |
+| Scope  | Get the diff, split into chunks | Receive the chunk only                                         |
+| Review | Never                           | 3 viewpoints (logic / test / doc) + conditional a11y (UI only) |
+| Fix    | Never (present findings only)   | Never                                                          |
+| Output | Aggregate and present findings  | Return findings in a fixed format                              |
 
 ## Procedure
 
@@ -25,7 +25,7 @@ Pre-commit code review. The main agent handles scope and aggregation; the audito
    - One chunk = one work unit's full change set (code + tests + docs) so the auditor can cross-check the three viewpoints
    - Shared libraries form their own chunk; generated artifacts (`log.jsonl`, `snapshots/`) excluded — covered by build validation
    - Oversized chunk → split by cohesion, keeping each sub-group's code/tests/docs together
-4. **Spawn auditors in parallel** — one Task per chunk with `auditor`. Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass: changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests). The auditor reads the diff file and the files themselves; it does not run git.
+4. **Spawn auditors in parallel** — one Task per chunk with `auditor`. Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass: changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests). The auditor reads the diff file and the files themselves; it does not run git. Chunks containing UI markup get the conditional a11y viewpoint — the auditor detects this from the paths and diff, so no extra handoff is needed.
 5. **Aggregate** — collect the fixed-format findings from each auditor.
 6. **Digest** — group findings, add your assessment (clearly valid / needs user judgment / likely false positive), recommend. Fold in unresolved components from step 2.
 7. **Present** — show findings + recommendation. Do not fix anything yourself.

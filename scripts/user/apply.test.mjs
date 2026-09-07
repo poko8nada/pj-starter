@@ -38,6 +38,7 @@ const STARTER_CHECKPOINT = {
           purpose: '作業単位を確定する',
           status: { stage: 'commit', text: 'スターター版' },
           updatedAt: '20260801',
+          why: { '20260901T000000000': { why: 'スターター側の理由' } },
         },
         recon: {
           path: '.opencode/skills/recon/SKILL.md',
@@ -353,6 +354,8 @@ describe('apply.mjs の一方向ミラー', () => {
       path: '.opencode/skills/agenda/SKILL.md',
       purpose: '作業単位を確定する',
     });
+    // スターター境界：複写前の why 系譜は持ち出さない
+    expect(checkpoint.trees.meta.skills.agenda.why).toBeUndefined();
     // スターターのログ由来のコミット済み在庫（audit）も畳み込まれて含まれる
     expect(checkpoint.trees.meta.skills.audit).toEqual({
       path: '.opencode/skills/audit/SKILL.md',
