@@ -47,7 +47,8 @@ export const initEvents = (starterRoot, targetRoot, run) => {
   const starterEventsDir = path.join(starterRoot, 'events');
   const targetEventsDir = path.join(targetRoot, 'events');
   const trees = withEventsDir(starterEventsDir, readState);
-  const stripped = lib.stripHistory(committedInventory(trees));
+  // スターター境界：複写前の履歴は持ち出さないため why 系譜を落とす（現行理由も含む）
+  const stripped = lib.stripHistory(lib.stripWhy(committedInventory(trees)));
   const stack = trees.product?.stack ?? {};
   const stackKeys = Object.keys(stack).length;
   const unitCount = Object.values(stripped).reduce(
@@ -80,7 +81,10 @@ export const initEvents = (starterRoot, targetRoot, run) => {
       if (fs.existsSync(file)) fs.rmSync(file);
     }
     fs.writeFileSync(lib.LOG_PATH(), '');
-    lib.writeCheckpoint({ product: { stack: lib.stripHistory(stack) }, meta: stripped });
+    lib.writeCheckpoint({
+      product: { stack: lib.stripHistory(lib.stripWhy(stack)) },
+      meta: stripped,
+    });
     const ts = lib.jstNow();
     const events = [
       lib.buildEvent({ type: 'set', key: 'product.name.value', value: DEFAULT_NAME }, ts),

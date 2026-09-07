@@ -118,7 +118,8 @@ export const applyMeta = async (starterRoot, run) => {
     const project = readState();
 
     const inventory = committedInventory(starter.trees);
-    const stripped = lib.stripHistory(inventory);
+    // スターター境界：複写前の履歴は持ち出さないため why 系譜を落とす（現行理由も含む）
+    const stripped = lib.stripHistory(lib.stripWhy(inventory));
     const unitCount = Object.values(stripped).reduce(
       (sum, section) => sum + Object.keys(section).length,
       0,

@@ -275,25 +275,26 @@ The live inventory is always readable from `events/snapshots/meta.json`; this do
 
 ## why
 
-Reasons span both namespaces: a `.why` leaf sits next to the state it explains, at the same positions as `status` (fact-section roots, work units). Its shape is two fields:
+Reasons span both namespaces and accumulate over time: next to the state it explains, at the same positions as `status` (fact-section roots, work units), each target holds timestamped entries. Writers only supply reason strings:
 
-```json
-{
-  "why": "pnpm の方が CI のインストールが速い",
-  "whyNot": "npm はロックファイルの解決が遅いため見送り"
-}
+```bash
+node events/scripts/append-build.mjs \
+  --set product.stack.why 'pnpm の方が CI のインストールが速い' \
+  --set product.stack.whyNot 'npm はロックファイルの解決が遅いため見送り'
 ```
 
 - `why` — the reason for the current value or definition. Required, non-empty string
-- `whyNot` — the discarded alternative and why it lost. Optional, non-empty string when present
-- No lifecycle: a `.why` leaf carries no `stage` and receives no `updatedAt`. One node holds one current reason (last-write-wins, asserted whole); freshness of the whole projection is tracked by the snapshot's `asOf`
-- Projection: the build excludes `.why` from `product.json` / `meta.json` and collects it into `why.json`, keyed by target path:
+- `whyNot` — the discarded alternative and why it lost. Optional, same invocation only, non-empty string when present
+- No lifecycle: entries carry no `stage` and receive no `updatedAt`. Each append adds one entry (`<target>.why.<YYYYMMDDTHHmmssSSS>`); dictionary order equals chronological order, and the latest entry per target is its current reason. Freshness of the whole projection is tracked by the snapshot's `asOf`
+- Projection: the build excludes `why` from `product.json` / `meta.json` and collects it into `why.json`, keyed by target path:
 
 ```json
 {
   "product.stack": {
-    "why": "pnpm の方が CI のインストールが速い",
-    "whyNot": "npm はロックファイルの解決が遅いため見送り"
+    "20260908T120000123": {
+      "why": "pnpm の方が CI のインストールが速い",
+      "whyNot": "npm はロックファイルの解決が遅いため見送り"
+    }
   }
 }
 ```

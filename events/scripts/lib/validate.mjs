@@ -10,7 +10,15 @@ import {
   PRODUCT_SECTIONS,
   STAGES,
 } from './consts.mjs';
-import { assertWhyLocation, assertWhyValue } from './why.mjs';
+import {
+  assertWhyEntryLocation,
+  assertWhyLocation,
+  assertWhyShortValue,
+  assertWhyValue,
+} from './why.mjs';
+
+// `.why.<ID>` エントリキー（末尾がドットなし ID のもの）。深い部分書き込みは対象外
+const isWhyEntryKey = (key) => /\.why\.[^.]+$/.test(key);
 
 // .status の書ける位置は「事実セクションのルート」か「作業単位（第3セグメント）」のみ。
 // それ以外の位置・深さはここで拒否する
@@ -30,7 +38,12 @@ const assertStatusLocation = (key) => {
 export const validateKey = (key) => {
   if (!key) throw new EventError('key is required');
   if (key.includes('.status.')) throw new EventError(`status must be asserted whole: ${key}`);
-  if (key.includes('.why.')) throw new EventError(`why must be asserted whole: ${key}`);
+  if (key.includes('.whyNot.')) throw new EventError(`whyNot must be asserted whole: ${key}`);
+  if (isWhyEntryKey(key)) {
+    assertWhyEntryLocation(key);
+  } else {
+    if (key.includes('.why.')) throw new EventError(`why must be asserted whole: ${key}`);
+  }
   const [ns, section] = key.split('.');
   if (!Object.hasOwn(NAMESPACES, ns)) throw new EventError(`unknown namespace: ${ns}`);
   if (ns === 'product' && !PRODUCT_SECTIONS.has(section)) {
@@ -48,7 +61,7 @@ export const validateKey = (key) => {
     }
   }
   if (key.endsWith('.status')) assertStatusLocation(key);
-  if (key.endsWith('.why')) assertWhyLocation(key);
+  if (key.endsWith('.why') || key.endsWith('.whyNot')) assertWhyLocation(key);
 };
 
 const assertStatusValue = (key, value) => {
@@ -116,7 +129,11 @@ export const buildEvent = (draft, ts = jstNow()) => {
   if (draft.type === 'set') {
     if (draft.value === undefined) throw new EventError('value is required for set');
     if (draft.key.endsWith('.status')) assertStatusValue(draft.key, draft.value);
-    if (draft.key.endsWith('.why')) assertWhyValue(draft.key, draft.value);
+    if (draft.key.endsWith('.why') || draft.key.endsWith('.whyNot')) {
+      assertWhyShortValue(draft.key, draft.value);
+    } else if (isWhyEntryKey(draft.key)) {
+      assertWhyValue(draft.key, draft.value);
+    }
     if (draft.key.startsWith('log.')) assertLogValue(draft.key, draft.value);
     event.value = draft.value;
   }
