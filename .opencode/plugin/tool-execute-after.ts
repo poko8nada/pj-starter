@@ -2,7 +2,7 @@
 // report-only の lint を差し込み、bash長文出力を予算で切り詰める。処理の実体は lib 配下。
 import type { Plugin } from '@opencode-ai/plugin';
 import { runEditLint } from '../lib/checks/edit-lint.hook';
-import { applyBudgetToOutput } from '../lib/output-budget/hook';
+import { applyBudgetToOutput } from '../lib/quiet-policy/policy';
 import { resolveProjectRoot } from '../lib/harness/resolve-root';
 import { buildMessage } from '../lib/utils/message';
 

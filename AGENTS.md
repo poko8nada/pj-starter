@@ -30,4 +30,4 @@
 
 - **Maintain a self-explanatory and modern code structure.**
 - Assume the use of `pnpm`.
-- Write code in English, but actively add supplementary Japanese comments.
+- Write code in English, but actively add supplementary ONLY Japanese comments.

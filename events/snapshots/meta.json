@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-07T23:06:26.593+09:00",
-  "asOf": "2026-09-07T23:06:26.561+09:00",
+  "generatedAt": "2026-09-08T09:56:08.858+09:00",
+  "asOf": "2026-09-08T09:56:08.824+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -48,15 +48,6 @@
         },
         "updatedAt": "20260826"
       },
-      "output-budget": {
-        "path": ".opencode/lib/output-budget/budget.ts",
-        "purpose": "冗長なコマンド出力を要約に切り詰め全文を退避する出力予算",
-        "status": {
-          "stage": "commit",
-          "text": "長文bash出力を切り詰め全文をtmpへ退避"
-        },
-        "updatedAt": "20260904"
-      },
       "process-compliance": {
         "path": ".opencode/lib/process-compliance/compliance.hook.ts",
         "purpose": "プロセス無視の編集を検出し、ステータス記録まで edit/write をブロックするプロセス順守チェック",
@@ -84,6 +75,15 @@
         },
         "updatedAt": "20260904"
       },
+      "quiet-policy": {
+        "path": ".opencode/lib/quiet-policy/policy.ts",
+        "purpose": "冗長なコマンド出力を静かな既定に抑える出力制御",
+        "status": {
+          "stage": "commit",
+          "text": "英語コメントを除去し日本語のみに整理"
+        },
+        "updatedAt": "20260908"
+      },
       "tool-trail": {
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
@@ -101,15 +101,6 @@
           "text": "CLI文字列出力依存をやめ、findUnresolved を直接 import して構造的に0件判定するよう修正"
         },
         "updatedAt": "20260901"
-      },
-      "verbose-guide": {
-        "path": ".opencode/lib/verbose-guide/guide.ts",
-        "purpose": "冗長な実行コマンドの使用時に静かな呼び出しを案内する事前誘導",
-        "status": {
-          "stage": "commit",
-          "text": "冗長指定の検出と事前誘導をbeforeへ配線"
-        },
-        "updatedAt": "20260904"
       },
       "yolo-continue": {
         "path": ".opencode/plugin/yolo-continue.ts",
