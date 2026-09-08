@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-08T09:56:08.858+09:00",
-  "asOf": "2026-09-08T09:56:08.824+09:00",
+  "generatedAt": "2026-09-08T10:56:06.420+09:00",
+  "asOf": "2026-09-08T10:56:06.384+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -246,9 +246,9 @@
         "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
         "status": {
           "stage": "commit",
-          "text": "候補セット化と契約変更ラベルを追加"
+          "text": "説明とStep4書式を改訂"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260908"
       },
       "visual": {
         "path": ".opencode/skills/visual/SKILL.md",

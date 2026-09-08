@@ -1,6 +1,6 @@
 ---
 name: refactor
-description: Refactor code, documentation (including code comments), or both, with mode selection. Use when the user asks to refactor (リファクタして / 整理して), clean up code, tidy up comments/docs, or reduce duplication.
+description: Restructure code and/or documentation without changing behavior or definitions. Use when the user asks to refactor (リファクタして / 整理して) or clean up within the existing structure. No new identifiers, no definition changes.
 ---
 
 # Refactor
@@ -97,15 +97,40 @@ If labeling reveals that a component's **definition** (trigger/result/route or p
 
 \* Supplementary Japanese comments per `AGENTS.md` are never `redundant-with-code` — even restating ones aid Japanese readers.
 
-## Step 4: Human review of labels (required)
+## Step 4: Present the refactor plan (required)
 
-Before applying any changes, present to the user:
+Group the labeled candidates by outcome and present them in the format below. Wait for approval. Labels are tags at the end of each line, never headings. For functions, append the signature; for docs, append the heading. Placeholders only — fill them per case.
 
-1. A list of all candidate locations with the label you assigned
-2. A one-line reason for each label
-3. The touched components (matched against snapshots) — or "none"
-4. For every inferred WHY (`why-stale` / `why-missing`): the drafted text plus its evidence source (snapshot key, commit, or chat basis). Without evidence, present a `TODO(why):` marker or an open question instead — never a drafted explanation
-5. Ask: "これらのラベル付けで進めてよいですか？ 修正したいラベルがあれば指示してください。"
+```markdown
+## Refactor plan
+
+### Compact
+
+- `<path>:<line>` — <what changes> / `<label>`
+
+### Restructure
+
+- `<path>:<line>` `<name>(<args>)` — <what changes> → <expected shape> / `<label>`
+- `<path>` `## <heading>` — <what changes> → <expected shape> / `<label>`
+
+### Keep
+
+- `<path>:<line>` — <why it stays> / `<label>`
+
+### Components
+
+- `<component>` — <what happens>
+- none
+
+### WHY
+
+- `<path>:<line>` — <draft> / evidence: <source>
+- TODO(why): <what is missing>
+```
+
+For every inferred WHY (`why-stale` / `why-missing`): include the drafted text plus its evidence source (snapshot key, commit, or chat basis). Without evidence, present a `TODO(why):` marker or an open question instead — never a drafted explanation.
+
+Ask: "この案で進めてよいですか？ 修正したい点があれば指示してください。"
 
 Do not proceed to Step 5 until the user explicitly approves (or provides corrections).
 
