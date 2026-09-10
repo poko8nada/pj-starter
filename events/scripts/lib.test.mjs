@@ -956,6 +956,31 @@ describe('sortTrees', () => {
     expect(Object.keys(ordered.product)).toEqual(['name', 'what', 'stack', 'look']);
   });
 
+  it('orders look keys with motion/density before mockups', () => {
+    const ordered = sortTrees({
+      product: {
+        look: {
+          mockups: {},
+          density: { value: 2, label: 'Airy' },
+          keywords: ['monochrome'],
+          motion: { value: 3, label: 'Standard' },
+        },
+      },
+      meta: {},
+    });
+    expect(Object.keys(ordered.product.look)).toEqual(['keywords', 'motion', 'density', 'mockups']);
+  });
+
+  it('puts unknown look keys last and passes non-object look through', () => {
+    const ordered = sortTrees({
+      product: { look: { custom: { value: 'x' }, keywords: ['t'] } },
+      meta: {},
+    });
+    expect(Object.keys(ordered.product.look)).toEqual(['keywords', 'custom']);
+    const raw = sortTrees({ product: { look: 'raw' }, meta: {} });
+    expect(raw.product.look).toBe('raw');
+  });
+
   it('orders meta sections by the schema order', () => {
     const ordered = sortTrees({
       product: {},

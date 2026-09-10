@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-08T10:56:06.420+09:00",
-  "asOf": "2026-09-08T10:56:06.384+09:00",
+  "generatedAt": "2026-09-10T12:29:51.026+09:00",
+  "asOf": "2026-09-10T12:29:50.995+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -178,6 +178,15 @@
         },
         "updatedAt": "20260904"
       },
+      "concept": {
+        "path": ".opencode/skills/concept/SKILL.md",
+        "purpose": "コンセプト画像の生成と対話で見た目の方向性を合意しlookへ登録する",
+        "status": {
+          "stage": "ready",
+          "text": "計画メモにagenda/refactor参照工程を追加"
+        },
+        "updatedAt": "20260910"
+      },
       "conflict": {
         "path": ".opencode/skills/conflict/SKILL.md",
         "purpose": "merge 時のコンフリクト（実コード / checkpoint）を解消し、解消結果をログに記録する",
@@ -293,9 +302,9 @@
         "purpose": "product/metaスナップショットのコンテンツスキーマと方法論",
         "status": {
           "stage": "commit",
-          "text": "why蓄積契約に書き直し"
+          "text": "lookにkeywordsとmotion/densityを定義しmotion-densityを新設"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260910"
       }
     },
     "scripts": {
@@ -331,9 +340,9 @@
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
           "stage": "commit",
-          "text": "順序定義と整形helperを追加"
+          "text": "LOOK_ORDERと順序テストにkeywordsとmotion/densityを反映"
         },
-        "updatedAt": "20260906"
+        "updatedAt": "20260910"
       },
       "event-merge-driver": {
         "path": "events/scripts/merge-driver.mjs",

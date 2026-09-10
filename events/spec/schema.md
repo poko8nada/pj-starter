@@ -48,11 +48,14 @@ Two scalars plus fixed groups. **Omit keys that do not apply** — a backend-onl
 
 ```json
 {
-  "tone": "concise, technical",
-  "theme": "monochrome base",
+  "keywords": ["monochrome", "technical"],
+  "motion": { "value": 3, "label": "Standard" },
+  "density": { "value": 2, "label": "Airy" },
   "mockups": { "lp-a": { "path": "mockups/lp-a.html", "description": "first draft" } }
 }
 ```
+
+`keywords` holds direction tags decided divergently (never a single converged scalar). `motion` / `density` record the agreed direction as number + label. The scale lives in [motion-density.md](./motion-density.md). Decide qualitatively in discussion and quantify only at registration; never feed raw numbers to image prompts.
 
 `mockups` links static HTML produced by the mockup skill. It is an ID map, not an array, so events can address entries as `look.mockups.<id>`.
 
