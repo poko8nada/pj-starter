@@ -30,22 +30,24 @@ The workbench is excluded from every root quality gate by design. No tests, no l
 
 ## Procedure
 
-0. **Orient** — read `product.look.mockups` from the snapshot and list `workbench/*.html`, then branch (never delete anything without user consent):
+0. **Orient** — read `product.look` (mockups + concepts, keywords, motion, density) from the snapshot and list `workbench/*.html`, then branch (never delete anything without user consent). Share the motion / density viewpoint with the user before building screens:
 
-   | State                           | Action                                                                                                                                                                        |
-   | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-   | No registrations, no screens    | Fresh start — create `<id>.html` (`pnpm install` inside `workbench/` first if `node_modules` is missing)                                                                      |
-   | No registrations, screens exist | Unregistered leftovers — propose `node scripts/reset.mjs --force`; on consent run it, then start fresh                                                                        |
-   | Registrations exist             | Ask the user: **a)** create a new mockup (next `<id>.html`), or **b)** revise an existing one — edit its `<id>.html`, rebuild, re-`set` the whole `{path, description}` value |
+   - **No registrations, no screens** — fresh start. Create `<id>.html` (`pnpm install` inside `workbench/` first if `node_modules` is missing)
+   - **No registrations, screens exist** — unregistered leftovers. Propose `node scripts/reset.mjs --force`; on consent run it, then start fresh
+   - **Concepts exist** — start from the agreed render + look values (keywords / motion / density). Create `<id>.html` tracing the direction
+   - **Registrations exist** — ask the user: **a)** create a new mockup (next `<id>.html`), or **b)** revise an existing one — edit its `<id>.html`, rebuild, re-`set` the whole `{path, description}` value
 
 1. **Serve** — `node scripts/server.mjs serve` starts the dev server and prints the actual URL (`/<id>.html`). Create `<id>.html` first if the target screen does not exist yet. Never start `pnpm dev` directly — unmanaged servers become zombies; always go through the script and use the URL it prints (other projects' servers may occupy common ports)
 2. **Annotate** — the user hovers components (`data-mock` attributes show ID + outline) and clicks to write instructions. **送信** records each instruction to `annotations.jsonl` as `{ts, target, text, resolved}` without waking anyone; accumulate as many as needed. The **🔔 通知** button appends a `notify` record that the harness plugin (`meta.harness.mockup-notify`) picks up to wake the agent with all unresolved instructions
-3. **Iterate** — read unresolved entries, edit the screen source and/or `theme.css`, then rewrite their records with `resolved: true` (e.g. a small node one-liner over `annotations.jsonl`). HMR reflects changes instantly; confirm visually if asked.
-4. **Freeze** — when the look settles: run `pnpm build` inside `workbench/` to produce `dist/<id>.html` (CSS inlined, opens correctly via `file://` while online).
-5. **Record** — append the standard contract event:
+3. **Iterate** — read unresolved entries, edit the screen source and/or `theme.css`, then rewrite their records with `resolved: true` (e.g. a small node one-liner over `annotations.jsonl`). HMR reflects changes instantly; confirm visually if asked. After editing, run `slop-reviewer` over the screen (details in the agent body).
+4. **Freeze** — when the look settles: run `slop-reviewer` over the settled screen, then run `pnpm build` inside `workbench/` to produce `dist/<id>.html` (CSS inlined, opens correctly via `file://` while online).
+5. **Record** — append the standard contract event (look values travel in the same invocation so no pattern leaks them):
    ```bash
    node events/scripts/append-build.mjs --set product.look.mockups.<id> \
-   '{"path":".opencode/skills/mockup/workbench/dist/<id>.html","description":"<one-liner>"}'
+   '{"path":".opencode/skills/mockup/workbench/dist/<id>.html","description":"<one-liner>"}' \
+   --set product.look.keywords '["<k1>","<k2>"]' \
+   --set product.look.motion '{"value":<1-5>,"label":"<Name>"}' \
+   --set product.look.density '{"value":<1-5>,"label":"<Name>"}'
    ```
 6. **Stop** — `node scripts/server.mjs stop` kills the tracked server (process group included). **Mandatory at every session end** — leaked servers keep ports occupied and outlive the conversation
 

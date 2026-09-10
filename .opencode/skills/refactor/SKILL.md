@@ -1,6 +1,6 @@
 ---
 name: refactor
-description: Refactor code, documentation (including code comments), or both, with mode selection. Use when the user asks to refactor (リファクタして / 整理して), clean up code, tidy up comments/docs, or reduce duplication.
+description: Restructure code and/or documentation without changing behavior or definitions. Use when the user asks to refactor (リファクタして / 整理して) or clean up within the existing structure. No new identifiers, no definition changes.
 ---
 
 # Refactor
@@ -71,41 +71,73 @@ If labeling reveals that a component's **definition** (trigger/result/route or p
 
 ### Code labels
 
-| Label                     | Criteria                                                | Diff rule                           |
-| ------------------------- | ------------------------------------------------------- | ----------------------------------- |
-| `duplicate`               | Same/near-same logic in 2+ places                       | Must shrink (or flat)               |
-| `duplicate-with-reason`   | Intentional duplication *                               | Out of scope — keep each            |
-| `dead`                    | Unreachable / unreferenced                              | Must shrink                         |
-| `equivalent-simplifiable` | Provably equivalent rewrite **                          | Must shrink                         |
-| `needs-restructure`       | Bloated, coupled, poorly named, or missing handling     | Free — preserve behavior            |
-| `contract-change`         | Alters a shared shape (snapshot / checkpoint / lib API) | Free — consumers + tests ride along |
+**Compaction**
+
+Shrink-natured. Self-contained; no review engine owns these.
+
+| Label                     | Criteria                          | Diff rule               |
+| ------------------------- | --------------------------------- | ----------------------- |
+| `duplicate`               | Same/near-same logic in 2+ places | Must shrink (or flat)   |
+| `duplicate-with-reason`   | Intentional duplication *         | Out of scope, keep each |
+| `dead`                    | Unreachable / unreferenced        | Must shrink             |
+| `equivalent-simplifiable` | Provably equivalent rewrite **    | Must shrink             |
 
 \* Each instance must function independently in its own context (e.g. subagent frontmatter, per-directory declarations); consolidation would break independence.
 \** E.g. `if x==true: return true else return false` → `return x`.
 
+**Structure**
+
+Structural judgment lives in `arch-auditor.md` — read it before labeling. This skill owns only the diff rules:
+
+- `needs-restructure` → Free (preserve behavior)
+- `contract-change` → Free (consumers + tests ride along)
+
 ### Doc labels
 
-| Label                         | Criteria                                        | Diff rule                     |
-| ----------------------------- | ----------------------------------------------- | ----------------------------- |
-| `redundant-with-code`         | Restates the code (e.g. `// increment i`) *     | Must shrink                   |
-| `duplicated-across-locations` | Same note copy-pasted in multiple places        | Must shrink (consolidate)     |
-| `stale-or-incorrect`          | Non-WHY content contradicts current code        | Free — accuracy only          |
-| `insufficient`                | Non-WHY explanation the reader needs is missing | Free — never delete           |
-| `why-accurate`                | WHY matches current evidence                    | Out of scope — wording only   |
-| `why-stale`                   | WHY contradicts current evidence                | Free — update to evidence     |
-| `why-missing`                 | Decision or complex logic lacks needed WHY      | Free — add only with evidence |
+Doc-behavior judgment lives in `doc-auditor.md` — read it before labeling. This skill owns only the diff rules:
 
-\* Supplementary Japanese comments per `AGENTS.md` are never `redundant-with-code` — even restating ones aid Japanese readers.
+- `redundant-with-code` and `duplicated-across-locations` → Must shrink
+- `stale-or-incorrect` → Free (accuracy only)
+- `insufficient` → Free (never delete)
+- `why-accurate` → out of scope (wording only)
+- `why-stale` / `why-missing` → Free (update / add with evidence)
 
-## Step 4: Human review of labels (required)
+\* Supplementary Japanese comments are never `redundant-with-code` — even restating ones aid Japanese readers.
 
-Before applying any changes, present to the user:
+## Step 4: Present the refactor plan (required)
 
-1. A list of all candidate locations with the label you assigned
-2. A one-line reason for each label
-3. The touched components (matched against snapshots) — or "none"
-4. For every inferred WHY (`why-stale` / `why-missing`): the drafted text plus its evidence source (snapshot key, commit, or chat basis). Without evidence, present a `TODO(why):` marker or an open question instead — never a drafted explanation
-5. Ask: "これらのラベル付けで進めてよいですか？ 修正したいラベルがあれば指示してください。"
+Group the labeled candidates by outcome and present them in the format below. Wait for approval. Labels are tags at the end of each line, never headings. For functions, append the signature; for docs, append the heading. Placeholders only — fill them per case.
+
+```markdown
+## Refactor plan
+
+### Compact
+
+- `<path>:<line>` — <what changes> / `<label>`
+
+### Restructure
+
+- `<path>:<line>` `<name>(<args>)` — <what changes> → <expected shape> / `<label>`
+- `<path>` `## <heading>` — <what changes> → <expected shape> / `<label>`
+
+### Keep
+
+- `<path>:<line>` — <why it stays> / `<label>`
+
+### Components
+
+- `<component>` — <what happens>
+- none
+
+### WHY
+
+- `<path>:<line>` — <draft> / evidence: <source>
+- TODO(why): <what is missing>
+```
+
+For every inferred WHY (`why-stale` / `why-missing`): include the drafted text plus its evidence source (snapshot key, commit, or chat basis). Without evidence, present a `TODO(why):` marker or an open question instead — never a drafted explanation.
+
+Ask: "この案で進めてよいですか？ 修正したい点があれば指示してください。"
 
 Do not proceed to Step 5 until the user explicitly approves (or provides corrections).
 

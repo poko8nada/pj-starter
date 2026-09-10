@@ -40,7 +40,15 @@ export const STACK_ORDER = [
   'updatedAt',
 ];
 export const FACT_LEAF_ORDER = ['value', 'status', 'updatedAt'];
-export const LOOK_ORDER = ['tone', 'theme', 'mockups', 'status', 'updatedAt'];
+export const LOOK_ORDER = [
+  'keywords',
+  'motion',
+  'density',
+  'concepts',
+  'mockups',
+  'status',
+  'updatedAt',
+];
 export const FEATURE_LEAF_ORDER = ['trigger', 'result', 'route', 'status', 'updatedAt'];
 export const ROADMAP_ORDER = ['mvp', 'v1', 'status', 'updatedAt'];
 export const DEPLOY_ORDER = ['target', 'method', 'pipeline', 'environments', 'status', 'updatedAt'];

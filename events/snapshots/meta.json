@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-07T23:06:26.593+09:00",
-  "asOf": "2026-09-07T23:06:26.561+09:00",
+  "generatedAt": "2026-09-10T21:56:58.862+09:00",
+  "asOf": "2026-09-10T21:56:58.815+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -48,15 +48,6 @@
         },
         "updatedAt": "20260826"
       },
-      "output-budget": {
-        "path": ".opencode/lib/output-budget/budget.ts",
-        "purpose": "冗長なコマンド出力を要約に切り詰め全文を退避する出力予算",
-        "status": {
-          "stage": "commit",
-          "text": "長文bash出力を切り詰め全文をtmpへ退避"
-        },
-        "updatedAt": "20260904"
-      },
       "process-compliance": {
         "path": ".opencode/lib/process-compliance/compliance.hook.ts",
         "purpose": "プロセス無視の編集を検出し、ステータス記録まで edit/write をブロックするプロセス順守チェック",
@@ -84,6 +75,15 @@
         },
         "updatedAt": "20260904"
       },
+      "quiet-policy": {
+        "path": ".opencode/lib/quiet-policy/policy.ts",
+        "purpose": "冗長なコマンド出力を静かな既定に抑える出力制御",
+        "status": {
+          "stage": "commit",
+          "text": "英語コメントを除去し日本語のみに整理"
+        },
+        "updatedAt": "20260908"
+      },
       "tool-trail": {
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
@@ -102,15 +102,6 @@
         },
         "updatedAt": "20260901"
       },
-      "verbose-guide": {
-        "path": ".opencode/lib/verbose-guide/guide.ts",
-        "purpose": "冗長な実行コマンドの使用時に静かな呼び出しを案内する事前誘導",
-        "status": {
-          "stage": "commit",
-          "text": "冗長指定の検出と事前誘導をbeforeへ配線"
-        },
-        "updatedAt": "20260904"
-      },
       "yolo-continue": {
         "path": ".opencode/plugin/yolo-continue.ts",
         "purpose": "/workflow yolo後の合意を起点にコミットまで自動継続させる",
@@ -122,6 +113,15 @@
       }
     },
     "agents": {
+      "a11y-auditor": {
+        "path": ".opencode/agent/a11y-auditor.md",
+        "purpose": "UIのアクセシビリティを静的検査で審査する",
+        "status": {
+          "stage": "commit",
+          "text": "静的検査エンジンを新設しレスポンシブ条項を追加"
+        },
+        "updatedAt": "20260910"
+      },
       "agenda-reviewer": {
         "path": ".opencode/agent/agenda-reviewer.md",
         "purpose": "アジェンダのReport/Planを事実と整合性の狭い観点でレビューし所見を返す",
@@ -131,14 +131,41 @@
         },
         "updatedAt": "20260907"
       },
-      "auditor": {
-        "path": ".opencode/agent/auditor.md",
-        "purpose": "コミット前レビューを担う専任サブエージェント",
+      "arch-auditor": {
+        "path": ".opencode/agent/arch-auditor.md",
+        "purpose": "配置・分割・参照構造を将来の軌道で審査する",
         "status": {
           "stage": "commit",
-          "text": "条件付きa11y観点を追加"
+          "text": "配置審査エンジンを新設"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260910"
+      },
+      "doc-auditor": {
+        "path": ".opencode/agent/doc-auditor.md",
+        "purpose": "コードコメントとドキュメントが実挙動と一致するかを審査する",
+        "status": {
+          "stage": "commit",
+          "text": "一致審査エンジンを新設し日本語審査を追加"
+        },
+        "updatedAt": "20260910"
+      },
+      "logic-test-auditor": {
+        "path": ".opencode/agent/logic-test-auditor.md",
+        "purpose": "変更の振る舞い正当性とテストの実質検証を対で審査する",
+        "status": {
+          "stage": "commit",
+          "text": "抑制条項を追加"
+        },
+        "updatedAt": "20260910"
+      },
+      "slop-reviewer": {
+        "path": ".opencode/agent/slop-reviewer.md",
+        "purpose": "コンセプト画像とモック画面のAI臭さを審査する",
+        "status": {
+          "stage": "commit",
+          "text": "bans基準の専任レビュアーを新設"
+        },
+        "updatedAt": "20260910"
       },
       "spike-verifier": {
         "path": ".opencode/agent/spike-verifier.md",
@@ -165,18 +192,18 @@
         "purpose": "作業単位をfeatureスライス単位で確定する。慣習と負債の棚卸しを経てkeep/rebuild発注を提示する",
         "status": {
           "stage": "commit",
-          "text": "Report収集を閉包化"
+          "text": "目配り独立工程を追加"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260910"
       },
       "audit": {
         "path": ".opencode/skills/audit/SKILL.md",
         "purpose": "コミット前の変更をコードレビューする",
         "status": {
           "stage": "commit",
-          "text": "条件付きa11y観点の表記に更新"
+          "text": "エンジン選択制とスキップ記録を追加"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260910"
       },
       "commit": {
         "path": ".opencode/skills/commit/SKILL.md",
@@ -186,6 +213,15 @@
           "text": "sync-config-snapshots言及の除去"
         },
         "updatedAt": "20260904"
+      },
+      "concept": {
+        "path": ".opencode/skills/concept/SKILL.md",
+        "purpose": "コンセプト画像の生成と対話で見た目の方向性を合意しlookへ登録する",
+        "status": {
+          "stage": "commit",
+          "text": "スキル本体と機構と参照を新設し値検証を追加"
+        },
+        "updatedAt": "20260910"
       },
       "conflict": {
         "path": ".opencode/skills/conflict/SKILL.md",
@@ -210,18 +246,18 @@
         "purpose": "OpenRouterの画像生成APIでイラスト/フォト両対応の画像を生成するスキル。generate（muse text-to-image）で下書き生成し、edit（img2img）で再生成（muse）または仕上げ（Nano Banana 2 Liteフォト / Seedream 5.0 Liteイラスト・文字）を行う。各段階で完了可能な決定木フローを持ち、仕上げ前のユーザー確認を必須とする。プロンプト展開・モデル別パラメータ出し分けを持つ",
         "status": {
           "stage": "commit",
-          "text": "refineをeditに改名しmuse img2img再生成を追加、決定木フローとユーザー確認必須化を実装"
+          "text": "値検証ガードを追加"
         },
-        "updatedAt": "20260902"
+        "updatedAt": "20260910"
       },
       "mockup": {
         "path": ".opencode/skills/mockup/SKILL.md",
         "purpose": "静的HTMLモックアップの作成",
         "status": {
           "stage": "commit",
-          "text": "package.json復元・SKILL修正・workbench内gitignore追加"
+          "text": "concepts入力とlook登録とslop呼びとOrient整理を追加"
         },
-        "updatedAt": "20260905"
+        "updatedAt": "20260910"
       },
       "pr": {
         "path": ".opencode/skills/pr/SKILL.md",
@@ -255,27 +291,18 @@
         "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
         "status": {
           "stage": "commit",
-          "text": "候補セット化と契約変更ラベルを追加"
+          "text": "基準を参照化し表を分離"
         },
-        "updatedAt": "20260907"
-      },
-      "visual": {
-        "path": ".opencode/skills/visual/SKILL.md",
-        "purpose": "プロダクトのビジュアル（スタティック＋モーション）を実装する。mockupの成果物を参照して適用可能。look未決定時はmockupへハンズオフ",
-        "status": {
-          "stage": "commit",
-          "text": "audit 指摘8件を修正しコミット"
-        },
-        "updatedAt": "20260901"
+        "updatedAt": "20260910"
       },
       "workflow": {
         "path": ".opencode/skills/workflow/SKILL.md",
         "purpose": "ワークフローオーケストレーター。スラッシュコマンドによるユーザーのみがトリガーし、モデルからは決して呼び出されない。次以降のワークフローを提案し、ユーザー合意を得て実行する。yoloモードでは初期合意後に確認ステップを省略し最後まで走る",
         "status": {
           "stage": "commit",
-          "text": "closing digestにFact還元を追加"
+          "text": "visual系経路をconcept系に置換"
         },
-        "updatedAt": "20260906"
+        "updatedAt": "20260910"
       }
     },
     "docs": {
@@ -302,9 +329,9 @@
         "purpose": "product/metaスナップショットのコンテンツスキーマと方法論",
         "status": {
           "stage": "commit",
-          "text": "why蓄積契約に書き直し"
+          "text": "concepts枠を追加"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260910"
       }
     },
     "scripts": {
@@ -340,9 +367,9 @@
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
           "stage": "commit",
-          "text": "順序定義と整形helperを追加"
+          "text": "LOOK_ORDERにconceptsを連動"
         },
-        "updatedAt": "20260906"
+        "updatedAt": "20260910"
       },
       "event-merge-driver": {
         "path": "events/scripts/merge-driver.mjs",
