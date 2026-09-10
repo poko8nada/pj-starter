@@ -37,9 +37,17 @@ Severity orders the list; recommendation strength lives in the wording. Each eng
    - A split chunk = one work unit's full change set (code + tests + docs) so the engines see the full set
    - Shared libraries form their own chunk when splitting; generated artifacts (`log.jsonl`, `snapshots/`) excluded always — covered by build validation
    - Below the bar, still split when contexts mix; above it, stay whole for a single cohesive unit. The numbers are a guide, not a gate
-4. **Spawn engines in parallel** — per chunk, one Task per engine (`logic-test-auditor`, `doc-auditor`, `a11y-auditor`, `arch-auditor`). Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass: changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests). The `arch-auditor` additionally receives related files (callers, neighbors, directory listing) — it alone may read outside the chunk, only from that list. Engines read the diff file and the files themselves; they do not run git.
+4. **Spawn engines in parallel** — per chunk, select engines first, then one Task per selected engine. Judge only from `git diff --stat` paths and status letters (R/M/A/D); no content reads except the a11y markup grep below. When in doubt, run:
+
+   - `logic-test-auditor`: code files present (docs-only chunks skip)
+   - `doc-auditor`: skip only content-neutral chunks (renames/moves with zero content hunks)
+   - `a11y-auditor`: a UI extension in paths, or markup in added lines (grep); otherwise skip
+   - `arch-auditor`: structural signals (new / delete / rename / cross-dir / shared-lib changes); otherwise skip
+
+   Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass: changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests). The `arch-auditor` additionally receives related files (callers, neighbors, directory listing) — it alone may read outside the chunk, only from that list. Engines read the diff file and the files themselves; they do not run git.
+
 5. **Aggregate** — merge the four flat lists per chunk into one, re-sorted high → med → low.
-6. **Digest** — group findings, add your assessment (clearly valid / needs user judgment / likely false positive), recommend. Fold in unresolved components from step 2.
+6. **Digest** — group findings, add your assessment (clearly valid / needs user judgment / likely false positive), recommend. Fold in unresolved components from step 2. List skipped engines with one reason line each, in a separate block from the merged findings (skips are not findings).
 7. **Present** — show findings + recommendation. Do not fix anything yourself.
 8. **Fix** — implement the fixes the user decided on.
 9. **Re-review** — re-run on the fixes only: the incremental diff is the changes made during the fix round (the files edited since the last review). Delegate ONLY the adopted findings + that diff per engine (via a diff file as in step 4). Each engine verifies resolution, must NOT raise new findings. Loop until OK or the user stops.
