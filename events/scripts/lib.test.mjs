@@ -961,6 +961,7 @@ describe('sortTrees', () => {
       product: {
         look: {
           mockups: {},
+          concepts: {},
           density: { value: 2, label: 'Airy' },
           keywords: ['monochrome'],
           motion: { value: 3, label: 'Standard' },
@@ -968,7 +969,13 @@ describe('sortTrees', () => {
       },
       meta: {},
     });
-    expect(Object.keys(ordered.product.look)).toEqual(['keywords', 'motion', 'density', 'mockups']);
+    expect(Object.keys(ordered.product.look)).toEqual([
+      'keywords',
+      'motion',
+      'density',
+      'concepts',
+      'mockups',
+    ]);
   });
 
   it('puts unknown look keys last and passes non-object look through', () => {
