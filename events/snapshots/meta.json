@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-10T12:29:51.026+09:00",
-  "asOf": "2026-09-10T12:29:50.995+09:00",
+  "generatedAt": "2026-09-10T17:08:14.297+09:00",
+  "asOf": "2026-09-10T17:08:14.266+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -113,6 +113,15 @@
       }
     },
     "agents": {
+      "a11y-auditor": {
+        "path": ".opencode/agent/a11y-auditor.md",
+        "purpose": "UIのアクセシビリティを静的検査で審査する",
+        "status": {
+          "stage": "commit",
+          "text": "静的検査エンジンを新設しレスポンシブ条項を追加"
+        },
+        "updatedAt": "20260910"
+      },
       "agenda-reviewer": {
         "path": ".opencode/agent/agenda-reviewer.md",
         "purpose": "アジェンダのReport/Planを事実と整合性の狭い観点でレビューし所見を返す",
@@ -122,14 +131,32 @@
         },
         "updatedAt": "20260907"
       },
-      "auditor": {
-        "path": ".opencode/agent/auditor.md",
-        "purpose": "コミット前レビューを担う専任サブエージェント",
+      "arch-auditor": {
+        "path": ".opencode/agent/arch-auditor.md",
+        "purpose": "配置・分割・参照構造を将来の軌道で審査する",
         "status": {
           "stage": "commit",
-          "text": "条件付きa11y観点を追加"
+          "text": "配置審査エンジンを新設"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260910"
+      },
+      "doc-auditor": {
+        "path": ".opencode/agent/doc-auditor.md",
+        "purpose": "コードコメントとドキュメントが実挙動と一致するかを審査する",
+        "status": {
+          "stage": "commit",
+          "text": "一致審査エンジンを新設し日本語審査を追加"
+        },
+        "updatedAt": "20260910"
+      },
+      "logic-test-auditor": {
+        "path": ".opencode/agent/logic-test-auditor.md",
+        "purpose": "変更の振る舞い正当性とテストの実質検証を対で審査する",
+        "status": {
+          "stage": "commit",
+          "text": "振る舞いと検証の対審査エンジンを新設"
+        },
+        "updatedAt": "20260910"
       },
       "spike-verifier": {
         "path": ".opencode/agent/spike-verifier.md",
@@ -165,9 +192,9 @@
         "purpose": "コミット前の変更をコードレビューする",
         "status": {
           "stage": "commit",
-          "text": "条件付きa11y観点の表記に更新"
+          "text": "4系統振り分けと共通書式に改訂し旧エンジンを撤去"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260910"
       },
       "commit": {
         "path": ".opencode/skills/commit/SKILL.md",
@@ -183,7 +210,7 @@
         "purpose": "コンセプト画像の生成と対話で見た目の方向性を合意しlookへ登録する",
         "status": {
           "stage": "ready",
-          "text": "計画メモにagenda/refactor参照工程を追加"
+          "text": "計画メモのauditor拡充案を4系統とslop別置きに書き換え"
         },
         "updatedAt": "20260910"
       },
