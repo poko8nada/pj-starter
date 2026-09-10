@@ -4,9 +4,9 @@
 // 使用法:
 //   node edit.mjs --input IMAGE --style <draft|photo|illustration> --prompt "..." [--model M] [--n N] [--resolution R] [--aspect-ratio AR] [--output-format F] [--out DIR]
 // モデルは --style で出し分け:
-//   draft        -> muse-image（安価な再生成、imagegen/tmp/ に保存）
-//   photo        -> Nano Banana 2 Lite（フォト仕上げ、imagegen/ に保存）
-//   illustration -> Seedream 5.0 Lite（イラスト/文字入り仕上げ、imagegen/ に保存）
+//   draft        -> muse-image（安価な再生成、concept/tmp/ に保存）
+//   photo        -> Nano Banana 2 Lite（フォト仕上げ、concept/ に保存）
+//   illustration -> Seedream 5.0 Lite（イラスト/文字入り仕上げ、concept/ に保存）
 
 import process from 'node:process';
 import { buildRefineBody, modelForStyle } from './lib/params.mjs';

@@ -12,8 +12,8 @@ General patterns that can pass through the workflow. Every pattern that includes
 - **Refactor**: refactor → audit → commit — Restructuring existing code
 - **Mockup → implement**: mockup → agenda → implement → audit → commit — Decide look first, then build
 - **Mockup only**: mockup — Create mockup, no implementation
-- **Visual → implement**: visual → agenda → implement → audit → commit — Apply visual design (mockup or direct)
-- **Mockup → visual**: mockup → visual → agenda → implement → audit → commit — Decide look, then apply
+- **Concept → implement**: concept → agenda → implement → audit → commit — Agree look with renders, then build
+- **Concept → mockup → implement**: concept → mockup → agenda → implement → audit → commit — Agree look, freeze in HTML, then build
 
 ### Non-implementation patterns
 

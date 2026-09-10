@@ -71,31 +71,38 @@ If labeling reveals that a component's **definition** (trigger/result/route or p
 
 ### Code labels
 
-| Label                     | Criteria                                                | Diff rule                           |
-| ------------------------- | ------------------------------------------------------- | ----------------------------------- |
-| `duplicate`               | Same/near-same logic in 2+ places                       | Must shrink (or flat)               |
-| `duplicate-with-reason`   | Intentional duplication *                               | Out of scope — keep each            |
-| `dead`                    | Unreachable / unreferenced                              | Must shrink                         |
-| `equivalent-simplifiable` | Provably equivalent rewrite **                          | Must shrink                         |
-| `needs-restructure`       | Bloated, coupled, poorly named, or missing handling     | Free — preserve behavior            |
-| `contract-change`         | Alters a shared shape (snapshot / checkpoint / lib API) | Free — consumers + tests ride along |
+**Compaction**
+
+Shrink-natured. Self-contained; no review engine owns these.
+
+| Label                     | Criteria                          | Diff rule               |
+| ------------------------- | --------------------------------- | ----------------------- |
+| `duplicate`               | Same/near-same logic in 2+ places | Must shrink (or flat)   |
+| `duplicate-with-reason`   | Intentional duplication *         | Out of scope, keep each |
+| `dead`                    | Unreachable / unreferenced        | Must shrink             |
+| `equivalent-simplifiable` | Provably equivalent rewrite **    | Must shrink             |
 
 \* Each instance must function independently in its own context (e.g. subagent frontmatter, per-directory declarations); consolidation would break independence.
 \** E.g. `if x==true: return true else return false` → `return x`.
 
+**Structure**
+
+Structural judgment lives in `arch-auditor.md` — read it before labeling. This skill owns only the diff rules:
+
+- `needs-restructure` → Free (preserve behavior)
+- `contract-change` → Free (consumers + tests ride along)
+
 ### Doc labels
 
-| Label                         | Criteria                                        | Diff rule                     |
-| ----------------------------- | ----------------------------------------------- | ----------------------------- |
-| `redundant-with-code`         | Restates the code (e.g. `// increment i`) *     | Must shrink                   |
-| `duplicated-across-locations` | Same note copy-pasted in multiple places        | Must shrink (consolidate)     |
-| `stale-or-incorrect`          | Non-WHY content contradicts current code        | Free — accuracy only          |
-| `insufficient`                | Non-WHY explanation the reader needs is missing | Free — never delete           |
-| `why-accurate`                | WHY matches current evidence                    | Out of scope — wording only   |
-| `why-stale`                   | WHY contradicts current evidence                | Free — update to evidence     |
-| `why-missing`                 | Decision or complex logic lacks needed WHY      | Free — add only with evidence |
+Doc-behavior judgment lives in `doc-auditor.md` — read it before labeling. This skill owns only the diff rules:
 
-\* Supplementary Japanese comments per `AGENTS.md` are never `redundant-with-code` — even restating ones aid Japanese readers.
+- `redundant-with-code` and `duplicated-across-locations` → Must shrink
+- `stale-or-incorrect` → Free (accuracy only)
+- `insufficient` → Free (never delete)
+- `why-accurate` → out of scope (wording only)
+- `why-stale` / `why-missing` → Free (update / add with evidence)
+
+\* Supplementary Japanese comments are never `redundant-with-code` — even restating ones aid Japanese readers.
 
 ## Step 4: Present the refactor plan (required)
 

@@ -6,7 +6,7 @@ Visual reference sites for aligning agent and user on aesthetic direction. Show,
 
 1. Show, don't ask. Instead of "What style do you want?", show two directions and ask "Which is closer?".
 2. Use comparison tools to toggle between aesthetics.
-3. Once direction is clear, set `motion` and `density` dials.
+3. Once direction is clear, propose starting `motion` and `density` values from `patterns.md` — proposals only, decided after the renders.
 
 ## Japanese Aesthetic
 

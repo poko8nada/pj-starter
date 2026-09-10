@@ -1,6 +1,8 @@
 # Patterns
 
-Dial values and pattern choices for common contexts.
+Starting proposals for direction discussion. Every value below is a proposal, never a constraint — adjust freely with the user and record the agreed numbers to `look` afterwards.
+
+Dial values and pattern choices for common contexts. Typical = the proposal; Range = the sane band.
 
 ## Dashboard
 

@@ -16,6 +16,15 @@ Turn an implementation decision into an agreed plan, then record it. Never imple
 
 ## Procedure
 
+### 0. Reviewers
+
+Audit runs on four engines. Read all four bodies first (`.opencode/agent/*-auditor.md`), then carry the relevant viewpoints into Report and Plan:
+
+- `logic-test-auditor`: behavior and tests as a pair
+- `doc-auditor`: comments and docs vs behavior
+- `a11y-auditor`: static checks where UI markup exists
+- `arch-auditor`: placement and trajectory — hand it callers and neighbors through Files
+
 ### 1. Target
 
 Decide product or meta and pick one or more related target keys in that same domain from snapshots. Product and meta never mix in one agenda — when both are needed, run separate linked agendas.
