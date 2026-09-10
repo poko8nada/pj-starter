@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-10T18:23:36.258+09:00",
-  "asOf": "2026-09-10T18:23:36.223+09:00",
+  "generatedAt": "2026-09-10T21:35:55.572+09:00",
+  "asOf": "2026-09-10T21:35:55.541+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -192,9 +192,9 @@
         "purpose": "作業単位をfeatureスライス単位で確定する。慣習と負債の棚卸しを経てkeep/rebuild発注を提示する",
         "status": {
           "stage": "commit",
-          "text": "Report収集を閉包化"
+          "text": "目配り独立工程を追加"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260910"
       },
       "audit": {
         "path": ".opencode/skills/audit/SKILL.md",
@@ -291,9 +291,9 @@
         "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
         "status": {
           "stage": "commit",
-          "text": "説明とStep4書式を改訂"
+          "text": "基準を参照化し表を分離"
         },
-        "updatedAt": "20260908"
+        "updatedAt": "20260910"
       },
       "visual": {
         "path": ".opencode/skills/visual/SKILL.md",
