@@ -738,3 +738,16 @@
 {"ts":"2026-09-10T21:44:27.711+09:00","type":"set","key":"log.try.a766730f","value":{"tool":"bash","gap":4140,"targets":["grep"]}}
 {"ts":"2026-09-10T21:44:27.792+09:00","type":"set","key":"meta.skills.audit.status","branch":"feature-refactor-mock","value":{"stage":"implement","text":"選択制2オーダー実装し議論待ち"}}
 {"ts":"2026-09-10T21:45:27.657+09:00","type":"set","key":"meta.skills.audit.status","branch":"feature-refactor-mock","value":{"stage":"commit","text":"エンジン選択制とスキップ記録を追加"}}
+{"ts":"2026-09-10T21:54:27.652+09:00","type":"set","key":"meta.skills.visual.status","branch":"feature-refactor-mock","value":{"stage":"ready","text":"登録delとdir撤去へ"}}
+{"ts":"2026-09-10T21:54:27.652+09:00","type":"set","key":"meta.skills.workflow.status","branch":"feature-refactor-mock","value":{"stage":"ready","text":"visual系経路改訂へ"}}
+{"ts":"2026-09-10T21:54:27.652+09:00","type":"set","key":"meta.agents.logic-test-auditor.status","branch":"feature-refactor-mock","value":{"stage":"ready","text":"抑制条項追加へ"}}
+{"ts":"2026-09-10T21:54:34.869+09:00","type":"set","key":"log.try.19f2f170","value":{"tool":"bash","gap":0,"targets":["rm"]}}
+{"ts":"2026-09-10T21:54:34.946+09:00","type":"del","key":"meta.skills.visual","branch":"feature-refactor-mock"}
+{"ts":"2026-09-10T21:54:50.749+09:00","type":"set","key":"log.try.3e62dd6b","value":{"tool":"edit","gap":8459,"targets":[".opencode/skills/workflow/references/patterns.md",".opencode/agent/logic-test-auditor.md"]}}
+{"ts":"2026-09-10T21:54:55.752+09:00","type":"set","key":"log.try.d13d7b02","value":{"tool":"bash","gap":5003,"targets":["test"]}}
+{"ts":"2026-09-10T21:54:55.835+09:00","type":"set","key":"meta.skills.workflow.status","branch":"feature-refactor-mock","value":{"stage":"implement","text":"経路改訂し議論なしyolo"}}
+{"ts":"2026-09-10T21:54:55.835+09:00","type":"set","key":"meta.agents.logic-test-auditor.status","branch":"feature-refactor-mock","value":{"stage":"implement","text":"抑制条項追加しyolo"}}
+{"ts":"2026-09-10T21:55:09.043+09:00","type":"set","key":"log.try.75f75b6a","value":{"tool":"bash","gap":13291,"targets":["git"]}}
+{"ts":"2026-09-10T21:55:16.855+09:00","type":"set","key":"log.try.5c8d3fba","value":{"tool":"task","gap":7786,"targets":["arch-auditor","doc-auditor","doc-auditor"]}}
+{"ts":"2026-09-10T21:56:58.815+09:00","type":"set","key":"meta.skills.workflow.status","branch":"feature-refactor-mock","value":{"stage":"commit","text":"visual系経路をconcept系に置換"}}
+{"ts":"2026-09-10T21:56:58.815+09:00","type":"set","key":"meta.agents.logic-test-auditor.status","branch":"feature-refactor-mock","value":{"stage":"commit","text":"抑制条項を追加"}}

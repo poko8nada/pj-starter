@@ -38,6 +38,11 @@ Judge behavior and its verification as a pair. Exhaust every valid finding in th
 
   Keep to the minimum set that catches regressions. Do not demand tests where the policy says none; do not demand exhaustive coverage beyond the minimum set.
 
+- **Restraint** — Flag animation and density excess without visible justification (severity against `look` is the user's call):
+  - Scroll listeners driving state, `scrollY` in state, `requestAnimationFrame` touching state
+  - Layout transitions without visible state change, unjustified staggered animation
+  - Text-only sections, generic card containers where spacing suffices, cramped padding
+
 Nothing else: docs, style, structure, snapshot conformance — other engines' or automation's job.
 
 ## Output format

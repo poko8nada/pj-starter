@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-10T21:45:27.688+09:00",
-  "asOf": "2026-09-10T21:45:27.657+09:00",
+  "generatedAt": "2026-09-10T21:56:58.862+09:00",
+  "asOf": "2026-09-10T21:56:58.815+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -154,7 +154,7 @@
         "purpose": "変更の振る舞い正当性とテストの実質検証を対で審査する",
         "status": {
           "stage": "commit",
-          "text": "振る舞いと検証の対審査エンジンを新設"
+          "text": "抑制条項を追加"
         },
         "updatedAt": "20260910"
       },
@@ -295,23 +295,14 @@
         },
         "updatedAt": "20260910"
       },
-      "visual": {
-        "path": ".opencode/skills/visual/SKILL.md",
-        "purpose": "プロダクトのビジュアル（スタティック＋モーション）を実装する。mockupの成果物を参照して適用可能。look未決定時はmockupへハンズオフ",
-        "status": {
-          "stage": "commit",
-          "text": "audit 指摘8件を修正しコミット"
-        },
-        "updatedAt": "20260901"
-      },
       "workflow": {
         "path": ".opencode/skills/workflow/SKILL.md",
         "purpose": "ワークフローオーケストレーター。スラッシュコマンドによるユーザーのみがトリガーし、モデルからは決して呼び出されない。次以降のワークフローを提案し、ユーザー合意を得て実行する。yoloモードでは初期合意後に確認ステップを省略し最後まで走る",
         "status": {
           "stage": "commit",
-          "text": "closing digestにFact還元を追加"
+          "text": "visual系経路をconcept系に置換"
         },
-        "updatedAt": "20260906"
+        "updatedAt": "20260910"
       }
     },
     "docs": {
