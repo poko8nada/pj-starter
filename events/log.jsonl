@@ -690,3 +690,10 @@
 {"ts":"2026-09-10T18:13:14.981+09:00","type":"set","key":"meta.docs.schema-spec.status","branch":"feature-refactor-mock","value":{"stage":"commit","text":"concepts枠を追加"}}
 {"ts":"2026-09-10T18:13:14.981+09:00","type":"set","key":"meta.scripts.event-lib.status","branch":"feature-refactor-mock","value":{"stage":"commit","text":"LOOK_ORDERにconceptsを連動"}}
 {"ts":"2026-09-10T18:13:14.981+09:00","type":"set","key":"meta.skills.imagegen.status","branch":"feature-refactor-mock","value":{"stage":"commit","text":"値検証ガードを追加"}}
+{"ts":"2026-09-10T18:21:03.620+09:00","type":"set","key":"meta.skills.mockup.status","branch":"feature-refactor-mock","value":{"stage":"ready","text":"concepts入力とlook登録とslop呼び追加へ"}}
+{"ts":"2026-09-10T18:21:21.903+09:00","type":"set","key":"log.try.254ccb57","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/mockup/SKILL.md",".opencode/skills/mockup/SKILL.md",".opencode/skills/mockup/SKILL.md"]}}
+{"ts":"2026-09-10T18:21:26.116+09:00","type":"set","key":"log.try.7e776b75","value":{"tool":"bash","gap":4213,"targets":["grep"]}}
+{"ts":"2026-09-10T18:21:26.193+09:00","type":"set","key":"meta.skills.mockup.status","branch":"feature-refactor-mock","value":{"stage":"implement","text":"3手順追加し議論待ち"}}
+{"ts":"2026-09-10T18:23:01.832+09:00","type":"set","key":"meta.skills.mockup.status","branch":"feature-refactor-mock","value":{"stage":"implement","text":"Orient表を箇条書きに整理中"}}
+{"ts":"2026-09-10T18:23:07.610+09:00","type":"set","key":"log.try.a2b723d4","value":{"tool":"edit","gap":0,"targets":[".opencode/skills/mockup/SKILL.md"]}}
+{"ts":"2026-09-10T18:23:36.223+09:00","type":"set","key":"meta.skills.mockup.status","branch":"feature-refactor-mock","value":{"stage":"commit","text":"concepts入力とlook登録とslop呼びとOrient整理を追加"}}

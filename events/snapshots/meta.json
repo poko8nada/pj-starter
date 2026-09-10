@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-10T18:13:15.014+09:00",
-  "asOf": "2026-09-10T18:13:14.981+09:00",
+  "generatedAt": "2026-09-10T18:23:36.258+09:00",
+  "asOf": "2026-09-10T18:23:36.223+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -255,9 +255,9 @@
         "purpose": "静的HTMLモックアップの作成",
         "status": {
           "stage": "commit",
-          "text": "package.json復元・SKILL修正・workbench内gitignore追加"
+          "text": "concepts入力とlook登録とslop呼びとOrient整理を追加"
         },
-        "updatedAt": "20260905"
+        "updatedAt": "20260910"
       },
       "pr": {
         "path": ".opencode/skills/pr/SKILL.md",
