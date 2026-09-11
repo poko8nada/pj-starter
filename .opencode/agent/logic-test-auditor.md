@@ -43,7 +43,7 @@ Judge behavior and its verification as a pair. Exhaust every valid finding in th
   | Pure functions               | Unit tests — happy path AND error paths |
   | Boundaries (CLI, shell, I/O) | Boundary tests including failure modes  |
 
-  Keep to the minimum set that catches regressions. Do not demand tests where the policy says none; do not demand exhaustive coverage beyond the minimum set.
+  Keep to the minimum set that catches regressions. Do not demand tests where the policy says none; do not demand exhaustive coverage beyond the minimum set. Flag always-green tests — implementation copies, mock self-verification, type/library re-assurance, duplicates, internals over-dependence, excessive splits. Mental kill check: would breaking the behavior make this test fall — if not, flag it.
 
 - **Restraint** — Flag animation and density excess without visible justification (severity against `look` is the user's call):
   - Scroll listeners driving state, `scrollY` in state, `requestAnimationFrame` touching state

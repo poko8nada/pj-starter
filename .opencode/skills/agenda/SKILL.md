@@ -112,7 +112,15 @@ Domain: <product | meta>
   - <command or behavior proving trigger → result (product) or purpose fulfillment (meta)>
 ```
 
-Test policy: UI / markup → none. Pure functions (fold, validators, formatters) → unit tests for happy path and error paths. Boundaries (CLI, shell, I/O) → boundary tests including failure modes. Keep the minimum set that catches regressions. Tests live next to their source as `*.test.ts` and run via `pnpm test:run`.
+Test policy:
+
+- UI / markup → none.
+- Pure functions (fold, validators, formatters) → unit tests for happy path and error paths.
+- Boundaries (CLI, shell, I/O) → boundary tests including failure modes.
+- Keep the minimum set that catches regressions. Write none of: implementation copies, mock self-verification, type/library re-assurance, duplicates, internals over-dependence, excessive splits.
+- Deletion test: what realistic defect would be missed if deleted — never keep just in case; weigh runtime, flakiness, and fix burden against guarantee value, never count or coverage.
+- Verify survivors by kill check: break the code once and confirm the test falls.
+- Tests live next to their source as `*.test.ts` and run via `pnpm test:run`.
 
 If refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle. Refactor orders verify behavior preservation (existing tests stay green).
 
