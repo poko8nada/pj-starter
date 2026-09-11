@@ -65,7 +65,11 @@ If none of the above yields evidence, do not write a WHY — present it as a can
 
 Before changing anything, classify each candidate block/comment using the tables below. Do not touch anything until it has a label.
 
-While labeling, also identify the **touched components**: match the candidate locations plus their callers and tests against component `path`s in the declared domain's snapshot — `events/snapshots/product.json` for product, `events/snapshots/meta.json` for meta. Locations matching no component are raw code — they have no status to assert. Candidates mapping to the other domain are still handled (the domain is a consultation default, not a hard gate).
+While labeling, also identify the **touched components**:
+
+- Match — match the candidate locations plus their callers and tests against component `path`s in the declared domain's snapshot — `events/snapshots/product.json` for product, `events/snapshots/meta.json` for meta.
+- Raw — locations matching no component are raw code — they have no status to assert.
+- Cross-domain — candidates mapping to the other domain are still handled (the domain is a consultation default, not a hard gate).
 
 If labeling reveals that a component's **definition** (trigger/result/route or purpose) has drifted from reality, do not refactor around it — route to the feature skill for a definition revision, then restart.
 

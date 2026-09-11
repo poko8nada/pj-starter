@@ -19,7 +19,10 @@ Commit failure points: pre-commit hooks (lint / format / typecheck). When a comm
 
 ## Procedure
 
-1. **Append status assertions mechanically** — for every touched component, assert `{"stage":"commit","text":"<今回の変更内容>"}`. No stage-transition judgment: always write `commit`, even when the component was already `commit` (the text is updated). `text` states only what changed this time — no reasons, no progress explanations. Multiple targets share one invocation: `node events/scripts/append-build.mjs --set <key>.status '{"stage":"commit","text":"…"}' --set …` (the wrapper runs the build to refresh snapshots). The log and snapshots are committed alongside the code.
+1. **Append status assertions mechanically** — for every touched component, assert `{"stage":"commit","text":"<今回の変更内容>"}`.
+   - No stage-transition judgment: always write `commit`, even when the component was already `commit` (the text is updated).
+   - `text` states only what changed this time — no reasons, no progress explanations.
+   - Multiple targets share one invocation: `node events/scripts/append-build.mjs --set <key>.status '{"stage":"commit","text":"…"}' --set …` (the wrapper runs the build to refresh snapshots). The log and snapshots are committed alongside the code.
 2. **Check unresolved components** — run `node events/scripts/read.mjs --name meta --unresolved` (and `--name product` as well) and list any unresolved (`ready`/`implement`) components to the user before proposing the message. For each, let the user decide:
    - Implementation is done → it is covered by the status assertions above
    - Not done / no longer wanted → record a withdrawal via `del` or a revert `set` **and re-run `append-build.mjs`** (canonical route) so the withdrawal lands in log and snapshots before committing

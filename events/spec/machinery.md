@@ -10,7 +10,13 @@ The `log` namespace records what the agent tried per tool call — a coarse acti
 - Value shape: `{ "tool": "…", "gap": <non-negative int>, "targets": ["…"] }`; `gap` is the thinking time (ms) since the previous tool call in the same turn; `targets` holds the tool's subject — file paths, commands, queries, URLs, subagent names, skill names, or the MCP tool name itself
 - Monitored tools: `read` / `edit` / `write` / `skill` / `bash` / `websearch` / `webfetch` / `task` and any `mcp_*` tool
 - Semantics: a **try** — the tool was started after the thinking gap; success, failure, and user rejection are not distinguished
-- Recording window: the trail records only within a work unit's implementation window — from the append that starts the work (any append that is not a `stage: commit` assertion) until the closing append (an append asserting `{"stage":"commit",…}`). `git commit` is a backstop that also closes the window. Outside the window (planning before the first append, post-commit turns) nothing is recorded. The window state persists across session boundaries and is initialized from the log's last state event on plugin start (no state event → OFF; a state event without `stage` — plain value or `del` — → ON). The append command itself is a boundary marker and is never recorded. Detection is command-string based: a batch `--file` append whose `stage: commit` lives inside the file is not recognized as closing (the canonical commit route always uses `--set`), and a non-closing append whose `text` literally contains `"stage":"commit"` is treated as closing (not observed in practice)
+- Recording window:
+
+  - Scope — the trail records only within a work unit's implementation window — from the append that starts the work (any append that is not a `stage: commit` assertion) until the closing append (an append asserting `{"stage":"commit",…}`). `git commit` is a backstop that also closes the window.
+  - Outside — outside the window (planning before the first append, post-commit turns) nothing is recorded.
+  - State — the window state persists across session boundaries and is initialized from the log's last state event on plugin start (no state event → OFF; a state event without `stage` — plain value or `del` — → ON). The append command itself is a boundary marker and is never recorded.
+  - Detection limits — detection is command-string based: a batch `--file` append whose `stage: commit` lives inside the file is not recognized as closing (the canonical commit route always uses `--set`), and a non-closing append whose `text` literally contains `"stage":"commit"` is treated as closing (not observed in practice)
+
 - Merging: the emitter keeps the trail merged — consecutive tries of the same tool collapse into one line whose `targets` array grows (the `gap` of the first try is kept). Only `log.try.*` lines are ever rewritten; state events are never touched
 - Fold participation: **none**. `build.mjs` skips these lines and excludes them from `asOf`, so snapshots are untouched by trail volume
 - Compaction: dropped. The checkpoint stores folded trees only, so trail lines vanish from the active log at compaction — history survives in git alone
@@ -27,7 +33,13 @@ Pre-compaction history lives in git — no archive mechanism exists. Because com
 
 ## Merge
 
-Parallel git worktrees merge `events/log.jsonl` with the custom driver `event-merge-driver`: the parent's (incoming) log block first, then the current branch's delta — the lines whose `branch` field matches the current branch — appended at the end, with exact-duplicate lines deduped. Because the delta lands last, the current branch wins on conflicting keys, and deletions are preserved regardless of merge direction. Register per clone with `pnpm setup:merge-driver`. Generated files (`checkpoint.json`, `snapshots/*.json`) keep the current side via the `events-generated` driver and are rebuilt from the merged log with `build.mjs` — never hand-resolved. When both sides compacted, the checkpoint conflicts and needs manual resolution (see the conflict skill).
+Parallel git worktrees merge `events/log.jsonl` with the custom driver `event-merge-driver`:
+
+- Order — the parent's (incoming) log block first, then the current branch's delta — the lines whose `branch` field matches the current branch — appended at the end, with exact-duplicate lines deduped.
+- Outcome — because the delta lands last, the current branch wins on conflicting keys, and deletions are preserved regardless of merge direction.
+- Setup — register per clone with `pnpm setup:merge-driver`.
+- Generated files — generated files (`checkpoint.json`, `snapshots/*.json`) keep the current side via the `events-generated` driver and are rebuilt from the merged log with `build.mjs` — never hand-resolved.
+- Exception — when both sides compacted, the checkpoint conflicts and needs manual resolution (see the conflict skill).
 
 ## Rebuild rules
 

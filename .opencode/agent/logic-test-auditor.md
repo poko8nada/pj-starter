@@ -28,7 +28,13 @@ Read files within the chunk as needed. Do not run git — the diff is provided. 
 Judge behavior and its verification as a pair. Exhaust every valid finding in this first review — do not hold any back for later rounds; re-review verifies fixes only and will not accept new findings:
 
 - **Behavior** — Does the code do what it claims? Boundary conditions, empty states, error paths, error swallowing.
-- **Affordance-Behavior gap** — Does implemented behavior fulfill what the UI promises? An interactive affordance (`button`, `a`, `input`, `select`, `textarea`, `form`, `role="button"`) without its corresponding behavior (handler, `href`, submit, navigation, state change) in the same chunk is `high`. Basis is limited to the work-unit definition (`result` / `route`), markup semantics, or agenda Orders — never speculate. A `// DEFERRED(<target-id>): <reason>` comment (doc-auditor convention) exempts the gap. Static reading only; the UI no-test policy below is unchanged.
+- **Affordance-Behavior gap** — Does implemented behavior fulfill what the UI promises?
+
+  - Scope — an interactive affordance (`button`, `a`, `input`, `select`, `textarea`, `form`, `role="button"`) without its corresponding behavior (handler, `href`, submit, navigation, state change) in the same chunk is `high`.
+  - Basis — limited to the work-unit definition (`result` / `route`), markup semantics, or agenda Orders — never speculate.
+  - Exemption — a `// DEFERRED(<target-id>): <reason>` comment (doc-auditor convention) exempts the gap.
+  - Reading — static reading only; the UI no-test policy below is unchanged.
+
 - **Tests** — Do the tests verify behavior substantively per the agreed test policy?
 
   | Target                       | Policy                                  |

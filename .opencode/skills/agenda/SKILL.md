@@ -69,7 +69,12 @@ The approved report is the premise for step 3. Files outside it stay untouched u
 Goal: decide what rides on the conventions and what must break for the debt, as concrete orders.
 
 1. For each file in the approved report, mark `keep` (rides on the conventions, adds no debt) or `rebuild` (must break to address a Debt item, citing which one).
-2. Write minimal orders in the format below. Each order is independently verifiable; `Depends on` references earlier numbers only. Every `rebuild` traces to a Debt item and every `keep` rides on a stated Convention. A Debt item with no order needs a defer-with-reason recorded in `## Debt`, never a silent drop. Creation orders with no existing code ride on the snapshot definition (trigger / result / route or purpose) with Conventions / Debt as `none (with reason)`.
+2. Write minimal orders in the format below.
+
+   - Verifiability — each order is independently verifiable; `Depends on` references earlier numbers only.
+   - Traceability — every `rebuild` traces to a Debt item and every `keep` rides on a stated Convention. A Debt item with no order needs a defer-with-reason recorded in `## Debt`, never a silent drop.
+   - Creation orders — creation orders with no existing code ride on the snapshot definition (trigger / result / route or purpose) with Conventions / Debt as `none (with reason)`.
+
 3. Spawn `agenda-reviewer` in `plan` mode (consistency only — narrow check). Fold every finding the same way, then present the **complete, updated plan in the format below** — never a delta or a summary — together with the reviewer findings and their disposition. Iterate until explicit agreement; re-present the full plan every round.
 
 ```markdown
