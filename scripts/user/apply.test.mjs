@@ -332,6 +332,24 @@ describe('apply.mjs の一方向ミラー', () => {
     expect(read(path.join(project, 'keep.txt'))).toBe('project keep');
   });
 
+  it('github 単位は pullfrog.yml のみ運び、別ワークフローは無視する', () => {
+    const project = makeProject();
+    const starter = makeStarter();
+    write(path.join(starter, '.github', 'workflows', 'pullfrog.yml'), 'starter pullfrog\n');
+    write(path.join(starter, '.github', 'workflows', 'starter-only.yml'), 'starter only\n');
+    write(path.join(project, '.github', 'workflows', 'other.yml'), 'project other\n');
+
+    const result = runApply(project, starter, ['--run']);
+
+    expect(result.status).toBe(0);
+    expect(read(path.join(project, '.github', 'workflows', 'pullfrog.yml'))).toBe(
+      'starter pullfrog\n',
+    );
+    // allowlist 外は運ばれず、適用先の別物も消えない
+    expect(exists(path.join(project, '.github', 'workflows', 'starter-only.yml'))).toBe(false);
+    expect(read(path.join(project, '.github', 'workflows', 'other.yml'))).toBe('project other\n');
+  });
+
   it('存在しないスターターパスは失敗する', () => {
     const project = makeProject();
     const result = runApply(project, '/tmp/definitely-not-exist-12345');
@@ -412,6 +430,7 @@ describe('グループ定義の等価性', () => {
       'events',
       'docs',
       'lint',
+      'github',
     ]);
 
     // scripts 群は new 関連を除外する

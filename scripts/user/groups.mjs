@@ -55,7 +55,7 @@ export const GROUPS = [
     files: ['AGENTS.md', 'lefthook.yaml', '.gitattributes'],
     tools: ['apply', 'new'],
   },
-  // lint は両ツールで使う。以降は new のみ（新規立ち上げで運ぶ）。apply の更新配布には含めない
+  // lint・github は両ツールで使う
   {
     id: 'lint',
     label: 'lint',
@@ -63,6 +63,15 @@ export const GROUPS = [
     files: ['.oxlintrc.json', '.oxfmtrc.json'],
     tools: ['apply', 'new'],
   },
+  // pullfrog.yml だけを運ぶ（他プロジェクトの別ワークフローは無視する）。apply/new 共通
+  {
+    id: 'github',
+    label: 'github',
+    paths: ['.github'],
+    files: ['workflows/pullfrog.yml'],
+    tools: ['apply', 'new'],
+  },
+  // 以降は new のみ（新規立ち上げで運ぶ）。apply の更新配布には含めない
   {
     id: 'node',
     label: 'node',

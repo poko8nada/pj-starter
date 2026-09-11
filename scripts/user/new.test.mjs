@@ -312,6 +312,42 @@ describe('new.mjs の scaffold 複写', () => {
       ),
     ).toBe(false);
   });
+
+  it('github 群は pullfrog.yml のみ運び、別ワークフローは運ばない', () => {
+    const starter = makeFullStarter();
+    const script = path.join(starter, 'scripts', 'user', 'new.mjs');
+    const parent = makeParent();
+    const target = path.join(parent, 'proj');
+    const write = (rel, content) => {
+      const file = path.join(starter, rel);
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      fs.writeFileSync(file, content);
+    };
+    write('.github/workflows/pullfrog.yml', 'starter pullfrog\n');
+    write('.github/workflows/other.yml', 'starter other\n');
+
+    const result = runNew(
+      [
+        '--in',
+        parent,
+        'proj',
+        '--run',
+        '--skip-readme',
+        '--skip-git',
+        '--skip-install',
+        '--skip-events',
+        '--skip-build',
+      ],
+      {},
+      script,
+    );
+
+    expect(result.status).toBe(0);
+    expect(fs.readFileSync(path.join(target, '.github', 'workflows', 'pullfrog.yml'), 'utf8')).toBe(
+      'starter pullfrog\n',
+    );
+    expect(fs.existsSync(path.join(target, '.github', 'workflows', 'other.yml'))).toBe(false);
+  });
 });
 
 describe('new.mjs の仕上げ工程', () => {
