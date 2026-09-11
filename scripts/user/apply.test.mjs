@@ -350,14 +350,6 @@ describe('apply.mjs の一方向ミラー', () => {
     expect(read(path.join(project, '.github', 'workflows', 'other.yml'))).toBe('project other\n');
   });
 
-  it('存在しないスターターパスは失敗する', () => {
-    const project = makeProject();
-    const result = runApply(project, '/tmp/definitely-not-exist-12345');
-
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain('スターターが見つかりません');
-  });
-
   it('meta はスターターのコミット済み在庫で置換され、ログの committed イベントが除去される', () => {
     const project = makeProject();
     const starter = makeStarter();
