@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-11T17:32:21.654+09:00",
-  "asOf": "2026-09-11T17:32:21.620+09:00",
+  "generatedAt": "2026-09-11T18:16:03.968+09:00",
+  "asOf": "2026-09-11T18:16:03.930+09:00",
   "content": {
     "meta.agents.a11y-auditor": {
       "20260910T145842504": {
@@ -56,6 +56,11 @@
     "meta.harness.pullfrog": {
       "20260911T173221620": {
         "why": "ファイルだけ運んでも定義が在庫に載らず片肺になるため"
+      }
+    },
+    "meta.harness.quality-gate": {
+      "20260911T181603930": {
+        "why": "pre-commit素通りの穴とpush時保証の欠如を塞ぐため"
       }
     },
     "meta.harness.quiet-policy": {

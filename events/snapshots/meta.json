@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-11T17:52:06.168+09:00",
-  "asOf": "2026-09-11T17:52:06.135+09:00",
+  "generatedAt": "2026-09-11T18:18:15.717+09:00",
+  "asOf": "2026-09-11T18:18:15.679+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -68,12 +68,12 @@
       },
       "quality-gate": {
         "path": "lefthook.yaml",
-        "purpose": "コミット時のformat/lint/typecheck強制",
+        "purpose": "コミット時とプッシュ時のformat/lint/typecheck/test強制",
         "status": {
           "stage": "commit",
-          "text": "sync-config jobの除去"
+          "text": "pre-commit relatedとpre-push全体テストを組み込み"
         },
-        "updatedAt": "20260904"
+        "updatedAt": "20260911"
       },
       "quiet-defaults": {
         "path": "vitest.config.ts",

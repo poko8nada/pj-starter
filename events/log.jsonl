@@ -953,3 +953,22 @@
 {"ts":"2026-09-11T17:50:52.422+09:00","type":"set","key":"log.try.d61dca97","value":{"tool":"task","gap":6081,"targets":["logic-test-auditor","doc-auditor","arch-auditor"]}}
 {"ts":"2026-09-11T17:52:06.135+09:00","type":"set","key":"meta.scripts.user-apply.status","branch":"develop","value":{"stage":"commit","text":"除外判定を共有化し配置を対称化"}}
 {"ts":"2026-09-11T17:52:06.135+09:00","type":"set","key":"meta.scripts.user-new.status","branch":"develop","value":{"stage":"commit","text":"scaffoldを切り出し配置を対称化"}}
+{"ts":"2026-09-11T18:15:35.623+09:00","type":"set","key":"meta.harness.quality-gate.status","branch":"develop","value":{"stage":"ready","text":"pre-commit relatedとpre-push全体テストの計画が確定"}}
+{"ts":"2026-09-11T18:15:35.800+09:00","type":"set","key":"meta.harness.quality-gate.status","branch":"develop","value":{"stage":"implement","text":"lefthookへのテスト組み込みを実施中"}}
+{"ts":"2026-09-11T18:15:40.892+09:00","type":"set","key":"log.try.b2ca299c","value":{"tool":"edit","gap":0,"targets":["lefthook.yaml","package.json"]}}
+{"ts":"2026-09-11T18:15:43.890+09:00","type":"set","key":"log.try.61bc0867","value":{"tool":"bash","gap":2998,"targets":["pnpm"]}}
+{"ts":"2026-09-11T18:15:48.287+09:00","type":"set","key":"log.try.97914958","value":{"tool":"edit","gap":4397,"targets":["lefthook.yaml"]}}
+{"ts":"2026-09-11T18:15:50.855+09:00","type":"set","key":"log.try.2042577b","value":{"tool":"bash","gap":2568,"targets":["pnpm"]}}
+{"ts":"2026-09-11T18:15:55.522+09:00","type":"set","key":"log.try.1d0afae4","value":{"tool":"read","gap":4663,"targets":["README.md","README.ja.md"]}}
+{"ts":"2026-09-11T18:15:59.028+09:00","type":"set","key":"log.try.050b94ea","value":{"tool":"edit","gap":3501,"targets":["README.md","README.ja.md"]}}
+{"ts":"2026-09-11T18:16:03.930+09:00","type":"set","key":"meta.harness.quality-gate","branch":"develop","value":{"path":"lefthook.yaml","purpose":"コミット時とプッシュ時のformat/lint/typecheck/test強制","why":{"20260911T181603930":{"why":"pre-commit素通りの穴とpush時保証の欠如を塞ぐため"}}}}
+{"ts":"2026-09-11T18:16:03.930+09:00","type":"set","key":"meta.harness.quality-gate.why.20260911T181603930","branch":"develop","value":{"why":"pre-commit素通りの穴とpush時保証の欠如を塞ぐため"}}
+{"ts":"2026-09-11T18:16:08.904+09:00","type":"set","key":"log.try.325eba1b","value":{"tool":"bash","gap":9876,"targets":["git"]}}
+{"ts":"2026-09-11T18:16:14.944+09:00","type":"set","key":"meta.harness.quality-gate.status","branch":"develop","value":{"stage":"implement","text":"lefthookへのテスト組み込みを実施中"}}
+{"ts":"2026-09-11T18:16:19.192+09:00","type":"set","key":"log.try.764fe487","value":{"tool":"bash","gap":10288,"targets":["git"]}}
+{"ts":"2026-09-11T18:16:22.777+09:00","type":"set","key":"log.try.503d631d","value":{"tool":"task","gap":3585,"targets":["doc-auditor"]}}
+{"ts":"2026-09-11T18:17:32.120+09:00","type":"set","key":"log.try.83f38d20","value":{"tool":"read","gap":0,"targets":["README.md","README.ja.md"]}}
+{"ts":"2026-09-11T18:17:39.958+09:00","type":"set","key":"log.try.9d3828af","value":{"tool":"edit","gap":7827,"targets":["README.md","README.ja.md","README.md","README.ja.md"]}}
+{"ts":"2026-09-11T18:17:58.895+09:00","type":"set","key":"log.try.f8c6f31d","value":{"tool":"bash","gap":3427,"targets":["pnpm","pnpm","git","pnpm"]}}
+{"ts":"2026-09-11T18:18:02.930+09:00","type":"set","key":"log.try.0de0c11c","value":{"tool":"task","gap":4035,"targets":["doc-auditor"]}}
+{"ts":"2026-09-11T18:18:15.679+09:00","type":"set","key":"meta.harness.quality-gate.status","branch":"develop","value":{"stage":"commit","text":"pre-commit relatedとpre-push全体テストを組み込み"}}

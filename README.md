@@ -12,7 +12,7 @@ A project starter for product-driven development — copy it and replace the pro
 
 This repository is a starting point for projects whose state is driven by an event log: the product definition (name, stack, features, roadmap) lives under [events/](./events/README.md) as append-only facts, and documents like this README are derived from them rather than hand-maintained.
 
-Copy the whole starter into a new project, then overwrite the bundled product definition with your own. A pre-commit quality gate (format / lint / typecheck via lefthook) is already wired up.
+Copy the whole starter into a new project, then overwrite the bundled product definition with your own. A quality gate via lefthook is already wired up (format / lint / typecheck / related tests on pre-commit, full typecheck / test suite on pre-push).
 
 ## Install
 
@@ -27,12 +27,13 @@ Git hooks are installed automatically by the `prepare` script.
 Run the quality gate:
 
 ```bash
+pnpm format --check
 pnpm lint
 pnpm typecheck
 pnpm test:run
 ```
 
-All three should pass on a fresh checkout.
+All four should pass on a fresh checkout.
 
 Read the current product definition — the core loop of the driving system:
 
