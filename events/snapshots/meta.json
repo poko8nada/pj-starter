@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-11T18:40:59.365+09:00",
-  "asOf": "2026-09-11T18:40:59.328+09:00",
+  "generatedAt": "2026-09-11T22:42:08.742+09:00",
+  "asOf": "2026-09-11T22:42:08.710+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -246,7 +246,7 @@
         "purpose": "featureとコンポーネントの登録・分割・定義改訂",
         "status": {
           "stage": "commit",
-          "text": "reference形式に作り直し"
+          "text": "completenessの表組み替え"
         },
         "updatedAt": "20260911"
       },
