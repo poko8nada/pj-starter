@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-11T10:31:38.146+09:00",
-  "asOf": "2026-09-11T10:31:38.110+09:00",
+  "generatedAt": "2026-09-11T13:37:59.512+09:00",
+  "asOf": "2026-09-11T13:37:59.476+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -127,9 +127,9 @@
         "purpose": "アジェンダのReport/Planを事実と整合性の狭い観点でレビューし所見を返す",
         "status": {
           "stage": "commit",
-          "text": "欠落指摘を許可"
+          "text": "route被覆＋読み／出力拡張を追加"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260911"
       },
       "arch-auditor": {
         "path": ".opencode/agent/arch-auditor.md",
@@ -145,18 +145,18 @@
         "purpose": "コードコメントとドキュメントが実挙動と一致するかを審査する",
         "status": {
           "stage": "commit",
-          "text": "一致審査エンジンを新設し日本語審査を追加"
+          "text": "DEFERRED規約を追加"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       },
       "logic-test-auditor": {
         "path": ".opencode/agent/logic-test-auditor.md",
         "purpose": "変更の振る舞い正当性とテストの実質検証を対で審査する",
         "status": {
           "stage": "commit",
-          "text": "抑制条項を追加"
+          "text": "Affordance-Behaviorギャップ検査を追加"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       },
       "slop-reviewer": {
         "path": ".opencode/agent/slop-reviewer.md",

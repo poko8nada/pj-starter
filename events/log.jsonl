@@ -799,3 +799,15 @@
 {"ts":"2026-09-11T10:31:38.110+09:00","type":"set","key":"meta.skills.commit.status","branch":"develop","value":{"stage":"commit","text":"手順番号を修正"}}
 {"ts":"2026-09-11T10:31:38.110+09:00","type":"set","key":"meta.skills.feature.status","branch":"develop","value":{"stage":"commit","text":"重複文を参照化"}}
 {"ts":"2026-09-11T10:31:38.110+09:00","type":"set","key":"meta.skills.agenda.status","branch":"develop","value":{"stage":"commit","text":"重複文を参照化"}}
+{"ts":"2026-09-11T13:35:07.229+09:00","type":"set","key":"meta.agents.logic-test-auditor.status","branch":"develop","value":{"stage":"ready","text":"Affordance-Behaviorギャップ検査追加待ち"}}
+{"ts":"2026-09-11T13:35:07.229+09:00","type":"set","key":"meta.agents.doc-auditor.status","branch":"develop","value":{"stage":"ready","text":"DEFERRED規約追加待ち"}}
+{"ts":"2026-09-11T13:35:07.229+09:00","type":"set","key":"meta.agents.agenda-reviewer.status","branch":"develop","value":{"stage":"ready","text":"route被覆＋読み／出力拡張待ち"}}
+{"ts":"2026-09-11T13:35:07.229+09:00","type":"set","key":"meta.agents.logic-test-auditor.why.20260911T133507229","branch":"develop","value":{"why":"骨組みだけ・表面だけの素通りを防ぐため"}}
+{"ts":"2026-09-11T13:35:07.229+09:00","type":"set","key":"meta.agents.doc-auditor.why.20260911T133507229","branch":"develop","value":{"why":"合意なき欠落と意図的後回しを区別するため"}}
+{"ts":"2026-09-11T13:35:07.229+09:00","type":"set","key":"meta.agents.agenda-reviewer.why.20260911T133507229","branch":"develop","value":{"why":"欠落系指摘を書ける関所にするため"}}
+{"ts":"2026-09-11T13:35:43.399+09:00","type":"set","key":"log.try.7e32411c","value":{"tool":"edit","gap":0,"targets":[".opencode/agent/doc-auditor.md",".opencode/agent/logic-test-auditor.md",".opencode/agent/agenda-reviewer.md",".opencode/agent/agenda-reviewer.md",".opencode/agent/agenda-reviewer.md"]}}
+{"ts":"2026-09-11T13:35:48.647+09:00","type":"set","key":"log.try.56afb84b","value":{"tool":"bash","gap":2298,"targets":["rg","git"]}}
+{"ts":"2026-09-11T13:37:52.848+09:00","type":"set","key":"log.try.b57138a7","value":{"tool":"skill","gap":0,"targets":["commit"]}}
+{"ts":"2026-09-11T13:37:59.476+09:00","type":"set","key":"meta.agents.logic-test-auditor.status","branch":"develop","value":{"stage":"commit","text":"Affordance-Behaviorギャップ検査を追加"}}
+{"ts":"2026-09-11T13:37:59.476+09:00","type":"set","key":"meta.agents.doc-auditor.status","branch":"develop","value":{"stage":"commit","text":"DEFERRED規約を追加"}}
+{"ts":"2026-09-11T13:37:59.476+09:00","type":"set","key":"meta.agents.agenda-reviewer.status","branch":"develop","value":{"stage":"commit","text":"route被覆＋読み／出力拡張を追加"}}
