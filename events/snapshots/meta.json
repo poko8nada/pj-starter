@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-11T14:11:40.462+09:00",
-  "asOf": "2026-09-11T14:11:40.430+09:00",
+  "generatedAt": "2026-09-11T14:22:06.295+09:00",
+  "asOf": "2026-09-11T14:22:06.260+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -237,7 +237,7 @@
         "purpose": "featureとコンポーネントの登録・分割・定義改訂",
         "status": {
           "stage": "commit",
-          "text": "重複文を参照化"
+          "text": "登録手順に値の言語規則を明記"
         },
         "updatedAt": "20260911"
       },
@@ -329,9 +329,9 @@
         "purpose": "product/metaスナップショットのコンテンツスキーマと方法論",
         "status": {
           "stage": "commit",
-          "text": "concepts枠を追加"
+          "text": "値の言語規則を追加しtrigger/result用例を日本語化"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       }
     },
     "scripts": {

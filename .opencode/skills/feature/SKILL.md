@@ -19,7 +19,7 @@ When a discussion settles on something new:
 
 1. **Domain** — product feature or meta component.
 2. **Draft the full definition** — nothing partial enters the log:
-   - Product: `{trigger, result, route}` with **at most 3 route steps**
+   - Product: `{trigger, result, route}` with **at most 3 route steps** — write `trigger` and `result` in Japanese (route step IDs stay English)
    - Meta: `{purpose}` (+ `path` once it exists)
 3. **Size check** — one working session must carry it `ready → commit`. If obviously larger, propose a split instead (see Splitting).
 4. **Append** — one invocation carries both sets: `set <key> '<full definition>'` and `set <key>.status '{"stage":"planned","text":"未着手"}'`. The explicit assertion is the canonical route in both namespaces; rebuild's injection is only a product-side backstop.

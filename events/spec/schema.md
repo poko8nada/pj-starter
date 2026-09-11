@@ -4,6 +4,10 @@ This document defines the content schemas of the snapshots: what every `product.
 
 The shared node model — fact sections vs work units, `status` shapes, the stage vocabulary, whole-status assertions, validation — is specified once in [../README.md](../README.md#recording-contract) (Recording contract) and is not redefined here; the entries below reference it rather than repeating it. Log format, compaction, and rebuild mechanics also live there.
 
+## Value language
+
+Prose values that a person reads are written in Japanese: `trigger`, `result`, `purpose`, `status.text`, and `why`. Identifiers, enums, and proper nouns stay English/technical: `route` step IDs, `stack` technology names, `look.keywords` tags, and all object keys. This mirrors [AGENTS.md](../../AGENTS.md) (user-facing Japanese, agent-facing English).
+
 ## product
 
 `product.*` describes the artifacts the project produces. The second segment is fixed to these seven sections:
@@ -69,8 +73,8 @@ A feature is a **vertical slice**: the smallest unit that independently complete
 ```json
 {
   "contact_form": {
-    "trigger": "User fills the contact form and presses submit",
-    "result": "A completion message is shown and the operator is notified",
+    "trigger": "ユーザーが問い合わせフォームに入力して送信する",
+    "result": "完了メッセージが表示され、運用担当者に通知される",
     "route": [
       "form_input",
       "validation",
@@ -104,10 +108,10 @@ Ask: _can this unit be described as "X happens → Y results" while standing on 
 
 **trigger** — the initiating cause. All of these are valid forms:
 
-- Active operation: "User submits the contact form"
-- Passive arrival: "Visitor scrolls to the pricing section", "Top page is requested"
-- Programmatic invocation: "The function returned by `debounce(fn, wait)` is called multiple times"
-- Compile-time application: "`PickPartial<T, K>` is applied to type T"
+- Active operation: 「ユーザーが問い合わせフォームを送信する」
+- Passive arrival: 「訪問者が料金セクションまでスクロールする」「トップページがリクエストされる」
+- Programmatic invocation: 「`debounce(fn, wait)` が返した関数が複数回呼ばれる」
+- Compile-time application: 「型 `T` に `PickPartial<T, K>` が適用される」
 
 For type-level APIs, generalize trigger/result from runtime causality to input/output correspondence instead of forcing runtime wording.
 
@@ -134,13 +138,13 @@ Content website (passive triggers dominate):
 
 ```json
 "hero_section": {
-  "trigger": "Visitor opens the top page",
-  "result": "Value proposition and CTA button are displayed",
+  "trigger": "訪問者がトップページを開く",
+  "result": "価値提案と CTA ボタンが表示される",
   "route": ["hero_copy", "hero_visual", "cta_button"]
 },
 "testimonials_section": {
-  "trigger": "Visitor scrolls to the testimonials section",
-  "result": "Client logos and quotes are displayed",
+  "trigger": "訪問者がお客様の声セクションまでスクロールする",
+  "result": "クライアントのロゴと引用が表示される",
   "route": ["testimonial_cards", "logo_grid"]
 }
 ```
@@ -149,8 +153,8 @@ Web application (active trigger, long route):
 
 ```json
 "contact_form": {
-  "trigger": "User fills the contact form and presses submit",
-  "result": "A completion message is shown and the operator is notified",
+  "trigger": "ユーザーが問い合わせフォームに入力して送信する",
+  "result": "完了メッセージが表示され、運用担当者に通知される",
   "route": ["form_input", "validation", "submit_handler", "notification_dispatch", "thanks_message"]
 }
 ```
@@ -159,13 +163,13 @@ Backend-only library (function signatures map directly):
 
 ```json
 "debounce": {
-  "trigger": "The function returned by debounce(fn, wait) is called multiple times",
-  "result": "fn runs exactly once after calls have stopped for wait",
+  "trigger": "`debounce(fn, wait)` が返した関数が複数回呼ばれる",
+  "result": "呼び出しが wait の間止まった後、fn がちょうど1回実行される",
   "route": ["timer_reset", "timer_schedule", "invoke"]
 },
 "array_group_by": {
-  "trigger": "groupBy(array, iteratee) is called",
-  "result": "An object keyed by iteratee's return values is returned",
+  "trigger": "`groupBy(array, iteratee)` が呼ばれる",
+  "result": "iteratee の戻り値をキーにしたオブジェクトが返される",
   "route": ["iteratee", "key_extraction", "bucket_assign"]
 }
 ```
@@ -174,8 +178,8 @@ Type-level API:
 
 ```json
 "pick_partial_type": {
-  "trigger": "PickPartial<T, K> is applied to type T",
-  "result": "A type with only the properties in K made optional is produced",
+  "trigger": "型 `T` に `PickPartial<T, K>` が適用される",
+  "result": "`K` のプロパティだけを optional にした型が生成される",
   "route": ["key_filter", "optional_mapping"]
 }
 ```
@@ -183,8 +187,8 @@ Type-level API:
 Stateful API pair (split, do not merge):
 
 ```json
-"register_listener": { "trigger": "on('event', cb) is called", "result": "cb is registered as a listener", "route": ["listener_store"] },
-"emit_event":        { "trigger": "emit('event') is called",           "result": "All registered callbacks run",          "route": ["listener_lookup", "invoke_all"] }
+"register_listener": { "trigger": "`on('event', cb)` が呼ばれる", "result": "cb がリスナーとして登録される", "route": ["listener_store"] },
+"emit_event":        { "trigger": "`emit('event')` が呼ばれる",  "result": "登録済みのコールバックがすべて実行される", "route": ["listener_lookup", "invoke_all"] }
 ```
 
 #### Reading slices
@@ -255,7 +259,7 @@ Every component leaf carries a `purpose`; that field marks the object as a meta 
 {
   "agenda": {
     "path": ".opencode/skills/agenda/SKILL.md",
-    "purpose": "Fix the unit of work per feature slice",
+    "purpose": "作業単位を feature スライス単位で確定する",
     "status": { "stage": "commit", "text": "…" },
     "updatedAt": "20260825"
   }

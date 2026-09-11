@@ -837,3 +837,16 @@
 {"ts":"2026-09-11T14:11:09.632+09:00","type":"set","key":"log.try.374c1c73","value":{"tool":"read","gap":102456,"targets":[".opencode/skills/commit/SKILL.md","lefthook.yaml"]}}
 {"ts":"2026-09-11T14:11:40.430+09:00","type":"set","key":"meta.agents.agenda-reviewer.status","branch":"develop","value":{"stage":"commit","text":"出力をseverity順の平坦形式へ統一"}}
 {"ts":"2026-09-11T14:11:40.430+09:00","type":"set","key":"meta.skills.agenda.status","branch":"develop","value":{"stage":"commit","text":"reviewer後のフル再提示を必須化"}}
+{"ts":"2026-09-11T14:19:17.104+09:00","type":"set","key":"meta.docs.schema-spec.status","branch":"develop","value":{"stage":"ready","text":"値の言語規則を追加し用例を日本語化する計画が確定。実装待ち"}}
+{"ts":"2026-09-11T14:19:17.104+09:00","type":"set","key":"meta.docs.schema-spec.why.20260911T141917104","branch":"develop","value":{"why":"trigger/resultの用例が英語で、登録される値も英語に引きずられるため"}}
+{"ts":"2026-09-11T14:19:17.104+09:00","type":"set","key":"meta.skills.feature.status","branch":"develop","value":{"stage":"ready","text":"登録手順に値の言語規則を明記する計画が確定。実装待ち"}}
+{"ts":"2026-09-11T14:19:17.104+09:00","type":"set","key":"meta.skills.feature.why.20260911T141917104","branch":"develop","value":{"why":"登録時に言語規則がなく、値の言語が場当たりになるため"}}
+{"ts":"2026-09-11T14:19:59.862+09:00","type":"set","key":"log.try.cd45c00f","value":{"tool":"edit","gap":0,"targets":["events/spec/schema.md","events/spec/schema.md","events/spec/schema.md","events/spec/schema.md","events/spec/schema.md","events/spec/schema.md","events/spec/schema.md","events/spec/schema.md","events/spec/schema.md",".opencode/skills/feature/SKILL.md"]}}
+{"ts":"2026-09-11T14:20:03.401+09:00","type":"set","key":"log.try.56cf142c","value":{"tool":"bash","gap":3538,"targets":["rg"]}}
+{"ts":"2026-09-11T14:20:07.896+09:00","type":"set","key":"meta.docs.schema-spec.status","branch":"develop","value":{"stage":"implement","text":"値の言語規則を追加しtrigger/result用例を日本語化"}}
+{"ts":"2026-09-11T14:20:07.896+09:00","type":"set","key":"meta.skills.feature.status","branch":"develop","value":{"stage":"implement","text":"登録手順に値の言語規則を明記"}}
+{"ts":"2026-09-11T14:20:08.025+09:00","type":"set","key":"log.try.c7e6e8ac","value":{"tool":"bash","gap":4624,"targets":["pnpm"]}}
+{"ts":"2026-09-11T14:20:29.554+09:00","type":"set","key":"log.try.0734684a","value":{"tool":"bash","gap":0,"targets":["git"]}}
+{"ts":"2026-09-11T14:20:33.983+09:00","type":"set","key":"log.try.4dca3e20","value":{"tool":"task","gap":4429,"targets":["doc-auditor"]}}
+{"ts":"2026-09-11T14:22:06.260+09:00","type":"set","key":"meta.docs.schema-spec.status","branch":"develop","value":{"stage":"commit","text":"値の言語規則を追加しtrigger/result用例を日本語化"}}
+{"ts":"2026-09-11T14:22:06.260+09:00","type":"set","key":"meta.skills.feature.status","branch":"develop","value":{"stage":"commit","text":"登録手順に値の言語規則を明記"}}
