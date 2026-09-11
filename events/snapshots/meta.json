@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-10T21:56:58.862+09:00",
-  "asOf": "2026-09-10T21:56:58.815+09:00",
+  "generatedAt": "2026-09-11T14:41:05.103+09:00",
+  "asOf": "2026-09-11T14:41:05.071+09:00",
   "content": {
     "harness": {
       "compact-guard": {
@@ -80,18 +80,18 @@
         "purpose": "冗長なコマンド出力を静かな既定に抑える出力制御",
         "status": {
           "stage": "commit",
-          "text": "英語コメントを除去し日本語のみに整理"
+          "text": "死別名を除去"
         },
-        "updatedAt": "20260908"
+        "updatedAt": "20260911"
       },
       "tool-trail": {
         "path": ".opencode/lib/tool-trail/trail.hook.ts",
         "purpose": "ツール試行の都度、思考ギャップをlog名前空間としてeventsログへ直接追記する",
         "status": {
           "stage": "commit",
-          "text": "行識別子を見送りreadyを取り下げ"
+          "text": "参照コメントを修正"
         },
-        "updatedAt": "20260903"
+        "updatedAt": "20260911"
       },
       "unresolved-followup": {
         "path": ".opencode/lib/unresolved-followup/unresolved.hook.ts",
@@ -127,9 +127,9 @@
         "purpose": "アジェンダのReport/Planを事実と整合性の狭い観点でレビューし所見を返す",
         "status": {
           "stage": "commit",
-          "text": "欠落指摘を許可"
+          "text": "出力をseverity順の平坦形式へ統一"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260911"
       },
       "arch-auditor": {
         "path": ".opencode/agent/arch-auditor.md",
@@ -145,18 +145,18 @@
         "purpose": "コードコメントとドキュメントが実挙動と一致するかを審査する",
         "status": {
           "stage": "commit",
-          "text": "一致審査エンジンを新設し日本語審査を追加"
+          "text": "長文1項目を構造化した"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       },
       "logic-test-auditor": {
         "path": ".opencode/agent/logic-test-auditor.md",
         "purpose": "変更の振る舞い正当性とテストの実質検証を対で審査する",
         "status": {
           "stage": "commit",
-          "text": "抑制条項を追加"
+          "text": "長文1項目を構造化した"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       },
       "slop-reviewer": {
         "path": ".opencode/agent/slop-reviewer.md",
@@ -192,27 +192,27 @@
         "purpose": "作業単位をfeatureスライス単位で確定する。慣習と負債の棚卸しを経てkeep/rebuild発注を提示する",
         "status": {
           "stage": "commit",
-          "text": "目配り独立工程を追加"
+          "text": "長文1項目を構造化した"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       },
       "audit": {
         "path": ".opencode/skills/audit/SKILL.md",
         "purpose": "コミット前の変更をコードレビューする",
         "status": {
           "stage": "commit",
-          "text": "エンジン選択制とスキップ記録を追加"
+          "text": "長文1項目を構造化した"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       },
       "commit": {
         "path": ".opencode/skills/commit/SKILL.md",
         "purpose": "コミット判定と手順、メッセージ規約、ライフサイクル遷移を定める",
         "status": {
           "stage": "commit",
-          "text": "sync-config-snapshots言及の除去"
+          "text": "長文1項目を構造化した"
         },
-        "updatedAt": "20260904"
+        "updatedAt": "20260911"
       },
       "concept": {
         "path": ".opencode/skills/concept/SKILL.md",
@@ -237,9 +237,9 @@
         "purpose": "featureとコンポーネントの登録・分割・定義改訂",
         "status": {
           "stage": "commit",
-          "text": "短形式のwhy併記手順に改訂"
+          "text": "登録手順に値の言語規則を明記"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260911"
       },
       "imagegen": {
         "path": ".opencode/skills/imagegen/SKILL.md",
@@ -291,9 +291,9 @@
         "purpose": "コード・ドキュメント（コメント含む）をリファクタする。対象をラベル分類し圧縮/再構築の2パスで適用する",
         "status": {
           "stage": "commit",
-          "text": "基準を参照化し表を分離"
+          "text": "長文1項目を構造化した"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       },
       "workflow": {
         "path": ".opencode/skills/workflow/SKILL.md",
@@ -320,18 +320,18 @@
         "purpose": "駆動方式の仕様",
         "status": {
           "stage": "commit",
-          "text": "why蓄積契約に書き直し"
+          "text": "長文1項目を構造化した"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260911"
       },
       "schema-spec": {
         "path": "events/spec/schema.md",
         "purpose": "product/metaスナップショットのコンテンツスキーマと方法論",
         "status": {
           "stage": "commit",
-          "text": "concepts枠を追加"
+          "text": "値の言語規則を追加しtrigger/result用例を日本語化"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       }
     },
     "scripts": {
@@ -367,9 +367,9 @@
         "purpose": "append/build/compact/readが共有する駆動ライブラリ。検証・畳み込み・生成を担う",
         "status": {
           "stage": "commit",
-          "text": "LOOK_ORDERにconceptsを連動"
+          "text": "二重ソータを一本化"
         },
-        "updatedAt": "20260910"
+        "updatedAt": "20260911"
       },
       "event-merge-driver": {
         "path": "events/scripts/merge-driver.mjs",
@@ -412,18 +412,18 @@
         "purpose": "スターターをプロジェクトへ一方向適用するツール。ハーネス一式をミラー（スターターに無いファイルは削除）し、meta.* をスターターのコミット済み在庫で置換する。新規立ち上げは node scripts/user/new.mjs の責務",
         "status": {
           "stage": "commit",
-          "text": "在庫転送時のwhy除去を追加"
+          "text": "共有ヘルパーへ集約"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260911"
       },
       "user-new": {
         "path": "scripts/user/new.mjs",
         "purpose": "複写したスターターを新規プロジェクトに仕立て直す立ち上げコマンド。コピー先ルートで一度だけ実行し、git初期化・依存導入・イベント初期化（旧 apply --init 相当）を一括で行う",
         "status": {
           "stage": "commit",
-          "text": "種まき時のwhy除去を追加"
+          "text": "共有ヘルパーへ集約"
         },
-        "updatedAt": "20260907"
+        "updatedAt": "20260911"
       }
     }
   }

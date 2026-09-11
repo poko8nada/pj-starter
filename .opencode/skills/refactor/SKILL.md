@@ -46,7 +46,7 @@ Delegate the search to the built-in `explore` subagent — do not walk the tree 
 In addition to the label criteria below, have the subagent look for **module-resolution health**:
 
 - **[product]** import alias use: `tsconfig` `paths` declarations and whether imports honor them
-- **[all]** dynamic `import()`/`require()` root-path resolution: Node ESM does **not** resolve `tsconfig` `paths` — a `.mjs`/`.cjs` dynamic import using an alias typechecks but breaks at runtime. This is where moving files under a refactor silently breaks a `?t=` cache-busting import (`scripts/user/sync/meta.mjs` is the known example)
+- **[all]** dynamic `import()`/`require()` root-path resolution: Node ESM does **not** resolve `tsconfig` `paths` — a `.mjs`/`.cjs` dynamic import using an alias typechecks but breaks at runtime. This is where moving files under a refactor silently breaks a `?t=` cache-busting import (`scripts/user/apply/meta.mjs` is the known example)
 - **[all]** broken relative paths and imports pointing at non-existent modules
 - **[all]** receiver closure: for each candidate, its callers (importers included), the readers and writers of artifacts it touches (spawned paths, snapshot / checkpoint shapes), and the tests asserting those shapes
 - **[all]** contract changes: alterations to a shared shape (snapshot projection, checkpoint trees, lib API) whose consumers and tests must change together
@@ -65,7 +65,11 @@ If none of the above yields evidence, do not write a WHY — present it as a can
 
 Before changing anything, classify each candidate block/comment using the tables below. Do not touch anything until it has a label.
 
-While labeling, also identify the **touched components**: match the candidate locations plus their callers and tests against component `path`s in the declared domain's snapshot — `events/snapshots/product.json` for product, `events/snapshots/meta.json` for meta. Locations matching no component are raw code — they have no status to assert. Candidates mapping to the other domain are still handled (the domain is a consultation default, not a hard gate).
+While labeling, also identify the **touched components**:
+
+- Match — match the candidate locations plus their callers and tests against component `path`s in the declared domain's snapshot — `events/snapshots/product.json` for product, `events/snapshots/meta.json` for meta.
+- Raw — locations matching no component are raw code — they have no status to assert.
+- Cross-domain — candidates mapping to the other domain are still handled (the domain is a consultation default, not a hard gate).
 
 If labeling reveals that a component's **definition** (trigger/result/route or purpose) has drifted from reality, do not refactor around it — route to the feature skill for a definition revision, then restart.
 
@@ -174,4 +178,4 @@ This keeps the "diff shrank" claim honest — it only applies to the subset wher
 - On label approval (step 4): assert `ready` for every touched managed component. One status assertion per target, all in one invocation — `node events/scripts/append-build.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`
 - On completion (step 6): assert `implement` — the refactor is applied, awaiting commit
 - At commit: the commit skill asserts `commit` — never assert it from here
-- No manual build: the idle hook syncs snapshots after the turn ends
+- No manual build: snapshots refresh via the canonical path (see events/README.md)

@@ -1,5 +1,5 @@
 // ツールトレイルの純粋コア。対象抽出・root相対化・マージ判定のみを持つ。
-// 検証と ts 付与は buildEvent（events/scripts/validation.mjs）へ委ねる。全体の仕様は events/README.md#machine-injected trail 参照
+// 検証と ts 付与は buildEvent（events/scripts/lib/validate.mjs）へ委ねる。全体の仕様は events/README.md#machine-injected trail 参照
 import { randomUUID } from 'node:crypto';
 import { buildEvent, isLogTool } from '../../../events/scripts/lib.mjs';
 import { toRootRelative } from '../utils/path';

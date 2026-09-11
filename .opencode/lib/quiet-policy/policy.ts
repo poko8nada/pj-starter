@@ -49,9 +49,6 @@ export const isVerboseCommand = (command: unknown): boolean => {
   return VERBOSE_PATTERNS.some((entry) => entry.pattern.test(command));
 };
 
-// 旧verbose-guide面の別名（配線切替の移行用）。
-export const isVerboseVitest = isVerboseCommand;
-
 // 冗長な実行には案内を返し、それ以外は空報告を返す。
 export const buildQuietGuide = (command: unknown): Report => {
   if (typeof command !== 'string') return { errors: [] };
@@ -63,9 +60,6 @@ export const buildQuietGuide = (command: unknown): Report => {
     ],
   };
 };
-
-// 旧verbose-guide面の別名（配線切替の移行用）。
-export const buildVerboseGuide = buildQuietGuide;
 
 // 空行を除いて数える（clipLines と同一基準）。
 export const countContentLines = (text: string): number => {

@@ -1,5 +1,5 @@
 ---
-description: Reviews one chunk of pending changes for doc-behavior agreement across code comments and markdown, and returns findings in a flat severity-sorted format. Use as the doc engine of the audit skill.
+description: Reviews one chunk of pending changes for doc-behavior agreement across code comments, markdown, user-facing wording and content files, and returns findings in a flat severity-sorted format. Use as the doc engine of the audit skill.
 mode: subagent
 model: opencode-go/muse-spark-1.3-contributor
 reasoningEffort: high
@@ -25,13 +25,18 @@ Read files within the chunk as needed. Do not run git — the diff is provided. 
 
 ## Viewpoint
 
-Do the docs match actual behavior? Targets are code comments and markdown in the chunk. Exhaust every valid finding in this first review — do not hold any back for later rounds; re-review verifies fixes only and will not accept new findings:
+Do the docs match actual behavior? Targets are code comments, markdown, and user-facing wording plus content files in the chunk. Exhaust every valid finding in this first review — do not hold any back for later rounds; re-review verifies fixes only and will not accept new findings:
 
 - No lies: statements contradicting current code
 - Self-contained: explanations a reader needs and cannot derive from the code alone
 - Stale or missing: decisions or complex logic lacking needed notes
 - Redundant or duplicated (from refactor criteria): notes merely restating the code, the same note copy-pasted in multiple places. Supplementary Japanese comments are never redundant — even restating ones aid Japanese readers
 - Japanese prose: unnatural literal-translation phrasing, coined terms, sentences that do not hold as Japanese. User-facing text must read as natural Japanese; Katakana for programming terms
+- Deferred affordance (DEFERRED): when UI promises an operation but its behavior is intentionally deferred by agreement, the affordance must carry an adjacent `// DEFERRED(<target-id>): <reason>` comment.
+
+  - Verification — verify the comment matches the defer record in the work-unit context.
+  - Mismatch — a DEFERRED without a matching record is a lie.
+  - Scope — absent behavior without this comment is flagged here as a documentation gap only — the behavior absence itself is logic-test's job
 
 WHY is judged for accuracy only and never invented. Without evidence (snapshot definition, blame, session chat), present the gap without drafting the explanation. Wording-only adjustments of accurate notes are out of scope.
 

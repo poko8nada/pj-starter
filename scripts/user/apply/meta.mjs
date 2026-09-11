@@ -6,16 +6,7 @@ import process from 'node:process';
 // lib.mjs は遅延解決（呼び出し時に EVENTS_DIR を読む）のため、同一モジュールのままでenv を差し替えるだけで双方のディレクトリを扱える。キャッシュ破棄の動的 import は不要
 import * as lib from '../../../events/scripts/lib.mjs';
 import { PROJECT_ROOT, fail } from './files.mjs';
-
-const readState = () => {
-  const base = lib.loadBase();
-  const logPath = lib.LOG_PATH();
-  const hasLog = fs.existsSync(logPath) && fs.statSync(logPath).size > 0;
-  const { trees, events } = hasLog
-    ? lib.foldAll()
-    : { trees: structuredClone(base.trees), events: [] };
-  return { base, trees, events };
-};
+import { committedInventory, readState, withEventsDir } from '../state.mjs';
 
 const componentOf = (key) => key.split('.').slice(0, 3).join('.');
 
@@ -43,19 +34,6 @@ const readCandidates = (projectLogPath) => {
     }
   }
   return candidates;
-};
-
-// スターターのコミット済みコンポーネントのみを在庫として抽出する
-const committedInventory = (trees) => {
-  const inventory = {};
-  for (const [section, components] of Object.entries(trees.meta ?? {})) {
-    for (const [id, node] of Object.entries(components ?? {})) {
-      if (!node || typeof node !== 'object' || Array.isArray(node)) continue;
-      if (node.status?.stage !== 'commit') continue;
-      (inventory[section] ??= {})[id] = node;
-    }
-  }
-  return inventory;
 };
 
 // プロジェクトのログからコミット済みコンポーネントのイベントを除去する
@@ -110,38 +88,32 @@ export const applyMeta = async (starterRoot, run) => {
     return;
   }
 
-  const prevEventsDir = process.env.EVENTS_DIR;
-  try {
-    process.env.EVENTS_DIR = starterEventsDir;
-    const starter = readState();
-    process.env.EVENTS_DIR = projectEventsDir;
-    const project = readState();
+  const projectRoot = PROJECT_ROOT();
+  const starter = withEventsDir(starterEventsDir, readState);
+  const project = withEventsDir(projectEventsDir, readState);
 
-    const inventory = committedInventory(starter.trees);
-    // スターター境界：複写前の履歴は持ち出さないため why 系譜を落とす（現行理由も含む）
-    const stripped = lib.stripHistory(lib.stripWhy(inventory));
-    const unitCount = Object.values(stripped).reduce(
-      (sum, section) => sum + Object.keys(section).length,
-      0,
-    );
-    console.log(`[meta] スターターのコミット済み在庫 ${unitCount} unit で置換`);
+  const inventory = committedInventory(starter.trees);
+  // スターター境界：複写前の履歴は持ち出さないため why 系譜を落とす（現行理由も含む）
+  const stripped = lib.stripHistory(lib.stripWhy(inventory));
+  const unitCount = Object.values(stripped).reduce(
+    (sum, section) => sum + Object.keys(section).length,
+    0,
+  );
+  console.log(`[meta] スターターのコミット済み在庫 ${unitCount} unit で置換`);
 
-    const candidates = readCandidates(projectLogPath);
-    const removed = stripProjectLog(projectLogPath, candidates, run);
-    console.log(`[strip] プロジェクトのログからコミット済み meta イベント ${removed} 件を除去`);
+  const candidates = readCandidates(projectLogPath);
+  const removed = stripProjectLog(projectLogPath, candidates, run);
+  console.log(`[strip] プロジェクトのログからコミット済み meta イベント ${removed} 件を除去`);
 
-    if (!run) {
-      console.log('[dry-run] --run で実コピーと注入');
-      return;
-    }
-
-    process.env.EVENTS_DIR = projectEventsDir;
-    lib.writeCheckpoint({ product: project.trees.product, meta: stripped });
-    console.log('[strip] プロジェクトの checkpoint を書き換えました');
-
-    build(PROJECT_ROOT(), projectEventsDir);
-  } finally {
-    if (prevEventsDir === undefined) delete process.env.EVENTS_DIR;
-    else process.env.EVENTS_DIR = prevEventsDir;
+  if (!run) {
+    console.log('[dry-run] --run で実コピーと注入');
+    return;
   }
+
+  withEventsDir(projectEventsDir, () => {
+    lib.writeCheckpoint({ product: project.trees.product, meta: stripped });
+  });
+  console.log('[strip] プロジェクトの checkpoint を書き換えました');
+
+  build(projectRoot, projectEventsDir);
 };

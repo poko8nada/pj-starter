@@ -44,7 +44,11 @@ Severity orders the list; recommendation strength lives in the wording. Each eng
    - `a11y-auditor`: a UI extension in paths, or markup in added lines (grep); otherwise skip
    - `arch-auditor`: structural signals (new / delete / rename / cross-dir / shared-lib changes); otherwise skip
 
-   Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass: changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests). The `arch-auditor` additionally receives related files (callers, neighbors, directory listing) — it alone may read outside the chunk, only from that list. Engines read the diff file and the files themselves; they do not run git.
+   Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass:
+
+   - Artifacts — changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests).
+   - Arch exception — the `arch-auditor` additionally receives related files (callers, neighbors, directory listing) — it alone may read outside the chunk, only from that list.
+   - Reading — engines read the diff file and the files themselves; they do not run git.
 
 5. **Aggregate** — merge the four flat lists per chunk into one, re-sorted high → med → low.
 6. **Digest** — group findings, add your assessment (clearly valid / needs user judgment / likely false positive), recommend. Fold in unresolved components from step 2. List skipped engines with one reason line each, in a separate block from the merged findings (skips are not findings).

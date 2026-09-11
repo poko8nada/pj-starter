@@ -44,7 +44,12 @@ The current project state is the fold result under `snapshots/`: `product.json` 
 
 ## Log format
 
-JSONL. One event per line. **One line carries one concern** — a value assertion, or a whole status assertion. `ts` is always assigned by `append.mjs` (never handwritten) — except machine-injected `log.*` lines, which the harness plugin assigns via the same builder — and **all events from one invocation share one ts**. Timestamps are fixed-offset JST (`+09:00`, ISO 8601). There is no sequence number — ordering is simply file order. `branch` is the current git branch at append time (from `git branch --show-current`, overridable via `EVENTS_BRANCH`), used to identify a branch's delta when merging logs; it is omitted when unset.
+JSONL. One event per line.
+
+- One concern — **one line carries one concern** — a value assertion, or a whole status assertion.
+- Timestamping — `ts` is always assigned by `append.mjs` (never handwritten) — except machine-injected `log.*` lines, which the harness plugin assigns via the same builder — and **all events from one invocation share one ts**.
+- Clock — timestamps are fixed-offset JST (`+09:00`, ISO 8601). There is no sequence number — ordering is simply file order.
+- Branch — `branch` is the current git branch at append time (from `git branch --show-current`, overridable via `EVENTS_BRANCH`), used to identify a branch's delta when merging logs; it is omitted when unset.
 
 ```jsonl
 {"ts":"2026-08-25T10:00:00.000+09:00","type":"set","key":"product.name.value","value":"Pj Docs","branch":"develop"}
@@ -88,7 +93,11 @@ Lifecycle facts (`ready` / `implement` / `commit`) are not special types — the
 {"ts":"…","type":"set","key":"product.features.auth.status","value":{"stage":"implement","text":"認証APIを実装中"}}
 ```
 
-A node becomes _managed_ by writing its `status`; managed nodes receive `updatedAt` (YYYYMMDD) at rebuild. The canonical registration route asserts the whole initial status (`{"stage":"planned","text":"未着手"}`) together with the definition, in both namespaces. As a backstop, rebuild guards product feature slices even when their status was never asserted (see [spec/machinery.md](./spec/machinery.md)); every other node without status stays raw forever — including meta components, whose raw form represents the shipped harness baseline.
+A node becomes _managed_ by writing its `status`; managed nodes receive `updatedAt` (YYYYMMDD) at rebuild.
+
+- Registration — the canonical registration route asserts the whole initial status (`{"stage":"planned","text":"未着手"}`) together with the definition, in both namespaces.
+- Backstop — as a backstop, rebuild guards product feature slices even when their status was never asserted (see [spec/machinery.md](./spec/machinery.md)).
+- Raw — every other node without status stays raw forever — including meta components, whose raw form represents the shipped harness baseline.
 
 ### Why and why-not (`.why` entries and `why.json`)
 

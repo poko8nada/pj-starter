@@ -6,6 +6,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { groupsFor } from '../groups.mjs';
+import { hasInnerSlash, matchScoped } from '../match.mjs';
 
 // プロジェクトルートは EVENTS_DIR から遅延解決する（テストでスクラッチを指せるようにするため）。
 // スクリプト実在位置（process.argv[1]）からは解決しない — 実リポジトリを破壊しないため。
@@ -45,25 +46,7 @@ const stat = (file) => {
 // - 素形（スラッシュ無し。node_modules/・.DS_Store 等）: 従来通り、任意深度のセグメント一致
 // - 単位相対（スラッシュ有り。mockup/workbench/dist/ 等）: 単位起点の相対パスで判定。
 //   末尾 '/' は配下すべて、'*' は同一セグメント内のワイルドカード、素の相対パスはその1ファイル
-// 単位相対の約束は new.mjs の isSkippedPath と共有する（両方を同時に変えること）
-const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const hasInnerSlash = (pattern) => pattern.replace(/\/$/, '').includes('/');
-
-const matchScoped = (relPath, pattern) => {
-  if (pattern.endsWith('/')) {
-    const dir = pattern.slice(0, -1);
-    return relPath === dir || relPath.startsWith(`${dir}/`);
-  }
-  if (!pattern.includes('*')) return relPath === pattern;
-  // '*' は '/' を跨がない（workbench 直下の画面のみ等、階層を限定するため）
-  const source = pattern
-    .split('/')
-    .map((segment) => segment.split('*').map(escapeRegExp).join('[^/]*'))
-    .join('/');
-  return new RegExp(`^${source}$`).test(relPath);
-};
-
+// 単位相対の約束は new.mjs の isSkippedPath と共有する（純粋判定は match.mjs が正本）
 const isExcluded = (relPath, unitExcludes = []) => {
   const patterns = [...COMMON_EXCLUDES, ...unitExcludes];
   const segments = relPath.split('/');

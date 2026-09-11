@@ -15,19 +15,7 @@ import {
 } from './consts.mjs';
 import { projectWhy, stripWhy } from './why.mjs';
 
-const sortValue = (value) => {
-  if (Array.isArray(value)) return value.map(sortValue);
-  if (value && typeof value === 'object') {
-    return Object.fromEntries(
-      Object.keys(value)
-        .toSorted((a, b) => (a < b ? -1 : a > b ? 1 : 0))
-        .map((k) => [k, sortValue(value[k])]),
-    );
-  }
-  return value;
-};
-
-export const stableStringify = (value) => JSON.stringify(sortValue(value));
+export const stableStringify = (value) => JSON.stringify(sortAlphabetical(value));
 
 // 書き出し整形（骨格は任意順、中身は自動整列）。配列の中身は並べ替えず、要素のみ再帰整形する
 // 未知キーは末尾にアルファベット順で足す。入力は変えず新しいオブジェクトを返す

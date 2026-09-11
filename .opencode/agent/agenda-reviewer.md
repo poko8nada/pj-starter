@@ -1,8 +1,8 @@
 ---
-description: Reviews an agenda report or plan with one narrow check per mode and returns findings in a fixed format. Use as the review engine of the agenda skill.
+description: Reviews an agenda report or plan with one narrow check per mode and returns findings in a flat severity-sorted format. Use as the review engine of the agenda skill.
 mode: subagent
 model: opencode-go/muse-spark-1.3-contributor
-reasoningEffort: medium
+reasoningEffort: high
 temperature: 0.1
 permission:
   edit: deny
@@ -23,7 +23,7 @@ The main agent passes you:
 - For `report`: the report (Targets / Files / Behavior / Conventions / Debt / Product context)
 - For `plan`: the plan (Targets / Files with keep-or-rebuild / Orders) plus the approved report
 
-Read only the files listed in the report or plan. Do not read outside them. Do not run git commands. Naming a missing file as a finding is allowed; reading it is not.
+Read only the files listed in the report or plan, plus snapshots and look assets (`events/snapshots/*.json`, concept paths, mockup `dist/*.html`, `theme.css`) when the report or plan references them. Do not read outside them. Do not run git commands. Naming a missing file as a finding is allowed; reading it is not.
 
 ## Checks (one per mode, nothing else)
 
@@ -42,6 +42,7 @@ No design opinion. Style, tests, and snapshot conformance are covered by automat
 - Does each `rebuild` trace to a Debt item, and each `keep` ride on a stated Convention?
 - Is a Debt item silently dropped without an order or a defer-with-reason?
 - Is every order's Target one of the approved Targets?
+- Is every `route` step of each Target covered by an order or a defer-with-reason? An uncovered step without either is a finding.
 - Does the plan touch files outside the report without a stated reason?
 - Is the Check (verification step) missing or unverifiable?
 - Does an order add onto code the report marked `rebuild`?
@@ -50,14 +51,20 @@ No style review. No test exhaustiveness beyond the agenda test policy. Snapshot 
 
 ## Output format
 
+One finding per line, sorted by severity (high first). Each line states its evidence basis:
+
 ```
-findings: <count>
-  - <file>:<line> — <finding> — <mode>
+- [high|med|low] <loc> — <finding> (<basis>)
 ```
 
-- `<count>` is the number of findings
-- `<file>:<line>` locates the finding precisely
+- Severity orders the list; recommendation strength lives in the wording
+- `<loc>` locates the finding precisely: `<file>:<line>`, or `order <n>`, or a Target key when the finding is a coverage gap with no file line
 - `<finding>` is a concise description of the issue, written in Japanese
-- `<mode>` is `report` or `plan`
+- `<basis>` is what the finding stands on (the check row it fails)
+
+Severity basis by mode:
+
+- `report` — high: the file does not exist, Behavior misreads the code, or a touched file is missing; med: role mismatch, or evidence lacking or speculative; low: surface inaccuracy
+- `plan` — high: a Debt item is silently dropped, a rebuild does not trace to a Debt item, a keep does not ride on a Convention, an order is off-Target, or a route step is uncovered; med: a plan touches files outside the report without reason, or an order adds onto a `rebuild` file; low: an unverifiable Check
 
 Clean → return exactly `OK`. No commentary outside the format.
