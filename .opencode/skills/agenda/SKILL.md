@@ -23,7 +23,7 @@ Audit runs on four engines. Read all four bodies first (`.opencode/agent/*-audit
 - `logic-test-auditor`: behavior and tests as a pair
 - `doc-auditor`: comments and docs vs behavior
 - `a11y-auditor`: static checks where UI markup exists
-- `arch-auditor`: placement and trajectory — hand it callers and neighbors through Files
+- `arch-auditor`: whole-file structure (placement, componentization, duplication, trajectory) — hand it the touched files plus callers and neighbors through Files
 
 ### 1. Target
 

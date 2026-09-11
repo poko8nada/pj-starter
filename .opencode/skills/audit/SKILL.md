@@ -16,7 +16,7 @@ Pre-commit code review. The main agent handles scope and aggregation; the four e
 | Fix    | Never (present findings only)   | Never                                             |
 | Output | Merge and sort all findings     | Flat severity-sorted bullets                      |
 
-Engines: `logic-test-auditor` (behavior + tests as a pair), `doc-auditor` (comments + docs vs behavior), `a11y-auditor` (static accessibility checks, UI chunks only), `arch-auditor` (placement, splitting, reference structure against trajectory).
+Engines: `logic-test-auditor` (behavior + tests as a pair), `doc-auditor` (comments + docs vs behavior), `a11y-auditor` (static accessibility checks, UI chunks only), `arch-auditor` (whole-file structure: placement, splitting, componentization, duplication, reference structure against trajectory and current factorization).
 
 ## Output schema (normative)
 
@@ -42,12 +42,12 @@ Severity orders the list; recommendation strength lives in the wording. Each eng
    - `logic-test-auditor`: code files present (docs-only chunks skip)
    - `doc-auditor`: skip only content-neutral chunks (renames/moves with zero content hunks)
    - `a11y-auditor`: a UI extension in paths, or markup in added lines (grep); otherwise skip
-   - `arch-auditor`: structural signals (new / delete / rename / cross-dir / shared-lib changes); otherwise skip
+   - `arch-auditor`: code files present (A/M/R with content hunks); skip docs-only and content-neutral chunks (pure renames / moves / deletes)
 
    Write the chunk diff to `/tmp/audit-<chunk>.diff` via `git diff HEAD -- <chunk paths>` (unique name per chunk, single-turn handoff only) and pass:
 
    - Artifacts — changed file paths, the diff file path, and the work-unit context (purpose / definition / test policy from the agenda plan's Tests).
-   - Arch exception — the `arch-auditor` additionally receives related files (callers, neighbors, directory listing) — it alone may read outside the chunk, only from that list.
+   - Arch exception — the `arch-auditor` reviews the touched files in full (not only diff hunks) and additionally receives related files (callers, neighbors, directory listing) — it alone may read and judge beyond the chunk, only from that list.
    - Reading — engines read the diff file and the files themselves; they do not run git.
 
 5. **Aggregate** — merge the four flat lists per chunk into one, re-sorted high → med → low.
@@ -59,7 +59,7 @@ Severity orders the list; recommendation strength lives in the wording. Each eng
 ## Rules
 
 - Never modify code during an audit
-- Never review outside the diff (`arch-auditor` reads only the handed related files beyond it)
+- Review stays diff-triggered, but `arch-auditor` judges the touched files in full and may propose restructuring untouched regions and handed related files
 - Merge engine findings as-is and re-sort; do not override the review judgment
 - Adoption decisions belong to the user; the main agent only digests and recommends
 - Re-review after every fix round — verify the adopted fixes resolved the findings; new issues surface in the next full audit round

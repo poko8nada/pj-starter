@@ -77,7 +77,7 @@ If labeling reveals that a component's **definition** (trigger/result/route or p
 
 **Compaction**
 
-Shrink-natured. Self-contained; no review engine owns these.
+Shrink-natured. Self-contained; detection also arrives from `arch-auditor` findings at audit time.
 
 | Label                     | Criteria                          | Diff rule               |
 | ------------------------- | --------------------------------- | ----------------------- |
