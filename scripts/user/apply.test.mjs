@@ -11,6 +11,8 @@ const SCRIPT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'apply
 const GROUPS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'groups.mjs');
 const FILES = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'apply/files.mjs');
 const META = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'apply/meta.mjs');
+const MATCH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'match.mjs');
+const STATE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'state.mjs');
 const EVENTS_SCRIPTS = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '../../events/scripts',
@@ -107,6 +109,8 @@ const makeProject = ({ logEvents = PROJECT_LOG } = {}) => {
   fs.copyFileSync(GROUPS, path.join(root, 'scripts', 'user', 'groups.mjs'));
   fs.copyFileSync(FILES, path.join(root, 'scripts', 'user', 'apply', 'files.mjs'));
   fs.copyFileSync(META, path.join(root, 'scripts', 'user', 'apply', 'meta.mjs'));
+  fs.copyFileSync(MATCH, path.join(root, 'scripts', 'user', 'match.mjs'));
+  fs.copyFileSync(STATE, path.join(root, 'scripts', 'user', 'state.mjs'));
   seedEvents(eventsDir);
   fs.copyFileSync(BUILD, path.join(eventsDir, 'scripts', 'build.mjs'));
   writeLog(eventsDir, logEvents);

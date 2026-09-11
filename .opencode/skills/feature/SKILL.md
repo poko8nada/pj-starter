@@ -42,4 +42,4 @@ Route or definition changes on existing components are deep-key sets with full-v
 
 - The log only accepts finished definitions — never leave a draft incomplete
 - One registration = one coherent deliverable
-- No manual build: the idle hook syncs snapshots after the turn ends
+- No manual build: snapshots refresh via the canonical path (see events/README.md)

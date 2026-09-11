@@ -3,41 +3,8 @@
 // log.jsonl がなくても動く。apply 内部は参照しない（小関数は new 側に持つ）。
 import fs from 'node:fs';
 import path from 'node:path';
-import process from 'node:process';
 import * as lib from '../../../events/scripts/lib.mjs';
-
-// EVENTS_DIR を差し替えて実行する（起点と対象を使い分けるため）
-const withEventsDir = (eventsDir, fn) => {
-  const prev = process.env.EVENTS_DIR;
-  process.env.EVENTS_DIR = eventsDir;
-  try {
-    return fn();
-  } finally {
-    if (prev === undefined) delete process.env.EVENTS_DIR;
-    else process.env.EVENTS_DIR = prev;
-  }
-};
-
-// コミット済みコンポーネントのみを在庫として抽出する
-const committedInventory = (trees) => {
-  const inventory = {};
-  for (const [section, components] of Object.entries(trees.meta ?? {})) {
-    for (const [id, node] of Object.entries(components ?? {})) {
-      if (!node || typeof node !== 'object' || Array.isArray(node)) continue;
-      if (node.status?.stage !== 'commit') continue;
-      (inventory[section] ??= {})[id] = node;
-    }
-  }
-  return inventory;
-};
-
-const readState = () => {
-  const base = lib.loadBase();
-  const logPath = lib.LOG_PATH();
-  const hasLog = fs.existsSync(logPath) && fs.statSync(logPath).size > 0;
-  const { trees } = hasLog ? lib.foldAll() : { trees: structuredClone(base.trees) };
-  return trees;
-};
+import { committedInventory, readState, withEventsDir } from '../state.mjs';
 
 const DEFAULT_NAME = 'プロジェクト名が入ります';
 const WHAT_TEXT = '今からプロジェクトを作り始める段階です';
@@ -46,7 +13,7 @@ const WHAT_TEXT = '今からプロジェクトを作り始める段階です';
 export const initEvents = (starterRoot, targetRoot, run) => {
   const starterEventsDir = path.join(starterRoot, 'events');
   const targetEventsDir = path.join(targetRoot, 'events');
-  const trees = withEventsDir(starterEventsDir, readState);
+  const { trees } = withEventsDir(starterEventsDir, readState);
   // スターター境界：複写前の履歴は持ち出さないため why 系譜を落とす（現行理由も含む）
   const stripped = lib.stripHistory(lib.stripWhy(committedInventory(trees)));
   const stack = trees.product?.stack ?? {};

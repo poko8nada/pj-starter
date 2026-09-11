@@ -46,7 +46,7 @@ Delegate the search to the built-in `explore` subagent — do not walk the tree 
 In addition to the label criteria below, have the subagent look for **module-resolution health**:
 
 - **[product]** import alias use: `tsconfig` `paths` declarations and whether imports honor them
-- **[all]** dynamic `import()`/`require()` root-path resolution: Node ESM does **not** resolve `tsconfig` `paths` — a `.mjs`/`.cjs` dynamic import using an alias typechecks but breaks at runtime. This is where moving files under a refactor silently breaks a `?t=` cache-busting import (`scripts/user/sync/meta.mjs` is the known example)
+- **[all]** dynamic `import()`/`require()` root-path resolution: Node ESM does **not** resolve `tsconfig` `paths` — a `.mjs`/`.cjs` dynamic import using an alias typechecks but breaks at runtime. This is where moving files under a refactor silently breaks a `?t=` cache-busting import (`scripts/user/apply/meta.mjs` is the known example)
 - **[all]** broken relative paths and imports pointing at non-existent modules
 - **[all]** receiver closure: for each candidate, its callers (importers included), the readers and writers of artifacts it touches (spawned paths, snapshot / checkpoint shapes), and the tests asserting those shapes
 - **[all]** contract changes: alterations to a shared shape (snapshot projection, checkpoint trees, lib API) whose consumers and tests must change together
@@ -174,4 +174,4 @@ This keeps the "diff shrank" claim honest — it only applies to the subset wher
 - On label approval (step 4): assert `ready` for every touched managed component. One status assertion per target, all in one invocation — `node events/scripts/append-build.mjs --set <key>.status '{"stage":"ready","text":"<progress>"}'`
 - On completion (step 6): assert `implement` — the refactor is applied, awaiting commit
 - At commit: the commit skill asserts `commit` — never assert it from here
-- No manual build: the idle hook syncs snapshots after the turn ends
+- No manual build: snapshots refresh via the canonical path (see events/README.md)
