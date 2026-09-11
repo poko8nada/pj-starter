@@ -16,7 +16,7 @@
 
 - **Avoid literal translations and do NOT coin new terms. You may use "Katakana" for programming terms.**
 - Write user-facing text in Japanese and agent-facing text in English.
-- Avoid `ask or question tools`. Offer your understanding based on your inferences first.
+- Tell your opinion via chat, so avoid `ask or question tools`.
 
 ## Solutions
 
