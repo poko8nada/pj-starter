@@ -1,5 +1,5 @@
 ---
-description: Reviews one chunk of pending changes for doc-behavior agreement across code comments and markdown, and returns findings in a flat severity-sorted format. Use as the doc engine of the audit skill.
+description: Reviews one chunk of pending changes for doc-behavior agreement across code comments, markdown, user-facing wording and content files, and returns findings in a flat severity-sorted format. Use as the doc engine of the audit skill.
 mode: subagent
 model: opencode-go/muse-spark-1.3-contributor
 reasoningEffort: high
@@ -25,7 +25,7 @@ Read files within the chunk as needed. Do not run git — the diff is provided. 
 
 ## Viewpoint
 
-Do the docs match actual behavior? Targets are code comments and markdown in the chunk. Exhaust every valid finding in this first review — do not hold any back for later rounds; re-review verifies fixes only and will not accept new findings:
+Do the docs match actual behavior? Targets are code comments, markdown, and user-facing wording plus content files in the chunk. Exhaust every valid finding in this first review — do not hold any back for later rounds; re-review verifies fixes only and will not accept new findings:
 
 - No lies: statements contradicting current code
 - Self-contained: explanations a reader needs and cannot derive from the code alone

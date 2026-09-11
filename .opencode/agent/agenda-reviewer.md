@@ -2,7 +2,7 @@
 description: Reviews an agenda report or plan with one narrow check per mode and returns findings in a fixed format. Use as the review engine of the agenda skill.
 mode: subagent
 model: opencode-go/muse-spark-1.3-contributor
-reasoningEffort: medium
+reasoningEffort: high
 temperature: 0.1
 permission:
   edit: deny

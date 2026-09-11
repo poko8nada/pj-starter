@@ -811,3 +811,11 @@
 {"ts":"2026-09-11T13:37:59.476+09:00","type":"set","key":"meta.agents.logic-test-auditor.status","branch":"develop","value":{"stage":"commit","text":"Affordance-Behaviorギャップ検査を追加"}}
 {"ts":"2026-09-11T13:37:59.476+09:00","type":"set","key":"meta.agents.doc-auditor.status","branch":"develop","value":{"stage":"commit","text":"DEFERRED規約を追加"}}
 {"ts":"2026-09-11T13:37:59.476+09:00","type":"set","key":"meta.agents.agenda-reviewer.status","branch":"develop","value":{"stage":"commit","text":"route被覆＋読み／出力拡張を追加"}}
+{"ts":"2026-09-11T13:43:22.852+09:00","type":"set","key":"meta.agents.doc-auditor.status","branch":"develop","value":{"stage":"ready","text":"日本語対象拡張待ち"}}
+{"ts":"2026-09-11T13:43:28.250+09:00","type":"set","key":"log.try.1ca4c0ed","value":{"tool":"edit","gap":0,"targets":[".opencode/agent/doc-auditor.md"]}}
+{"ts":"2026-09-11T13:43:42.400+09:00","type":"set","key":"log.try.7fc8e962","value":{"tool":"bash","gap":1932,"targets":["rg","git","git"]}}
+{"ts":"2026-09-11T13:43:44.961+09:00","type":"set","key":"log.try.1e57c67d","value":{"tool":"task","gap":2561,"targets":["doc-auditor"]}}
+{"ts":"2026-09-11T13:44:05.184+09:00","type":"set","key":"log.try.17f28451","value":{"tool":"edit","gap":20223,"targets":[".opencode/agent/doc-auditor.md"]}}
+{"ts":"2026-09-11T13:44:07.443+09:00","type":"set","key":"log.try.8c999040","value":{"tool":"bash","gap":2259,"targets":["git"]}}
+{"ts":"2026-09-11T13:44:09.459+09:00","type":"set","key":"log.try.3de1a25c","value":{"tool":"task","gap":2016,"targets":["doc-auditor"]}}
+{"ts":"2026-09-11T13:44:30.270+09:00","type":"set","key":"meta.agents.doc-auditor.status","branch":"develop","value":{"stage":"commit","text":"日本語対象を文言・コンテンツへ拡張"}}
