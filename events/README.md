@@ -8,7 +8,7 @@ This project is driven by an append-only event log. The log is the single source
 events/
   README.md            # This document (driving system spec)
   spec/
-    schema.md          # Snapshot content schemas (product/meta sections, feature methodology)
+    schema.md          # Snapshot content schemas (product/meta sections; derivation lives in the feature skill)
     machinery.md       # Machine internals (trail, rebuild, compaction, CLI) — agents rarely need this
   scripts/
     append.mjs         # Append events — the raw append script (used by the append-build wrapper)
@@ -66,7 +66,7 @@ JSONL. One event per line.
 
 ## Recording contract
 
-This section is the single home of the shared node model. What each section contains (content schemas, feature methodology) is specified in [spec/schema.md](./spec/schema.md).
+This section is the single home of the shared node model. What each section contains (content schemas) is specified in [spec/schema.md](./spec/schema.md); how to derive slices lives in the feature skill (`.opencode/skills/feature/references/`).
 
 ### Keys and namespaces
 

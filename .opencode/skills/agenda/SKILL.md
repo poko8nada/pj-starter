@@ -12,7 +12,7 @@ Turn an implementation decision into an agreed plan, then record it. Never imple
 - Idea capture ("ログインを作りたい") is not agenda — plain discussion: once agreed, append directly (new entries enter as `planned`).
 - Pure value changes (copy tweaks, status flips) skip agenda — append directly.
 - When unsure whether something counts as implementation, run agenda.
-- One agenda = one coherent deliverable carried by one or more related targets in the same domain; split unrelated areas into separate sessions.
+- One agenda = one coherent deliverable carried by one or more related targets in the same domain (sizing rule: see `events/spec/schema.md` Sizing & splitting); split unrelated areas into separate sessions.
 
 ## Procedure
 
@@ -112,7 +112,15 @@ Domain: <product | meta>
   - <command or behavior proving trigger → result (product) or purpose fulfillment (meta)>
 ```
 
-Test policy: UI / markup → none. Pure functions (fold, validators, formatters) → unit tests for happy path and error paths. Boundaries (CLI, shell, I/O) → boundary tests including failure modes. Keep the minimum set that catches regressions. Tests live next to their source as `*.test.ts` and run via `pnpm test:run`.
+Test policy:
+
+- UI / markup → none.
+- Pure functions (fold, validators, formatters) → unit tests for happy path and error paths.
+- Boundaries (CLI, shell, I/O) → boundary tests including failure modes.
+- Keep the minimum set that catches regressions. Write none of: implementation copies, mock self-verification, type/library re-assurance, duplicates, internals over-dependence, excessive splits.
+- Deletion test: what realistic defect would be missed if deleted — never keep just in case; weigh runtime, flakiness, and fix burden against guarantee value, never count or coverage.
+- Verify survivors by kill check: break the code once and confirm the test falls.
+- Tests live next to their source as `*.test.ts` and run via `pnpm test:run`.
 
 If refactor + feature cannot share one session, this agenda carries the full refactor and the feature follows in a later cycle. Refactor orders verify behavior preservation (existing tests stay green).
 

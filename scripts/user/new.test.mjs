@@ -114,14 +114,6 @@ afterAll(() => {
 });
 
 describe('new.mjs の骨格', () => {
-  it('引数なしは用法を表示する', () => {
-    const result = runNew([]);
-
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain('usage:');
-    expect(result.stdout).toContain('new 対象群:');
-  });
-
   it('名前あり・--run なしは dry-run プレビューで全工程を表示し、何も作らない', () => {
     const starter = makeStarter();
     const script = path.join(starter, 'scripts', 'user', 'new.mjs');
@@ -161,7 +153,7 @@ describe('new.mjs の骨格', () => {
     expect(result.stdout).toContain('中止: 対象が起点と同じです');
   });
 
-  it('空でない対象は --force なしで拒否する', () => {
+  it('空でない対象とファイル対象は拒否する', () => {
     const parent = makeParent();
     fs.mkdirSync(path.join(parent, 'taken'));
     fs.writeFileSync(path.join(parent, 'taken', 'keep.txt'), 'x');
@@ -170,6 +162,11 @@ describe('new.mjs の骨格', () => {
 
     expect(result.status).toBe(1);
     expect(result.stdout).toContain('中止: 対象が空ではありません');
+    // ファイル対象も同じ検証群で拒否される（対象検証の統合）
+    fs.writeFileSync(path.join(parent, 'afile'), 'x');
+    const fileResult = runNew(['--in', parent, 'afile']);
+    expect(fileResult.status).toBe(1);
+    expect(fileResult.stdout).toContain('中止: 対象がディレクトリではありません');
   });
 
   it('--force 付きなら非空対象にも複写できる（既存ファイルは残る）', () => {
@@ -199,16 +196,6 @@ describe('new.mjs の骨格', () => {
     expect(result.status).toBe(0);
     expect(fs.readFileSync(path.join(parent, 'taken', 'keep.txt'), 'utf8')).toBe('x');
     expect(fs.existsSync(path.join(parent, 'taken', '.oxlintrc.json'))).toBe(true);
-  });
-
-  it('対象がファイルの場合は拒否する', () => {
-    const parent = makeParent();
-    fs.writeFileSync(path.join(parent, 'afile'), 'x');
-
-    const result = runNew(['--in', parent, 'afile']);
-
-    expect(result.status).toBe(1);
-    expect(result.stdout).toContain('中止: 対象がディレクトリではありません');
   });
 });
 

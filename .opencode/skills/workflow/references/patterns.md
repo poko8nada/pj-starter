@@ -10,6 +10,7 @@ General patterns that can pass through the workflow. Every pattern that includes
 - **Recon → feature**: recon → feature — Research then register definition (implement later)
 - **Research → implement**: recon → agenda → implement → audit → commit — Investigate before building
 - **Refactor**: refactor → audit → commit — Restructuring existing code
+- **Prune**: prune → audit → commit — Curating existing tests
 - **Mockup → implement**: mockup → agenda → implement → audit → commit — Decide look first, then build
 - **Mockup only**: mockup — Create mockup, no implementation
 - **Concept → implement**: concept → agenda → implement → audit → commit — Agree look with renders, then build

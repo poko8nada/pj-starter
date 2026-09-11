@@ -55,17 +55,16 @@ describe('read.mjs --unresolved', () => {
     expect(stdout).not.toContain('meta.skills.planned');
   });
 
-  it('reports none when nothing is unresolved', () => {
+  it('reports none when nothing is unresolved or snapshot is missing', () => {
     writeSnapshot('meta', {
       skills: { x: { purpose: 'p', status: { stage: 'commit', text: '完了' } } },
     });
     const { stdout } = runRead(['--name', 'meta', '--unresolved']);
     expect(stdout).toBe('There are no unresolved components');
-  });
-
-  it('reports none when snapshot is missing', () => {
-    const { stdout } = runRead(['--name', 'meta', '--unresolved']);
-    expect(stdout).toBe('There are no unresolved components');
+    // スナップショット欠如時も同じ none 報告になる（欠如分岐の統合）
+    fs.rmSync(path.join(root, 'snapshots', 'meta.json'));
+    const { stdout: missing } = runRead(['--name', 'meta', '--unresolved']);
+    expect(missing).toBe('There are no unresolved components');
   });
 });
 
@@ -74,13 +73,11 @@ describe('read.mjs --name (legacy behavior)', () => {
     writeSnapshot('product', { name: { value: 'X' } });
     const { stdout } = runRead(['--name', 'product']);
     expect(JSON.parse(stdout)).toEqual({ name: { value: 'X' } });
-  });
-
-  it('outputs projected why content as JSON', () => {
+    // 投影 why も同じ汎用経路で素通しされる（why 分岐の統合）
     writeSnapshot('why', { 'product.stack': { why: '速い' } });
-    const { stdout, status } = runRead(['--name', 'why']);
+    const { stdout: whyOut, status } = runRead(['--name', 'why']);
     expect(status).toBe(0);
-    expect(JSON.parse(stdout)).toEqual({ 'product.stack': { why: '速い' } });
+    expect(JSON.parse(whyOut)).toEqual({ 'product.stack': { why: '速い' } });
   });
 
   it('prints null when the why snapshot is missing', () => {

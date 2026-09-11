@@ -75,18 +75,14 @@ A feature is a **vertical slice**: the smallest unit that independently complete
   "contact_form": {
     "trigger": "ユーザーが問い合わせフォームに入力して送信する",
     "result": "完了メッセージが表示され、運用担当者に通知される",
-    "route": [
-      "form_input",
-      "validation",
-      "submit_handler",
-      "notification_dispatch",
-      "thanks_message"
-    ],
+    "route": ["submit_handler", "notification_dispatch", "thanks_message"],
     "status": { "stage": "implement", "text": "submit_handlerまで実装済み" },
     "updatedAt": "20260825"
   }
 }
 ```
+
+The example shows the happy path only — validation, error display, and empty states are separate slices per the feature skill complement checklist.
 
 One lifecycle field exists on every slice. Assert it whole at creation — `{"stage": "planned", "text": "未着手"}` is the canonical entry point (see [Recording contract](../README.md#recording-contract)); rebuild also guards never-asserted slices by injecting the same default:
 
@@ -98,6 +94,7 @@ One lifecycle field exists on every slice. Assert it whole at creation — `{"st
 
 - Draft routes with **at most 3 steps**. A request needing more is split at capture time into sibling features — same depth, kebab-composed ids (`auth-session`, `auth-endpoint`) — each with its own trigger / result / sub-route; the oversized key is removed with `del`
 - Each feature is sized so one working session carries it through `ready → commit`
+- Registration stays fine-grained by circuit; work bundles by relatedness — if one slice fits in one session, one agenda may carry multiple slices
 - On re-entry (see [Recording contract](../README.md#recording-contract)), remaining route steps mark what is left of the slice
 
 #### The completeness test
@@ -117,85 +114,9 @@ For type-level APIs, generalize trigger/result from runtime causality to input/o
 
 **result** — the observable outcome in one sentence: what a user or system can perceive or obtain afterwards.
 
-**route** — an array of lowercase_snake step IDs. Two legitimate readings coexist and are deliberately **not distinguished at this stage**:
+**route** — an array of lowercase_snake step IDs forming a processing chain (input → validation → submit → notify → display). Visual composition alone (copy + visual + CTA rendered together) is not a route — every step must serve the trigger → result circuit. Do not add flags or nested structure; keep routes flat.
 
-- A processing chain: input → validation → submit → notify → display
-- A parallel composition enumeration: copy + visual + CTA rendered together
-
-Do not add flags or nested structure to separate them; premature distinction adds attributes without practical gain.
-
-#### Decomposition procedure
-
-1. List candidate units where a single cause yields a single observable result
-2. Apply the completeness test to each candidate
-3. **Stateful pairs**: when two triggers are separated in time by persisted state (login/logout, `on`/`emit`), split them into a _state-creating slice_ and a _state-consuming slice_. Never force both into one slice
-4. **Reject horizontal decomposition**: "all UI components" or "all DB access" groups are not slices — they have no closed circuit
-5. **Small function lists ARE valid slices** for libraries: each function completes call→result on its own, so many small slices are vertical, not horizontal fragmentation
-
-#### Worked examples by product type
-
-Content website (passive triggers dominate):
-
-```json
-"hero_section": {
-  "trigger": "訪問者がトップページを開く",
-  "result": "価値提案と CTA ボタンが表示される",
-  "route": ["hero_copy", "hero_visual", "cta_button"]
-},
-"testimonials_section": {
-  "trigger": "訪問者がお客様の声セクションまでスクロールする",
-  "result": "クライアントのロゴと引用が表示される",
-  "route": ["testimonial_cards", "logo_grid"]
-}
-```
-
-Web application (active trigger, long route):
-
-```json
-"contact_form": {
-  "trigger": "ユーザーが問い合わせフォームに入力して送信する",
-  "result": "完了メッセージが表示され、運用担当者に通知される",
-  "route": ["form_input", "validation", "submit_handler", "notification_dispatch", "thanks_message"]
-}
-```
-
-Backend-only library (function signatures map directly):
-
-```json
-"debounce": {
-  "trigger": "`debounce(fn, wait)` が返した関数が複数回呼ばれる",
-  "result": "呼び出しが wait の間止まった後、fn がちょうど1回実行される",
-  "route": ["timer_reset", "timer_schedule", "invoke"]
-},
-"array_group_by": {
-  "trigger": "`groupBy(array, iteratee)` が呼ばれる",
-  "result": "iteratee の戻り値をキーにしたオブジェクトが返される",
-  "route": ["iteratee", "key_extraction", "bucket_assign"]
-}
-```
-
-Type-level API:
-
-```json
-"pick_partial_type": {
-  "trigger": "型 `T` に `PickPartial<T, K>` が適用される",
-  "result": "`K` のプロパティだけを optional にした型が生成される",
-  "route": ["key_filter", "optional_mapping"]
-}
-```
-
-Stateful API pair (split, do not merge):
-
-```json
-"register_listener": { "trigger": "`on('event', cb)` が呼ばれる", "result": "cb がリスナーとして登録される", "route": ["listener_store"] },
-"emit_event":        { "trigger": "`emit('event')` が呼ばれる",  "result": "登録済みのコールバックがすべて実行される", "route": ["listener_lookup", "invoke_all"] }
-```
-
-#### Reading slices
-
-- Passive triggers clustering across slices reveals shared mechanisms (scroll detection, lazy display)
-- Long routes containing steps unique to one slice mark behavior-heavy complexity hotspots — visible without any Content/Behavior flag
-- Short enumeration routes indicate simple composition
+How to derive slices (extraction flows, complement checklist, split patterns) lives in the feature skill (`.opencode/skills/feature/references/extraction.md`, `.opencode/skills/feature/references/completeness.md`, `.opencode/skills/feature/references/splitting.md`), not here.
 
 #### Boundary
 
