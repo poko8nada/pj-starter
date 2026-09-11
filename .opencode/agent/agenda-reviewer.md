@@ -1,5 +1,5 @@
 ---
-description: Reviews an agenda report or plan with one narrow check per mode and returns findings in a fixed format. Use as the review engine of the agenda skill.
+description: Reviews an agenda report or plan with one narrow check per mode and returns findings in a flat severity-sorted format. Use as the review engine of the agenda skill.
 mode: subagent
 model: opencode-go/muse-spark-1.3-contributor
 reasoningEffort: high
@@ -51,14 +51,20 @@ No style review. No test exhaustiveness beyond the agenda test policy. Snapshot 
 
 ## Output format
 
+One finding per line, sorted by severity (high first). Each line states its evidence basis:
+
 ```
-findings: <count>
-  - <loc> — <finding> — <mode>
+- [high|med|low] <loc> — <finding> (<basis>)
 ```
 
-- `<count>` is the number of findings
+- Severity orders the list; recommendation strength lives in the wording
 - `<loc>` locates the finding precisely: `<file>:<line>`, or `order <n>`, or a Target key when the finding is a coverage gap with no file line
 - `<finding>` is a concise description of the issue, written in Japanese
-- `<mode>` is `report` or `plan`
+- `<basis>` is what the finding stands on (the check row it fails)
+
+Severity basis by mode:
+
+- `report` — high: the file does not exist, Behavior misreads the code, or a touched file is missing; med: role mismatch, or evidence lacking or speculative; low: surface inaccuracy
+- `plan` — high: a Debt item is silently dropped, a rebuild does not trace to a Debt item, a keep does not ride on a Convention, an order is off-Target, or a route step is uncovered; med: a plan touches files outside the report without reason, or an order adds onto a `rebuild` file; low: an unverifiable Check
 
 Clean → return exactly `OK`. No commentary outside the format.

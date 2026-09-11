@@ -43,8 +43,8 @@ Output: domain + target keys, one line each.
 Goal: agree on the current inventory. No design decisions here.
 
 1. Read the files touching all targets (their union). Close the list over receivers: the target files themselves, their callers, the readers and writers of every artifact they touch (spawned script paths, snapshot / checkpoint shapes), and the tests asserting those shapes, plus same-directory siblings and shared types only as needed. Every neighbor left out needs a boundary reason in the report.
-2. Write the report in chat in the format below and wait for user approval. If rejected, revise and repeat.
-3. Spawn `agenda-reviewer` in `report` mode (facts only — narrow check). Fold every finding (fix or defer with a reason, never silently drop), present report + findings to the user, and iterate until explicit agreement on reality.
+2. Draft the report in the format below and spawn `agenda-reviewer` in `report` mode (facts only — narrow check).
+3. Fold every finding (fix or defer with a reason, never silently drop), then present the **complete, updated report in the format below** — never a delta or a summary — together with the reviewer findings and their disposition. Iterate until explicit agreement on reality; re-present the full report every round.
 
 ```markdown
 ## Report
@@ -70,7 +70,7 @@ Goal: decide what rides on the conventions and what must break for the debt, as 
 
 1. For each file in the approved report, mark `keep` (rides on the conventions, adds no debt) or `rebuild` (must break to address a Debt item, citing which one).
 2. Write minimal orders in the format below. Each order is independently verifiable; `Depends on` references earlier numbers only. Every `rebuild` traces to a Debt item and every `keep` rides on a stated Convention. A Debt item with no order needs a defer-with-reason recorded in `## Debt`, never a silent drop. Creation orders with no existing code ride on the snapshot definition (trigger / result / route or purpose) with Conventions / Debt as `none (with reason)`.
-3. Spawn `agenda-reviewer` in `plan` mode (consistency only — narrow check). Fold every finding the same way, present plan + findings to the user, and iterate until explicit agreement.
+3. Spawn `agenda-reviewer` in `plan` mode (consistency only — narrow check). Fold every finding the same way, then present the **complete, updated plan in the format below** — never a delta or a summary — together with the reviewer findings and their disposition. Iterate until explicit agreement; re-present the full plan every round.
 
 ```markdown
 # Agenda: <short title>
@@ -125,3 +125,4 @@ Multiple targets can share one invocation (one shared ts). When the agreed work 
 - Deliberations stay in chat; only the `ready` status is recorded.
 - Never silently drop a reviewer finding.
 - Never silently drop a Debt item.
+- Report and Plan are always re-presented as the complete format after folding the reviewer findings; delta or summary presentations are forbidden.
