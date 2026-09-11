@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { afterAll, describe, expect, it } from 'vitest';
 
 const SCRIPT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'new.mjs');
+const SCAFFOLD = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'new', 'scaffold.mjs');
 const GROUPS = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'groups.mjs');
 const INIT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'new', 'init.mjs');
 const MATCH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'match.mjs');
@@ -24,6 +25,7 @@ const makeStarter = () => {
   scratches.push(root);
   fs.mkdirSync(path.join(root, 'scripts', 'user', 'new'), { recursive: true });
   fs.copyFileSync(SCRIPT, path.join(root, 'scripts', 'user', 'new.mjs'));
+  fs.copyFileSync(SCAFFOLD, path.join(root, 'scripts', 'user', 'new', 'scaffold.mjs'));
   fs.copyFileSync(GROUPS, path.join(root, 'scripts', 'user', 'groups.mjs'));
   fs.copyFileSync(MATCH, path.join(root, 'scripts', 'user', 'match.mjs'));
   fs.copyFileSync(STATE, path.join(root, 'scripts', 'user', 'state.mjs'));
