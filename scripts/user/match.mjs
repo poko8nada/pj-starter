@@ -18,3 +18,18 @@ export const matchScoped = (rel, pattern) => {
     .join('/');
   return new RegExp(`^${source}$`).test(rel);
 };
+
+// apply / new で共有する除外スキップ表と純粋判定。素形（スラッシュ無し）は任意深度の
+// セグメント一致、単位相対（スラッシュ有り）は単位起点の相対パスで判定する
+export const COMMON_SKIPS = ['node_modules/', '.DS_Store', 'package-lock.json', 'pnpm-lock.yaml'];
+
+export const isSkippedPath = (rel, extra = []) => {
+  const segments = rel.split('/');
+  return [...COMMON_SKIPS, ...extra].some((pattern) => {
+    if (!hasInnerSlash(pattern)) {
+      if (pattern.endsWith('/')) return segments.includes(pattern.slice(0, -1));
+      return segments.includes(pattern);
+    }
+    return matchScoped(rel, pattern);
+  });
+};

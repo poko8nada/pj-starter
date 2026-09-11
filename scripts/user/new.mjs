@@ -8,7 +8,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { groupsFor } from './groups.mjs';
-import { hasInnerSlash, matchScoped } from './match.mjs';
+import { copyScaffold } from './new/scaffold.mjs';
 import { initEvents } from './new/init.mjs';
 
 // 起点（スターター）はこのファイルの位置から解決する（fileURLToPath でデコードする）
@@ -92,66 +92,6 @@ export const checkTarget = (starterRoot, target, force) => {
     }
   }
   return problems;
-};
-
-// scaffold 複写。new タグのグループを起点から対象へ運ぶ（apply 内部は使わない）。
-// 除外判定。素形（スラッシュ無し）は任意深度のセグメント一致、
-// 単位相対（スラッシュ有り）は単位起点の相対パスで判定する（純粋判定は match.mjs と共有）
-const COMMON_SKIPS = ['node_modules/', '.DS_Store', 'package-lock.json', 'pnpm-lock.yaml'];
-
-const isSkippedPath = (rel, extra = []) => {
-  const segments = rel.split('/');
-  return [...COMMON_SKIPS, ...extra].some((pattern) => {
-    if (!hasInnerSlash(pattern)) {
-      if (pattern.endsWith('/')) return segments.includes(pattern.slice(0, -1));
-      return segments.includes(pattern);
-    }
-    return matchScoped(rel, pattern);
-  });
-};
-
-const walkFiles = (dir, base = dir) => {
-  const out = [];
-  let list;
-  try {
-    list = fs.readdirSync(dir, { withFileTypes: true });
-  } catch (error) {
-    if (error.code === 'ENOENT') return out;
-    throw error;
-  }
-  for (const entry of list) {
-    const abs = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...walkFiles(abs, base));
-    else out.push(path.relative(base, abs));
-  }
-  return out;
-};
-
-const copyScaffold = (starter, target) => {
-  for (const group of groupsFor('new')) {
-    if (!group.paths) continue; // create 系は別工程
-    for (const unitPath of group.paths) {
-      const src = path.join(starter, unitPath);
-      if (group.files) {
-        for (const file of group.files) {
-          const from = path.join(src, file);
-          if (!fs.existsSync(from)) continue;
-          const to = path.join(target, unitPath, file);
-          fs.mkdirSync(path.dirname(to), { recursive: true });
-          fs.copyFileSync(from, to);
-          console.log(`複写: ${unitPath}/${file}`);
-        }
-        continue;
-      }
-      if (!fs.existsSync(src)) continue;
-      for (const rel of walkFiles(src)) {
-        if (isSkippedPath(rel, group.excludes ?? [])) continue;
-        fs.mkdirSync(path.join(target, unitPath, path.dirname(rel)), { recursive: true });
-        fs.copyFileSync(path.join(src, rel), path.join(target, unitPath, rel));
-        console.log(`複写: ${unitPath}/${rel}`);
-      }
-    }
-  }
 };
 
 // 工程の実行本体。外付バイナリは環境変数で差し替え可能（テストで失敗系を再現するため）

@@ -23,9 +23,18 @@ pre-commit:
               - .opencode/skills/mockup/workbench/**
             run: pnpm typecheck:staged {staged_files}
             fail_text: 'Type check failed. Run: pnpm typecheck:staged for details.'
+          - name: test
+            glob: '*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}'
+            exclude:
+              - .opencode/skills/mockup/workbench/**
+            run: pnpm test:related {staged_files}
+            fail_text: 'Test failed. Run: pnpm test:run for details.'
 
 pre-push:
   commands:
     typecheck:
       run: pnpm typecheck
       fail_text: 'Type check failed. Run: pnpm typecheck for details.'
+    test:
+      run: pnpm test:run
+      fail_text: 'Test failed. Run: pnpm test:run for details.'

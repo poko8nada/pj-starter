@@ -14,7 +14,7 @@ pnpm apply --run <スターターのパス>          # 実行（ミラー + meta
 
 ### ファイルミラー（一方向）
 
-- 同期単位はグループ定義（`groups.mjs` の `GROUPS`）が正本。apply が対象にするのは tools に `apply` を含む群: harness（`.opencode/lib` + `.opencode/plugin`）/ agents（`.opencode/agent`）/ skills（`.opencode/skills`）/ config（`.opencode` の tsconfig.json・package.json・.gitignore）/ scripts（`new` 関連を除外）/ events（状態ファイルを除外）/ docs（`AGENTS.md` + `lefthook.yaml` + `.gitattributes`）/ lint（`.oxlintrc.json`・`.oxfmtrc.json`）
+- 同期単位はグループ定義（`groups.mjs` の `GROUPS`）が正本。apply が対象にするのは tools に `apply` を含む群: harness（`.opencode/lib` + `.opencode/plugin`）/ agents（`.opencode/agent`）/ skills（`.opencode/skills`）/ config（`.opencode` の tsconfig.json・package.json・.gitignore）/ scripts（`new` 関連を除外）/ events（状態ファイルを除外）/ docs（`AGENTS.md` + `lefthook.yaml` + `.gitattributes`）/ lint（`.oxlintrc.json`・`.oxfmtrc.json`）/ github（`.github` の `workflows/pullfrog.yml` のみ）
 - 適用先では merge driver を手動登録する: `pnpm setup:merge-driver`（各cloneで一度だけ）
 - **スターターが正**: スターターに無いプロジェクト側ファイルは削除される（単位内のみ）
 - 比較は mtime/size。コピー時に mtime を保持するため、再実行は冪等（差分ゼロ）

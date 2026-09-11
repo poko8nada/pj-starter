@@ -6,6 +6,7 @@
     "clean": "rm -rf dist",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:related": "vitest related --run",
     "lint": "oxlint --deny-warnings",
     "lint:fix": "oxlint --fix && oxfmt",
     "format": "oxfmt",

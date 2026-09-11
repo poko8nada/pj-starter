@@ -6,7 +6,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { groupsFor } from '../groups.mjs';
-import { hasInnerSlash, matchScoped } from '../match.mjs';
+import { COMMON_SKIPS, isSkippedPath } from '../match.mjs';
 
 // プロジェクトルートは EVENTS_DIR から遅延解決する（テストでスクラッチを指せるようにするため）。
 // スクリプト実在位置（process.argv[1]）からは解決しない — 実リポジトリを破壊しないため。
@@ -21,13 +21,8 @@ export const PROJECT_ROOT = () => {
 // tools に 'apply' を含むグループ。項目の意味は定義ファイルのコメントを参照
 export const SYNC_UNITS = groupsFor('apply');
 
-// ディレクトリ単位に適用する共通除外。lock は生成物なので運ばない
-export const COMMON_EXCLUDES = [
-  'node_modules/',
-  '.DS_Store',
-  'package-lock.json',
-  'pnpm-lock.yaml',
-];
+// ディレクトリ単位に適用する共通除外。lock は生成物なので運ばない（中身は match.mjs の共有表と同一）
+export const COMMON_EXCLUDES = COMMON_SKIPS;
 
 export const fail = (message) => {
   console.error(`error: ${message}`);
@@ -42,27 +37,12 @@ const stat = (file) => {
   }
 };
 
-// 除外判定。パターンは2種:
+// 除外判定は match.mjs の共有を使う。パターンは2種:
 // - 素形（スラッシュ無し。node_modules/・.DS_Store 等）: 従来通り、任意深度のセグメント一致
 // - 単位相対（スラッシュ有り。mockup/workbench/dist/ 等）: 単位起点の相対パスで判定。
 //   末尾 '/' は配下すべて、'*' は同一セグメント内のワイルドカード、素の相対パスはその1ファイル
-// 単位相対の約束は new.mjs の isSkippedPath と共有する（純粋判定は match.mjs が正本）
-const isExcluded = (relPath, unitExcludes = []) => {
-  const patterns = [...COMMON_EXCLUDES, ...unitExcludes];
-  const segments = relPath.split('/');
-  return patterns.some((pattern) => {
-    if (!hasInnerSlash(pattern)) {
-      if (pattern.endsWith('/')) {
-        // 素形ディレクトリパターン: いずれかのセグメント位置から一致（node_modules/ 等）
-        const dir = pattern.slice(0, -1);
-        return segments.includes(dir);
-      }
-      // 素形ファイルパターン: いずれかのセグメントと一致（.DS_Store 等）
-      return segments.includes(pattern);
-    }
-    return matchScoped(relPath, pattern);
-  });
-};
+// 単位相対の約束は new の scaffold 複写と共有する（純粋判定は match.mjs が正本）
+const isExcluded = (relPath, unitExcludes = []) => isSkippedPath(relPath, unitExcludes);
 
 // 再帰走査して相対パス一覧を返す（dir 起点。空ディレクトリは含まない。dir が無ければ空）
 const walk = (dir, base = dir, unitExcludes = []) => {
