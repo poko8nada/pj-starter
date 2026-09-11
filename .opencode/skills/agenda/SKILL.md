@@ -12,7 +12,7 @@ Turn an implementation decision into an agreed plan, then record it. Never imple
 - Idea capture ("ログインを作りたい") is not agenda — plain discussion: once agreed, append directly (new entries enter as `planned`).
 - Pure value changes (copy tweaks, status flips) skip agenda — append directly.
 - When unsure whether something counts as implementation, run agenda.
-- One agenda = one coherent deliverable carried by one or more related targets in the same domain; split unrelated areas into separate sessions.
+- One agenda = one coherent deliverable carried by one or more related targets in the same domain (sizing rule: see `events/spec/schema.md` Sizing & splitting); split unrelated areas into separate sessions.
 
 ## Procedure
 

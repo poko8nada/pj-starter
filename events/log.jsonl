@@ -1002,3 +1002,13 @@
 {"ts":"2026-09-11T22:41:49.960+09:00","type":"set","key":"log.try.604d0664","value":{"tool":"write","gap":5112,"targets":[".opencode/skills/feature/references/completeness.md"]}}
 {"ts":"2026-09-11T22:41:53.278+09:00","type":"set","key":"log.try.248183d8","value":{"tool":"bash","gap":3318,"targets":["node"]}}
 {"ts":"2026-09-11T22:42:08.710+09:00","type":"set","key":"meta.skills.feature.status","branch":"develop","value":{"stage":"commit","text":"completenessの表組み替え"}}
+{"ts":"2026-09-11T22:58:04.899+09:00","type":"set","key":"meta.docs.schema-spec.status","branch":"develop","value":{"stage":"ready","text":"登録と作業の粒度関係を明記する改訂中"}}
+{"ts":"2026-09-11T22:58:04.899+09:00","type":"set","key":"meta.docs.schema-spec.why.20260911T225804899","branch":"develop","value":{"why":"登録数の増加を正当化し、1スライス=1アジェンダの誤読を防ぐため"}}
+{"ts":"2026-09-11T22:58:09.344+09:00","type":"set","key":"log.try.867fb38e","value":{"tool":"edit","gap":0,"targets":["events/spec/schema.md"]}}
+{"ts":"2026-09-11T22:58:11.205+09:00","type":"set","key":"log.try.108d68f3","value":{"tool":"read","gap":1861,"targets":["events/spec/schema.md"]}}
+{"ts":"2026-09-11T22:58:28.461+09:00","type":"set","key":"meta.docs.schema-spec.status","branch":"develop","value":{"stage":"commit","text":"登録と作業の粒度関係を明記"}}
+{"ts":"2026-09-11T23:00:05.349+09:00","type":"set","key":"meta.skills.agenda.status","branch":"develop","value":{"stage":"ready","text":"schemaへのサイズ規約ポインタ追記中"}}
+{"ts":"2026-09-11T23:00:05.349+09:00","type":"set","key":"meta.skills.agenda.why.20260911T230005349","branch":"develop","value":{"why":"束ね可否の判断点に正本への導線を置き、1スライス=1アジェンダの誤読を防ぐため"}}
+{"ts":"2026-09-11T23:00:07.677+09:00","type":"set","key":"log.try.94b6915c","value":{"tool":"read","gap":0,"targets":[".opencode/skills/agenda/SKILL.md"]}}
+{"ts":"2026-09-11T23:00:19.950+09:00","type":"set","key":"log.try.7a16339d","value":{"tool":"edit","gap":12273,"targets":[".opencode/skills/agenda/SKILL.md"]}}
+{"ts":"2026-09-11T23:00:24.301+09:00","type":"set","key":"meta.skills.agenda.status","branch":"develop","value":{"stage":"commit","text":"schemaへのサイズ規約ポインタ追記"}}

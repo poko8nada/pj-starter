@@ -94,6 +94,7 @@ One lifecycle field exists on every slice. Assert it whole at creation — `{"st
 
 - Draft routes with **at most 3 steps**. A request needing more is split at capture time into sibling features — same depth, kebab-composed ids (`auth-session`, `auth-endpoint`) — each with its own trigger / result / sub-route; the oversized key is removed with `del`
 - Each feature is sized so one working session carries it through `ready → commit`
+- Registration stays fine-grained by circuit; work bundles by relatedness — if one slice fits in one session, one agenda may carry multiple slices
 - On re-entry (see [Recording contract](../README.md#recording-contract)), remaining route steps mark what is left of the slice
 
 #### The completeness test
